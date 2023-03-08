@@ -37,8 +37,8 @@ type App struct {
 	metrics Metrics
 	// cache пакет сохранения метрик в памяти
 	cache Cache
-	// // client клиент для отправки метрик на сервер
-	// client Client
+	// client клиент для отправки метрик на сервер
+	transport Transport
 }
 
 // Config конфигурация приложения
@@ -56,5 +56,5 @@ type Config struct {
 	// cache пакет сохранения метрик в памяти
 	Cache Cache
 	// client клиент для отправки метрик на сервер
-	Client Client
+	Transport Transport
 }

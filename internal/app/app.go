@@ -18,7 +18,7 @@ func New(conf Config) *App {
 		reportInterval: conf.ReportInterval,
 		metrics:        conf.Metrics,
 		cache:          conf.Cache,
-		// client:         conf.Client,
+		transport:      conf.Transport,
 	}
 }
 
@@ -38,9 +38,7 @@ func (a *App) Start() {
 			}
 		case <-reportTicker.C:
 			{
-				fmt.Println(a.cache.Get())
-				a.cache.Reset()
-				fmt.Println(a.cache.Get())
+				a.send()
 				fmt.Println("report")
 			}
 		}
@@ -53,9 +51,24 @@ func (a *App) scanAndSave() {
 		log.Fatal(err) //TODO
 	}
 	a.save(m)
-	fmt.Println(m)
 }
 
 func (a *App) save(m []Metric) {
 	a.cache.Add(m)
+}
+
+func (a *App) send() {
+	if a.transport == nil {
+		log.Fatal("transport not provided")
+	}
+	list, err := a.cache.Get()
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, item := range list {
+		err := a.transport.SendOne(item)
+		if err != nil {
+			log.Println(err)
+		}
+	}
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/cashe"
 	"github.com/rusalexch/metal/internal/metric"
+	"github.com/rusalexch/metal/internal/transport"
 )
 
 const (
@@ -14,19 +15,19 @@ const (
 )
 
 func main() {
-	// var url string
-	// var port int
+	var url string
+	var port int
 
 	m := metric.New()
 	c := cashe.New()
+	t := transport.New(url, port)
 
 	conf := app.Config{
 		PollInterval:   pollInterval,
 		ReportInterval: reportInterval,
-		// ServerUrl:      url,
-		// ServerPort:     port,
-		Metrics: m,
-		Cache:   c,
+		Metrics:        m,
+		Cache:          c,
+		Transport:      t,
 	}
 
 	a := app.New(conf)

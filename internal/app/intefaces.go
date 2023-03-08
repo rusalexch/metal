@@ -6,8 +6,8 @@ type Metrics interface {
 	Scan() ([]Metric, error)
 }
 
-// Client интерфейс клиента для отправки метрик на сервер
-type Client interface {
+// Transport интерфейс клиента для отправки метрик на сервер
+type Transport interface {
 	// SendOne метод для отправки одной метрики
 	SendOne(m Metric) error
 }
