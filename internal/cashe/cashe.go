@@ -1,6 +1,6 @@
 package cashe
 
-import "github.com/rusalexch/metal/internal/app"
+import "github.com/rusalexch/metal/internal/agent"
 
 // New инициализация кэша
 func New() *Cashe {
@@ -8,9 +8,9 @@ func New() *Cashe {
 }
 
 // Add добавление значений метрик в кэш
-func (c *Cashe) Add(m []app.Metric) error {
+func (c *Cashe) Add(m []agent.Metric) error {
 	if c.m == nil {
-		c.m = make([]app.Metric, len(m))
+		c.m = make([]agent.Metric, len(m))
 		copy(c.m, m)
 
 		return nil
@@ -26,6 +26,6 @@ func (c *Cashe) Reset() error {
 }
 
 // Get получение текущих значений кэша
-func (c Cashe) Get() ([]app.Metric, error) {
+func (c Cashe) Get() ([]agent.Metric, error) {
 	return c.m, nil
 }

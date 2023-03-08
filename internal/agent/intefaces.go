@@ -1,4 +1,4 @@
-package app
+package agent
 
 // Metrics интерфейс для сканера метрик
 type Metrics interface {

@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"github.com/rusalexch/metal/internal/app"
+	"github.com/rusalexch/metal/internal/agent"
 	"github.com/rusalexch/metal/internal/cashe"
 	"github.com/rusalexch/metal/internal/metric"
 	"github.com/rusalexch/metal/internal/transport"
@@ -22,7 +22,7 @@ func main() {
 	c := cashe.New()
 	t := transport.New(url, port)
 
-	conf := app.Config{
+	conf := agent.Config{
 		PollInterval:   pollInterval,
 		ReportInterval: reportInterval,
 		Metrics:        m,
@@ -30,7 +30,7 @@ func main() {
 		Transport:      t,
 	}
 
-	a := app.New(conf)
+	a := agent.New(conf)
 
 	a.Start()
 }

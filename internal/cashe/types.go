@@ -1,9 +1,9 @@
 package cashe
 
-import "github.com/rusalexch/metal/internal/app"
+import "github.com/rusalexch/metal/internal/agent"
 
 // Cashe структура кэша
 type Cashe struct {
 	// слайс для хранения кэша
-	m []app.Metric
+	m []agent.Metric
 }

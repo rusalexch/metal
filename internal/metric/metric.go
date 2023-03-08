@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/rusalexch/metal/internal/app"
+	"github.com/rusalexch/metal/internal/agent"
 )
 
 // New создание модуля сбора метрик
@@ -15,10 +15,10 @@ func New() *Metrics {
 }
 
 // Scan сканирование метрики
-func (m *Metrics) Scan() ([]app.Metric, error) {
+func (m *Metrics) Scan() ([]agent.Metric, error) {
 	rm := runtime.MemStats{}
 	runtime.ReadMemStats(&rm)
-	res := make([]app.Metric, 0, 29)
+	res := make([]agent.Metric, 0, 29)
 	m.cnt += 1
 
 	res = append(res, guage(float64(rm.Alloc), "Alloc"))
@@ -56,9 +56,9 @@ func (m *Metrics) Scan() ([]app.Metric, error) {
 }
 
 // guage преобразование метрики типа goage
-func guage(v float64, name string) app.Metric {
-	return app.Metric{
-		Type:      app.Guage,
+func guage(v float64, name string) agent.Metric {
+	return agent.Metric{
+		Type:      agent.Guage,
 		Value:     strconv.FormatFloat(v, 'E', -1, 64),
 		Timestamp: time.Now().Unix(),
 		Name:      name,
@@ -66,9 +66,9 @@ func guage(v float64, name string) app.Metric {
 }
 
 // counter преобразование метрики типа counter
-func counter(v int64, name string) app.Metric {
-	return app.Metric{
-		Type:  app.Counter,
+func counter(v int64, name string) agent.Metric {
+	return agent.Metric{
+		Type:  agent.Counter,
 		Value: strconv.FormatInt(v, 16),
 		Name:  name,
 	}
