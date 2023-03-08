@@ -35,8 +35,8 @@ type App struct {
 	// server Server
 	// metrics пакет сбора метрик
 	metrics Metrics
-	// // cache пакет сохранения метрик в памяти
-	// cache Cache
+	// cache пакет сохранения метрик в памяти
+	cache Cache
 	// // client клиент для отправки метрик на сервер
 	// client Client
 }

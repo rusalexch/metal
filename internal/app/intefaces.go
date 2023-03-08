@@ -15,7 +15,9 @@ type Client interface {
 // Cache интерфейс кэша для хранения метрик
 type Cache interface {
 	// Add метод для добавления метрики в кэш
-	Add(m Metric) error
+	Add(m []Metric) error
 	// Reset метод для очистки кэша
 	Reset() error
+	// Get метод для получения кэша
+	Get() ([]Metric, error)
 }

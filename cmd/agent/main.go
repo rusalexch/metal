@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/rusalexch/metal/internal/app"
+	"github.com/rusalexch/metal/internal/cashe"
 	"github.com/rusalexch/metal/internal/metric"
 )
 
@@ -17,6 +18,7 @@ func main() {
 	// var port int
 
 	m := metric.New()
+	c := cashe.New()
 
 	conf := app.Config{
 		PollInterval:   pollInterval,
@@ -24,6 +26,7 @@ func main() {
 		// ServerUrl:      url,
 		// ServerPort:     port,
 		Metrics: m,
+		Cache:   c,
 	}
 
 	a := app.New(conf)

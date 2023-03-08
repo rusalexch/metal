@@ -17,7 +17,7 @@ func New(conf Config) *App {
 		pollInterval:   conf.PollInterval,
 		reportInterval: conf.ReportInterval,
 		metrics:        conf.Metrics,
-		// cache:          conf.Cache,
+		cache:          conf.Cache,
 		// client:         conf.Client,
 	}
 }
@@ -33,16 +33,29 @@ func (a *App) Start() {
 		select {
 		case <-pollTicker.C:
 			{
-				met := a.metrics
-				m, err := met.Scan()
-				if err != nil {
-					log.Fatal(err) //TODO
-				}
-				fmt.Println(m)
+				a.scanAndSave()
 				fmt.Println("poll")
 			}
 		case <-reportTicker.C:
-			fmt.Println("report")
+			{
+				fmt.Println(a.cache.Get())
+				a.cache.Reset()
+				fmt.Println(a.cache.Get())
+				fmt.Println("report")
+			}
 		}
 	}
+}
+
+func (a *App) scanAndSave() {
+	m, err := a.metrics.Scan()
+	if err != nil {
+		log.Fatal(err) //TODO
+	}
+	a.save(m)
+	fmt.Println(m)
+}
+
+func (a *App) save(m []Metric) {
+	a.cache.Add(m)
 }
