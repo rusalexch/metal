@@ -1,29 +1,8 @@
 package agent
 
-import "time"
-
-// MetricType тип для типа метрики
-type MetricType = string
-
-// Metric структура метрики
-type Metric struct {
-	// Type наименование типа метрики
-	Type MetricType
-	// Value значение метрики в строковом формате
-	Value string
-	// Timestamp дата и время сбора метрики
-	Timestamp int64
-	// Name наименование метрики
-	Name string
-}
-
-// Server структура настроек сервера
-type Server struct {
-	// url адрес сервера сбора метрик
-	url string
-	// port порт сервера сбора метрик
-	port int
-}
+import (
+	"time"
+)
 
 // App структура настроек приложения
 type App struct {

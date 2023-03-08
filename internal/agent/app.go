@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/rusalexch/metal/internal/app"
 )
 
 // New инициализация приложения
@@ -53,7 +55,7 @@ func (a *App) scanAndSave() {
 	a.save(m)
 }
 
-func (a *App) save(m []Metric) {
+func (a *App) save(m []app.Metric) {
 	a.cache.Add(m)
 }
 

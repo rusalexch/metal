@@ -1,4 +1,4 @@
-package agent
+package app
 
 const (
 	// Guage название типа метрики с плавающей запятой
