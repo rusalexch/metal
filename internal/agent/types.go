@@ -10,8 +10,6 @@ type App struct {
 	pollInterval time.Duration
 	// reportInterval частота отправки метрик на сервер
 	reportInterval time.Duration
-	// // server конфигурация сервера сбора метрик
-	// server Server
 	// metrics пакет сбора метрик
 	metrics Metrics
 	// cache пакет сохранения метрик в памяти
@@ -26,10 +24,6 @@ type Config struct {
 	PollInterval time.Duration
 	// reportInterval частота отправки метрик на сервер
 	ReportInterval time.Duration
-	// server адрес сервера сбора метрик
-	ServerUrl string
-	// server порт сервера сбора метрик
-	ServerPort int
 	// metrics пакет сбора метрик
 	Metrics Metrics
 	// cache пакет сохранения метрик в памяти
