@@ -71,6 +71,8 @@ func (a *App) send() {
 		err := a.transport.SendOne(item)
 		if err != nil {
 			log.Println(err)
+		} else {
+			log.Println("sended")
 		}
 	}
 }
