@@ -175,7 +175,7 @@ func TestMertricsService_Get(t *testing.T) {
 				isErr: false,
 				m: app.Metric{
 					Type:      app.Guage,
-					Value:     "5.3E+00",
+					Value:     "5.3",
 					Timestamp: 0,
 					Name:      "testGuage2",
 				},

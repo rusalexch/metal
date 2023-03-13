@@ -43,10 +43,10 @@ func TestNew(t *testing.T) {
 	assert.Equal(t, http.StatusOK, statusCode)
 	assert.Equal(t, htmlNoMetrics, body)
 
-	statusCode, _ = testRequest(t, ts, http.MethodPost, "/update/gauge/testGauge1/1E-10")
+	statusCode, _ = testRequest(t, ts, http.MethodPost, "/update/gauge/testGauge1/0.000001")
 	assert.Equal(t, http.StatusOK, statusCode)
 
-	statusCode, body = testRequest(t, ts, http.MethodPost, "/update/unknown/testGauge1/1E-10")
+	statusCode, body = testRequest(t, ts, http.MethodPost, "/update/unknown/testGauge1/0.000001")
 	assert.Equal(t, http.StatusNotImplemented, statusCode)
 	assert.Equal(t, "method not implemented", body)
 
@@ -59,7 +59,7 @@ func TestNew(t *testing.T) {
 
 	statusCode, body = testRequest(t, ts, http.MethodGet, "/value/gauge/testGauge1")
 	assert.Equal(t, http.StatusOK, statusCode)
-	assert.Equal(t, "1E-10", body)
+	assert.Equal(t, "0.000001", body)
 
 	statusCode, body = testRequest(t, ts, http.MethodGet, "/value/counter/testCounter1")
 	assert.Equal(t, http.StatusOK, statusCode)
@@ -99,7 +99,7 @@ var htmlWithMetrics = `<!DOCTYPE html>
 	</head>
 	<body>
 		<ul>
-			<li><b>testCounter1:</b> 100</li><li><b>testGauge1:</b> 1E-10</li>
+			<li><b>testCounter1:</b> 100</li><li><b>testGauge1:</b> 0.000001</li>
 		</ul>
 	</body>
 </html>`

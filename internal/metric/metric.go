@@ -59,7 +59,7 @@ func (m *Metrics) Scan() []app.Metric {
 func guage(v float64, name string) app.Metric {
 	return app.Metric{
 		Type:      app.Guage,
-		Value:     strconv.FormatFloat(v, 'E', -1, 64),
+		Value:     strconv.FormatFloat(v, 'f', -1, 64),
 		Timestamp: time.Now().Unix(),
 		Name:      name,
 	}

@@ -67,7 +67,7 @@ func (ms *MertricsService) getGuage(name string) (app.Metric, error) {
 
 	m = app.Metric{
 		Type:      app.Guage,
-		Value:     strconv.FormatFloat(val, 'E', -1, 64),
+		Value:     strconv.FormatFloat(val, 'f', -1, 64),
 		Timestamp: 0,
 		Name:      name,
 	}
@@ -109,7 +109,7 @@ func (ms *MertricsService) List() []app.Metric {
 	for _, val := range gauges {
 		res = append(res, app.Metric{
 			Type:      app.Guage,
-			Value:     strconv.FormatFloat(val.Value, 'E', -1, 64),
+			Value:     strconv.FormatFloat(val.Value, 'f', -1, 64),
 			Timestamp: 0,
 			Name:      val.Name,
 		})
