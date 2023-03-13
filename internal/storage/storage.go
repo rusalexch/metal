@@ -10,8 +10,9 @@ func New() *Storage {
 
 // AddCounter метод добавления метрики типа counter
 func (s *Storage) AddCounter(name string, value int64) error {
+	exist, _ := s.GetCounter(name)
 	m := MetricCounter{
-		Value: value,
+		Value: exist + value,
 		Name:  name,
 	}
 	s.counters[name] = m
