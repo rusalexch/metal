@@ -37,12 +37,18 @@ func (a *App) Start() error {
 		case <-pollTicker.C:
 			{
 				fmt.Println("poll")
-				return a.scanAndSave()
+				err := a.scanAndSave()
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		case <-reportTicker.C:
 			{
 				fmt.Println("report")
-				return a.send()
+				err := a.send()
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		}
 	}
