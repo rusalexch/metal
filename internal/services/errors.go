@@ -1,4 +1,6 @@
 package services
 
+import "errors"
+
 // incorrectTypeErr ошибка не правильного типа метрики
-const incorrectTypeErr = "incorrect metric type"
+var IncorrectTypeErr = errors.New("incorrect metric type")

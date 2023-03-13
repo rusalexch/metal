@@ -1,7 +1,6 @@
 package services
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/rusalexch/metal/internal/app"
@@ -23,7 +22,7 @@ func (ms *MertricsService) Add(m app.Metric) error {
 	case app.Counter:
 		return ms.addCounter(m)
 	default:
-		return errors.New(incorrectTypeErr)
+		return IncorrectTypeErr
 	}
 }
 
@@ -35,7 +34,7 @@ func (ms *MertricsService) Get(name string, mType app.MetricType) (app.Metric, e
 	case app.Counter:
 		return ms.getCounter(name)
 	default:
-		return app.Metric{}, errors.New(incorrectTypeErr)
+		return app.Metric{}, IncorrectTypeErr
 	}
 }
 
