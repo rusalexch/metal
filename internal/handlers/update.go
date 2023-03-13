@@ -36,12 +36,10 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 
 	m := app.Metric{
 		Type:      s[0],
-		Value:     s[1],
-		Name:      s[2],
+		Name:      s[1],
+		Value:     s[2],
 		Timestamp: 0,
 	}
-
-	fmt.Println(m)
 
 	err := h.services.MetricsService.Add(m)
 	if err != nil {

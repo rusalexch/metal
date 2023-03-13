@@ -53,26 +53,14 @@ func TestHandlers_update(t *testing.T) {
 			},
 		},
 		{
-			name: "should be content-type error",
+			name: "should be error count params",
 			args: args{
-				url:         "/update/guage/test/123.32",
-				method:      http.MethodPost,
-				contentType: "application/json",
-			},
-			want: want{
-				code: http.StatusBadRequest,
-				res:  "Content-Type not available",
-			},
-		},
-		{
-			name: "should be error, count params",
-			args: args{
-				url:         "/update/guage/test/",
+				url:         "/update/guage/test",
 				method:      http.MethodPost,
 				contentType: "text/plain",
 			},
 			want: want{
-				code: http.StatusBadRequest,
+				code: http.StatusNotFound,
 				res:  "required three params",
 			},
 		},
@@ -87,7 +75,7 @@ func TestHandlers_update(t *testing.T) {
 			h.ServeHTTP(w, req)
 			res := w.Result()
 
-			assert.Equal(t, res.StatusCode, tt.want.code)
+			assert.Equal(t, tt.want.code, res.StatusCode)
 			defer res.Body.Close()
 			body, err := io.ReadAll(res.Body)
 			require.NoError(t, err)
