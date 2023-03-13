@@ -1,7 +1,5 @@
 package storage
 
-import "errors"
-
 // New конструктор хранилища метрик
 func New() *Storage {
 	return &Storage{
@@ -38,7 +36,7 @@ func (s *Storage) GetCounter(name string) (int64, error) {
 		return m.Value, nil
 	}
 
-	return 0, errors.New(CounterNotFoundErr)
+	return 0, ErrCounterNotFound
 }
 
 // GetGuage метод получения метрики типа guage
@@ -47,5 +45,5 @@ func (s *Storage) GetGuage(name string) (float64, error) {
 		return m.Value, nil
 	}
 
-	return 0, errors.New(GiuageNotFoundErr)
+	return 0, ErrGiuageNotFound
 }

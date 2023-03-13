@@ -43,7 +43,7 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 
 	err := h.services.MetricsService.Add(m)
 	if err != nil {
-		if errors.Is(err, services.IncorrectTypeErr) {
+		if errors.Is(err, services.ErrIncorrectType) {
 			w.WriteHeader(http.StatusNotImplemented)
 			fmt.Fprint(w, "method mot implemented")
 			return

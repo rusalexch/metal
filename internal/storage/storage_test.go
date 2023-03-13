@@ -1,8 +1,9 @@
 package storage
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
@@ -20,9 +21,8 @@ func TestNew(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := New(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("New() = %v, want %v", got, tt.want)
-			}
+			got := New()
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -122,10 +122,7 @@ func TestStorage_AddCounter(t *testing.T) {
 			for i, m := range tt.want.metrics {
 				got[i] = s.counters[m.Name]
 			}
-			if !reflect.DeepEqual(got, tt.want.metrics) {
-				t.Errorf("Storage.AddCounter() want = %v, got %v", tt.want.metrics, got)
-			}
-
+			assert.Equal(t, tt.want.metrics, got)
 		})
 	}
 }
@@ -225,10 +222,7 @@ func TestStorage_AddGuage(t *testing.T) {
 			for i, m := range tt.want.metrics {
 				got[i] = s.guages[m.Name]
 			}
-			if !reflect.DeepEqual(got, tt.want.metrics) {
-				t.Errorf("Storage.AddCounter() want = %v, got %v", tt.want.metrics, got)
-			}
-
+			assert.Equal(t, tt.want.metrics, got)
 		})
 	}
 }

@@ -2,10 +2,10 @@ package transport
 
 import (
 	"net/http"
-	"reflect"
 	"testing"
 
 	"github.com/rusalexch/metal/internal/app"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestClient_url(t *testing.T) {
@@ -121,9 +121,8 @@ func TestNew(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := New(tt.args.addr, tt.args.port); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("New() = %v, want %v", got, tt.want)
-			}
+			got := New(tt.args.addr, tt.args.port)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

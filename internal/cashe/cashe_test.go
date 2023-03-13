@@ -1,7 +1,6 @@
 package cashe
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/rusalexch/metal/internal/app"
@@ -20,9 +19,8 @@ func TestNew(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := New(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("New() = %v, want %v", got, tt.want)
-			}
+			got := New()
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

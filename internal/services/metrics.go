@@ -22,7 +22,7 @@ func (ms *MertricsService) Add(m app.Metric) error {
 	case app.Counter:
 		return ms.addCounter(m)
 	default:
-		return IncorrectTypeErr
+		return ErrIncorrectType
 	}
 }
 
@@ -34,7 +34,7 @@ func (ms *MertricsService) Get(name string, mType app.MetricType) (app.Metric, e
 	case app.Counter:
 		return ms.getCounter(name)
 	default:
-		return app.Metric{}, IncorrectTypeErr
+		return app.Metric{}, ErrIncorrectType
 	}
 }
 

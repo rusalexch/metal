@@ -1,11 +1,11 @@
 package services
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/storage"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewMertricsService(t *testing.T) {
@@ -31,9 +31,8 @@ func TestNewMertricsService(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMertricsService(tt.args.storage); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewMertricsService() = %v, want %v", got, tt.want)
-			}
+			got := NewMertricsService(tt.args.storage)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -229,9 +228,7 @@ func TestMertricsService_Get(t *testing.T) {
 				t.Errorf("MertricsService.Get() error = %v, wantErr %v", err, tt.want.isErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want.m) {
-				t.Errorf("MertricsService.Get() = %v, want %v", got, tt.want.m)
-			}
+			assert.Equal(t, tt.want.m, got)
 		})
 	}
 }
