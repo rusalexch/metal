@@ -13,7 +13,7 @@ func main() {
 	stor := storage.New()
 	srv := services.New(stor)
 	h := handlers.New(srv)
-	s := server.New(h)
+	s := server.New(h, "", 0)
 
 	err := s.Start()
 	if err != nil {

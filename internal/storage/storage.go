@@ -4,7 +4,7 @@ package storage
 func New() *Storage {
 	return &Storage{
 		counters: map[string]MetricCounter{},
-		guages:   map[string]MetricGuage{},
+		gauges:   map[string]MetricGauge{},
 	}
 }
 
@@ -20,12 +20,12 @@ func (s *Storage) AddCounter(name string, value int64) error {
 }
 
 // AddGuage метода добавления метрики типа guage
-func (s *Storage) AddGuage(name string, value float64) error {
-	m := MetricGuage{
+func (s *Storage) AddGauge(name string, value float64) error {
+	m := MetricGauge{
 		Value: value,
 		Name:  name,
 	}
-	s.guages[name] = m
+	s.gauges[name] = m
 
 	return nil
 }
@@ -36,14 +36,42 @@ func (s *Storage) GetCounter(name string) (int64, error) {
 		return m.Value, nil
 	}
 
-	return 0, ErrCounterNotFound
+	return 0, ErrMetricNotFound
 }
 
 // GetGuage метод получения метрики типа guage
-func (s *Storage) GetGuage(name string) (float64, error) {
-	if m, ok := s.guages[name]; ok {
+func (s *Storage) GetGauge(name string) (float64, error) {
+	if m, ok := s.gauges[name]; ok {
 		return m.Value, nil
 	}
 
-	return 0, ErrGiuageNotFound
+	return 0, ErrMetricNotFound
+}
+
+// ListCounter метод получения списка метрик типа counter
+func (s *Storage) ListCounter() []MetricCounter {
+	if s.counters == nil {
+		return []MetricCounter{}
+	}
+	res := make([]MetricCounter, 0, len(s.counters))
+
+	for _, val := range s.counters {
+		res = append(res, val)
+	}
+
+	return res
+}
+
+// ListCounter метод получения списка метрик типа gauge
+func (s *Storage) ListGauge() []MetricGauge {
+	if s.gauges == nil {
+		return []MetricGauge{}
+	}
+	res := make([]MetricGauge, 0, len(s.gauges))
+
+	for _, val := range s.gauges {
+		res = append(res, val)
+	}
+
+	return res
 }

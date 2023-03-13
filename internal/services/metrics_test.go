@@ -138,9 +138,9 @@ func TestMertricsService_Get(t *testing.T) {
 	f.storage.AddCounter("testCounter1", 777)
 	f.storage.AddCounter("testCounter2", 93245)
 	f.storage.AddCounter("testCounter3", -10005)
-	f.storage.AddGuage("testGuage1", 0.00001)
-	f.storage.AddGuage("testGuage2", 5.3)
-	f.storage.AddGuage("testGuage3", -0.000000001)
+	f.storage.AddGauge("testGuage1", 0.00001)
+	f.storage.AddGauge("testGuage2", 5.3)
+	f.storage.AddGauge("testGuage3", -0.000000001)
 	tests := []struct {
 		name   string
 		fields fields

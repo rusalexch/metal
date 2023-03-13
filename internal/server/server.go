@@ -1,18 +1,23 @@
 package server
 
 import (
-	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/rusalexch/metal/internal/handlers"
 )
 
 // New конструктор сервера сбора метрик
-func New(handler *handlers.Handlers) *Server {
+func New(handler *handlers.Handlers, baseURL string, port int) *Server {
+	if baseURL == "" {
+		baseURL = "127.0.0.1"
+	}
+	if port == 0 {
+		port = 8080
+	}
 	return &Server{
-		server: http.Server{
-			Addr: "127.0.0.1:8080",
-		},
+		baseURL: baseURL,
+		port:    port,
 		handler: handler,
 	}
 }
@@ -20,12 +25,13 @@ func New(handler *handlers.Handlers) *Server {
 // Start запуск сервера сбора метрик
 func (s *Server) Start() error {
 	s.handler.Init()
-	err := s.server.ListenAndServe()
+
+	err := http.ListenAndServe(s.addr(), s.handler.Mux)
 
 	return err
 }
 
-// Stop остановка сервера
-func (s *Server) Stop(ctx context.Context) error {
-	return s.server.Shutdown(ctx)
+// addr метод получение адреса сервера
+func (s *Server) addr() string {
+	return fmt.Sprintf("%s:%d", s.baseURL, s.port)
 }

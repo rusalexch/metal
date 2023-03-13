@@ -9,7 +9,7 @@ type MetricCounter struct {
 }
 
 // MetricGuage структура метрики guage для хранения
-type MetricGuage struct {
+type MetricGauge struct {
 	// Value значение метрики в строковом формате
 	Value float64
 	// Name наименование метрики
@@ -21,5 +21,5 @@ type Storage struct {
 	// counters мапа хранения для метрик типа counter
 	counters map[string]MetricCounter
 	// guages апа хранения для метрик типа guage
-	guages map[string]MetricGuage
+	gauges map[string]MetricGauge
 }

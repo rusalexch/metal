@@ -15,7 +15,7 @@ func TestNew(t *testing.T) {
 			name: "created storage",
 			want: &Storage{
 				counters: map[string]MetricCounter{},
-				guages:   map[string]MetricGuage{},
+				gauges:   map[string]MetricGauge{},
 			},
 		},
 	}
@@ -30,7 +30,7 @@ func TestNew(t *testing.T) {
 func TestStorage_AddCounter(t *testing.T) {
 	type storage struct {
 		counters map[string]MetricCounter
-		guages   map[string]MetricGuage
+		gauges   map[string]MetricGauge
 	}
 	type args struct {
 		name  string
@@ -43,7 +43,7 @@ func TestStorage_AddCounter(t *testing.T) {
 
 	st := storage{
 		counters: map[string]MetricCounter{},
-		guages:   map[string]MetricGuage{},
+		gauges:   map[string]MetricGauge{},
 	}
 	tests := []struct {
 		name    string
@@ -110,7 +110,7 @@ func TestStorage_AddCounter(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &Storage{
 				counters: tt.storage.counters,
-				guages:   tt.storage.guages,
+				gauges:   tt.storage.gauges,
 			}
 			for _, v := range tt.args {
 				if err := s.AddCounter(v.name, v.value); (err != nil) != tt.want.isErr {
@@ -130,7 +130,7 @@ func TestStorage_AddCounter(t *testing.T) {
 func TestStorage_AddGuage(t *testing.T) {
 	type fields struct {
 		counters map[string]MetricCounter
-		guages   map[string]MetricGuage
+		gauges   map[string]MetricGauge
 	}
 	type args struct {
 		name  string
@@ -138,12 +138,12 @@ func TestStorage_AddGuage(t *testing.T) {
 	}
 	type want struct {
 		isErr   bool
-		metrics []MetricGuage
+		metrics []MetricGauge
 	}
 
 	f := fields{
 		counters: map[string]MetricCounter{},
-		guages:   map[string]MetricGuage{},
+		gauges:   map[string]MetricGauge{},
 	}
 	tests := []struct {
 		name   string
@@ -152,7 +152,7 @@ func TestStorage_AddGuage(t *testing.T) {
 		want   want
 	}{
 		{
-			name:   "aded one guage metric",
+			name:   "aded one gauge metric",
 			fields: f,
 			args: []args{
 				{
@@ -162,7 +162,7 @@ func TestStorage_AddGuage(t *testing.T) {
 			},
 			want: want{
 				isErr: false,
-				metrics: []MetricGuage{
+				metrics: []MetricGauge{
 					{
 						Value: 3.14,
 						Name:  "testGuage",
@@ -189,7 +189,7 @@ func TestStorage_AddGuage(t *testing.T) {
 			},
 			want: want{
 				isErr: false,
-				metrics: []MetricGuage{
+				metrics: []MetricGauge{
 					{
 						Value: 3.14,
 						Name:  "testGuage1",
@@ -210,17 +210,17 @@ func TestStorage_AddGuage(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &Storage{
 				counters: tt.fields.counters,
-				guages:   tt.fields.guages,
+				gauges:   tt.fields.gauges,
 			}
 			for _, arg := range tt.args {
-				if err := s.AddGuage(arg.name, arg.value); (err != nil) != tt.want.isErr {
+				if err := s.AddGauge(arg.name, arg.value); (err != nil) != tt.want.isErr {
 					t.Fatalf("Storage.AddGuage() error = %v, wantErr %v", err, tt.want.isErr)
 				}
 			}
 
-			got := make([]MetricGuage, len(tt.want.metrics))
+			got := make([]MetricGauge, len(tt.want.metrics))
 			for i, m := range tt.want.metrics {
-				got[i] = s.guages[m.Name]
+				got[i] = s.gauges[m.Name]
 			}
 			assert.Equal(t, tt.want.metrics, got)
 		})
@@ -230,7 +230,7 @@ func TestStorage_AddGuage(t *testing.T) {
 func TestStorage_GetCounter(t *testing.T) {
 	type fields struct {
 		counters map[string]MetricCounter
-		guages   map[string]MetricGuage
+		gauges   map[string]MetricGauge
 	}
 	type args struct {
 		name string
@@ -280,7 +280,7 @@ func TestStorage_GetCounter(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &Storage{
 				counters: tt.fields.counters,
-				guages:   tt.fields.guages,
+				gauges:   tt.fields.gauges,
 			}
 			got, err := s.GetCounter(tt.args.name)
 			if (err != nil) != tt.want.isErr {
@@ -297,7 +297,7 @@ func TestStorage_GetCounter(t *testing.T) {
 func TestStorage_GetGuage(t *testing.T) {
 	type fields struct {
 		counters map[string]MetricCounter
-		guages   map[string]MetricGuage
+		gauges   map[string]MetricGauge
 	}
 	type args struct {
 		name string
@@ -309,7 +309,7 @@ func TestStorage_GetGuage(t *testing.T) {
 
 	f := fields{
 		counters: map[string]MetricCounter{},
-		guages: map[string]MetricGuage{
+		gauges: map[string]MetricGauge{
 			"testGuage1": {Name: "testGuage1", Value: 3.14},
 			"testGuage2": {Name: "testGuage2", Value: -3.14},
 			"testGuage3": {Name: "testGuage3", Value: 0.000000001},
@@ -349,9 +349,9 @@ func TestStorage_GetGuage(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &Storage{
 				counters: tt.fields.counters,
-				guages:   tt.fields.guages,
+				gauges:   tt.fields.gauges,
 			}
-			got, err := s.GetGuage(tt.args.name)
+			got, err := s.GetGauge(tt.args.name)
 			if (err != nil) != tt.want.isErr {
 				t.Errorf("Storage.GetGuage() error = %v, wantErr %v", err, tt.want.isErr)
 				return

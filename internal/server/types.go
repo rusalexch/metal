@@ -1,15 +1,15 @@
 package server
 
 import (
-	"net/http"
-
 	"github.com/rusalexch/metal/internal/handlers"
 )
 
 // Server структура сервера
 type Server struct {
-	// server экземпляр сервера
-	server http.Server
+	// addr адрес сервера
+	baseURL string
+	// port порт сервера
+	port int
 	// handler указатель на Хендлеры
 	handler *handlers.Handlers
 }
