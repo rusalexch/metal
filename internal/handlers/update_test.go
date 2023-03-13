@@ -31,7 +31,7 @@ func TestHandlers_update(t *testing.T) {
 		{
 			name: "should be ok",
 			args: args{
-				url:         "/update/guage/test/123.32",
+				url:         "/update/gauge/test/123.32",
 				method:      http.MethodPost,
 				contentType: "text/plain",
 			},
@@ -43,7 +43,7 @@ func TestHandlers_update(t *testing.T) {
 		{
 			name: "should be method error",
 			args: args{
-				url:         "/update/guage/test/123.32",
+				url:         "/update/gauge/test/123.32",
 				method:      http.MethodGet,
 				contentType: "text/plain",
 			},
@@ -55,7 +55,7 @@ func TestHandlers_update(t *testing.T) {
 		{
 			name: "should be error count params",
 			args: args{
-				url:         "/update/guage/test",
+				url:         "/update/gauge/test",
 				method:      http.MethodPost,
 				contentType: "text/plain",
 			},

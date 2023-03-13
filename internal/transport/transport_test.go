@@ -54,7 +54,7 @@ func TestClient_url(t *testing.T) {
 					Name:      "testGuage",
 				},
 			},
-			want: "http://127.0.0.1:8080/update/guage/testGuage/0.123",
+			want: "http://127.0.0.1:8080/update/gauge/testGuage/0.123",
 		},
 	}
 
