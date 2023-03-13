@@ -5,7 +5,7 @@ import "github.com/rusalexch/metal/internal/app"
 // Metrics интерфейс для сканера метрик
 type Metrics interface {
 	// Scan метод для сканирования метрик
-	Scan() ([]app.Metric, error)
+	Scan() []app.Metric
 }
 
 // Transport интерфейс клиента для отправки метрик на сервер

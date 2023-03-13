@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/rusalexch/metal/internal/handlers"
@@ -22,4 +23,9 @@ func (s *Server) Start() error {
 	err := s.server.ListenAndServe()
 
 	return err
+}
+
+// Stop остановка сервера
+func (s *Server) Stop(ctx context.Context) error {
+	return s.server.Shutdown(ctx)
 }

@@ -18,5 +18,3 @@ func (h *Handlers) Init() {
 	http.HandleFunc("/ping", ping)
 	http.HandleFunc("/update/", h.update)
 }
-
-

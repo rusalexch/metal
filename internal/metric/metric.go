@@ -15,7 +15,7 @@ func New() *Metrics {
 }
 
 // Scan сканирование метрики
-func (m *Metrics) Scan() ([]app.Metric, error) {
+func (m *Metrics) Scan() []app.Metric {
 	rm := runtime.MemStats{}
 	runtime.ReadMemStats(&rm)
 	res := make([]app.Metric, 0, 29)
@@ -52,7 +52,7 @@ func (m *Metrics) Scan() ([]app.Metric, error) {
 	res = append(res, counter(m.cnt, "PollCount"))
 	res = append(res, guage(randomValue(), "RandomValue"))
 
-	return res, nil
+	return res
 }
 
 // guage преобразование метрики типа goage
@@ -69,7 +69,7 @@ func guage(v float64, name string) app.Metric {
 func counter(v int64, name string) app.Metric {
 	return app.Metric{
 		Type:  app.Counter,
-		Value: strconv.FormatInt(v, 16),
+		Value: strconv.FormatInt(v, 10),
 		Name:  name,
 	}
 }

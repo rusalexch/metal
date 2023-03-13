@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -25,7 +26,7 @@ func New(conf Config) *App {
 }
 
 // Start метод запуска клиента сбора и отправки метрик на сервер
-func (a *App) Start() {
+func (a *App) Start() error {
 	pollTicker := time.NewTicker(a.pollInterval)
 	defer pollTicker.Stop()
 	reportTicker := time.NewTicker(a.reportInterval)
@@ -35,44 +36,48 @@ func (a *App) Start() {
 		select {
 		case <-pollTicker.C:
 			{
-				a.scanAndSave()
 				fmt.Println("poll")
+				return a.scanAndSave()
 			}
 		case <-reportTicker.C:
 			{
-				a.send()
 				fmt.Println("report")
+				return a.send()
 			}
 		}
 	}
 }
 
-func (a *App) scanAndSave() {
-	m, err := a.metrics.Scan()
-	if err != nil {
-		log.Fatal(err) //TODO
-	}
-	a.save(m)
+func (a *App) scanAndSave() error {
+	m := a.metrics.Scan()
+
+	return a.save(m)
 }
 
-func (a *App) save(m []app.Metric) {
-	a.cache.Add(m)
+func (a *App) save(m []app.Metric) error {
+	return a.cache.Add(m)
 }
 
-func (a *App) send() {
+func (a *App) send() error {
 	if a.transport == nil {
-		log.Fatal("transport not provided")
+		return errors.New(TransportNotProvided)
 	}
 	list, err := a.cache.Get()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+	cntErr := 0
 	for _, item := range list {
 		err := a.transport.SendOne(item)
 		if err != nil {
 			log.Println(err)
+			cntErr++
 		} else {
-			log.Println("sended")
+			log.Println(fmt.Scanf("metric: %s was sended", item.Name))
 		}
 	}
+	if cntErr == 0 {
+		return nil
+	}
+	return errors.New(NotAllMetricsSent)
 }

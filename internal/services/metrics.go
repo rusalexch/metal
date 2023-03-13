@@ -50,7 +50,7 @@ func (ms *MertricsService) addGuage(m app.Metric) error {
 
 // addCounter метод добавления метрики типа counter
 func (ms *MertricsService) addCounter(m app.Metric) error {
-	val, err := strconv.ParseInt(m.Value, 16, 64)
+	val, err := strconv.ParseInt(m.Value, 10, 64)
 	if err != nil {
 		return err
 	}
@@ -85,8 +85,8 @@ func (ms *MertricsService) getCounter(name string) (app.Metric, error) {
 	}
 
 	m = app.Metric{
-		Type:      app.Guage,
-		Value:     strconv.FormatInt(val, 16),
+		Type:      app.Counter,
+		Value:     strconv.FormatInt(val, 10),
 		Timestamp: 0,
 		Name:      name,
 	}

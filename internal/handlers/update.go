@@ -13,13 +13,13 @@ import (
 func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, "method not available")
+		fmt.Fprint(w, "method not available")
 		return
 	}
 
 	if r.Header.Get("Content-Type") != "text/plain" {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, "Content-Type not available")
+		fmt.Fprint(w, "Content-Type not available")
 		return
 	}
 
@@ -28,8 +28,7 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 	s := strings.Split(data, "/")
 	if len(s) != 3 || utils.IsSameEmpty(s) {
 		w.WriteHeader(http.StatusBadRequest)
-		res := fmt.Sprintf("required three params, get %d", len(s))
-		fmt.Fprintln(w, res)
+		fmt.Fprint(w, "required three params")
 		return
 	}
 

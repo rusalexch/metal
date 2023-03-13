@@ -9,5 +9,5 @@ import (
 func ping(w http.ResponseWriter, r *http.Request) {
 	res := "pong"
 
-	fmt.Fprintln(w, res)
+	fmt.Fprint(w, res)
 }

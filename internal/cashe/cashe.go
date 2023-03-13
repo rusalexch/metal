@@ -21,11 +21,14 @@ func (c *Cashe) Add(m []app.Metric) error {
 
 // Reset сброс кэша
 func (c *Cashe) Reset() error {
-	c.m = nil
+	c.m = []app.Metric{}
 	return nil
 }
 
 // Get получение текущих значений кэша
-func (c Cashe) Get() ([]app.Metric, error) {
+func (c *Cashe) Get() ([]app.Metric, error) {
+	if c.m == nil {
+		c.m = []app.Metric{}
+	}
 	return c.m, nil
 }
