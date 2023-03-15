@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/rusalexch/metal/internal/agent"
-	"github.com/rusalexch/metal/internal/cashe"
+	"github.com/rusalexch/metal/internal/cache"
 	"github.com/rusalexch/metal/internal/metric"
 	"github.com/rusalexch/metal/internal/transport"
 )
@@ -19,7 +19,7 @@ func main() {
 	var port int
 
 	m := metric.New()
-	c := cashe.New()
+	c := cache.New()
 	t := transport.New(url, port)
 
 	conf := agent.Config{

@@ -1,4 +1,4 @@
-package cashe
+package cache
 
 import (
 	"testing"
@@ -10,11 +10,11 @@ import (
 func TestNew(t *testing.T) {
 	tests := []struct {
 		name string
-		want *Cashe
+		want *Cache
 	}{
 		{
 			name: "should be created",
-			want: &Cashe{},
+			want: &Cache{},
 		},
 	}
 	for _, tt := range tests {

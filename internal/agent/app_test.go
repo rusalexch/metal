@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rusalexch/metal/internal/cashe"
+	"github.com/rusalexch/metal/internal/cache"
 	"github.com/rusalexch/metal/internal/metric"
 	"github.com/rusalexch/metal/internal/transport"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +15,7 @@ func TestNew(t *testing.T) {
 		conf Config
 	}
 	m := metric.New()
-	c := cashe.New()
+	c := cache.New()
 	tr := transport.New("http://127.0.0.1", 8080)
 	tests := []struct {
 		name string

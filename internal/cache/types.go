@@ -1,9 +1,9 @@
-package cashe
+package cache
 
 import "github.com/rusalexch/metal/internal/app"
 
-// Cashe структура кэша
-type Cashe struct {
+// Cache структура кэша
+type Cache struct {
 	// слайс для хранения кэша
 	m []app.Metric
 }

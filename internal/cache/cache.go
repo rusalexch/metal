@@ -1,14 +1,14 @@
-package cashe
+package cache
 
 import "github.com/rusalexch/metal/internal/app"
 
 // New инициализация кэша
-func New() *Cashe {
-	return &Cashe{}
+func New() *Cache {
+	return &Cache{}
 }
 
 // Add добавление значений метрик в кэш
-func (c *Cashe) Add(m []app.Metric) error {
+func (c *Cache) Add(m []app.Metric) error {
 	if c.m == nil {
 		c.m = make([]app.Metric, len(m))
 		copy(c.m, m)
@@ -20,13 +20,13 @@ func (c *Cashe) Add(m []app.Metric) error {
 }
 
 // Reset сброс кэша
-func (c *Cashe) Reset() error {
+func (c *Cache) Reset() error {
 	c.m = []app.Metric{}
 	return nil
 }
 
 // Get получение текущих значений кэша
-func (c *Cashe) Get() ([]app.Metric, error) {
+func (c *Cache) Get() ([]app.Metric, error) {
 	if c.m == nil {
 		c.m = []app.Metric{}
 	}
