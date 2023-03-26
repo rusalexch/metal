@@ -35,11 +35,11 @@ func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
 
 	t, err := template.New("metrics").Parse(tmpl)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	err = t.Execute(w, res)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
