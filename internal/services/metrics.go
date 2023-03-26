@@ -77,13 +77,12 @@ func (ms *MertricsService) getGuage(name string) (app.Metric, error) {
 
 // getCounter метод получения метрики типа counter
 func (ms *MertricsService) getCounter(name string) (app.Metric, error) {
-	var m app.Metric
 	val, err := ms.storage.GetCounter(name)
 	if err != nil {
-		return m, err
+		return app.Metric{}, err
 	}
 
-	m = app.Metric{
+	m := app.Metric{
 		Type:      app.Counter,
 		Value:     strconv.FormatInt(val, 10),
 		Timestamp: 0,
