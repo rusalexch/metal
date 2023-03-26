@@ -27,9 +27,8 @@ func TestNew(t *testing.T) {
 
 func TestCache_Add(t *testing.T) {
 	type want struct {
-		isErr bool
-		m1    []app.Metric
-		m2    []app.Metric
+		m1 []app.Metric
+		m2 []app.Metric
 	}
 	type args struct {
 		firstAdd  []app.Metric
@@ -59,9 +58,9 @@ func TestCache_Add(t *testing.T) {
 	metricsSecond := []app.Metric{
 		{
 			Type:      app.Counter,
-			Value:     "123",
+			Value:     "1230",
 			Timestamp: 1,
-			Name:      "testCounter1",
+			Name:      "testCounter5",
 		},
 	}
 	tests := []struct {
@@ -76,24 +75,20 @@ func TestCache_Add(t *testing.T) {
 				secondAdd: metricsSecond,
 			},
 			want: want{
-				isErr: false,
-				m1:    metricsFirst,
-				m2:    append(metricsFirst, metricsSecond...),
+				m1: metricsFirst,
+				m2: append(metricsFirst, metricsSecond...),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
-			if err := c.Add(tt.args.firstAdd); (err != nil) != tt.want.isErr {
-				t.Errorf("Cache.Add() error = %v, wantErr %v", err, tt.want.isErr)
-				return
-			}
+			c.Reset()
+			c.Add(tt.args.firstAdd)
+
 			assert.Equal(t, tt.want.m1, c.m)
-			if err := c.Add(tt.args.secondAdd); (err != nil) != tt.want.isErr {
-				t.Errorf("Cache.Add() error = %v, wantErr %v", err, tt.want.isErr)
-				return
-			}
+
+			c.Add(tt.args.secondAdd)
 			assert.Equal(t, tt.want.m2, c.m)
 		})
 	}
@@ -101,8 +96,7 @@ func TestCache_Add(t *testing.T) {
 
 func TestCache_Reset(t *testing.T) {
 	type want struct {
-		isErr bool
-		m     []app.Metric
+		m []app.Metric
 	}
 	metrics := []app.Metric{
 		{
@@ -134,16 +128,14 @@ func TestCache_Reset(t *testing.T) {
 			name:   "reset when empty",
 			fields: []app.Metric{},
 			want: want{
-				isErr: false,
-				m:     []app.Metric{},
+				m: []app.Metric{},
 			},
 		},
 		{
 			name:   "reset `when exist",
 			fields: metrics,
 			want: want{
-				isErr: false,
-				m:     []app.Metric{},
+				m: []app.Metric{},
 			},
 		},
 	}
@@ -153,9 +145,7 @@ func TestCache_Reset(t *testing.T) {
 			if len(tt.fields) != 0 {
 				c.Add(tt.fields)
 			}
-			if err := c.Reset(); (err != nil) != tt.want.isErr {
-				t.Errorf("Cache.Reset() error = %v, wantErr %v", err, tt.want.isErr)
-			}
+			c.Reset()
 			assert.Equal(t, tt.want.m, c.m)
 		})
 	}
@@ -163,8 +153,7 @@ func TestCache_Reset(t *testing.T) {
 
 func TestCache_Get(t *testing.T) {
 	type want struct {
-		isErr bool
-		m     []app.Metric
+		m []app.Metric
 	}
 	metrics := []app.Metric{
 		{
@@ -195,30 +184,25 @@ func TestCache_Get(t *testing.T) {
 			name:   "get empty cache",
 			fields: []app.Metric{},
 			want: want{
-				isErr: false,
-				m:     []app.Metric{},
+				m: []app.Metric{},
 			},
 		},
 		{
 			name:   "get values from cache",
 			fields: metrics,
 			want: want{
-				isErr: false,
-				m:     metrics,
+				m: metrics,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
+			c.Reset()
 			if len(tt.fields) != 0 {
 				c.Add(tt.fields)
 			}
-			got, err := c.Get()
-			if (err != nil) != tt.want.isErr {
-				t.Errorf("Cache.Get() error = %v, wantErr %v", err, tt.want.isErr)
-				return
-			}
+			got := c.Get()
 			assert.Equal(t, tt.want.m, got)
 		})
 	}

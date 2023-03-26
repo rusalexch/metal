@@ -17,9 +17,9 @@ type Transport interface {
 // Cache интерфейс кэша для хранения метрик
 type Cache interface {
 	// Add метод для добавления метрики в кэш
-	Add(m []app.Metric) error
+	Add(m []app.Metric)
 	// Reset метод для очистки кэша
-	Reset() error
+	Reset()
 	// Get метод для получения кэша
-	Get() ([]app.Metric, error)
+	Get() []app.Metric
 }

@@ -37,10 +37,7 @@ func (a *App) Start() error {
 		case <-pollTicker.C:
 			{
 				fmt.Println("poll")
-				err := a.scanAndSave()
-				if err != nil {
-					log.Println(err)
-				}
+				a.scanAndSave()
 			}
 		case <-reportTicker.C:
 			{
@@ -49,29 +46,28 @@ func (a *App) Start() error {
 				if err != nil {
 					log.Println(err)
 				}
+				a.cache.Reset()
 			}
 		}
 	}
 }
 
-func (a *App) scanAndSave() error {
+func (a *App) scanAndSave() {
 	m := a.metrics.Scan()
 
-	return a.save(m)
+	a.save(m)
 }
 
-func (a *App) save(m []app.Metric) error {
-	return a.cache.Add(m)
+func (a *App) save(m []app.Metric) {
+	a.cache.Add(m)
 }
 
 func (a *App) send() error {
 	if a.transport == nil {
 		return errors.New(TransportNotProvided)
 	}
-	list, err := a.cache.Get()
-	if err != nil {
-		return err
-	}
+	list := a.cache.Get()
+
 	cntErr := 0
 	for _, item := range list {
 		err := a.transport.SendOne(item)
