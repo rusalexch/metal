@@ -25,4 +25,6 @@ func (h *Handlers) Init() {
 	h.Get("/ping", ping)
 	h.Get("/value/{mType}/{ID}", h.find)
 	h.Post("/update/{mType}/{ID}/{value}", h.update)
+	h.Post("/update/", h.updateJSON)
+	h.Post("/value/", h.valueJSON)
 }

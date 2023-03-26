@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -13,7 +16,6 @@ import (
 )
 
 func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("value")
 	ID := chi.URLParam(r, "ID")
 	mType := chi.URLParam(r, "mType")
 	m, err := h.services.MetricsService.Get(ID, mType)
@@ -35,4 +37,45 @@ func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
 	case app.Gauge:
 		fmt.Fprint(w, utils.Float64ToStr(*m.Value))
 	}
+}
+
+func (h *Handlers) valueJSON(w http.ResponseWriter, r *http.Request) {
+
+	var m app.Metrics
+
+	body, err := io.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	content := r.Header.Get(contentType)
+	if content != appJSON {
+		w.WriteHeader(http.StatusNotImplemented)
+		return
+	}
+
+	err = json.Unmarshal(body, &m)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	m, err = h.services.MetricsService.Get(m.ID, m.Type)
+	if err != nil {
+		if errors.Is(err, storage.ErrMetricNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	body, err = json.Marshal(m)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Header().Add(contentType, appJSON)
+	w.Write(body)
 }

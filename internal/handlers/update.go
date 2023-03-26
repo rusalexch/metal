@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 
@@ -62,4 +64,36 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func (h *Handlers) updateJSON(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	content := r.Header.Get(contentType)
+	if content != appJSON {
+		w.WriteHeader(http.StatusNotImplemented)
+		return
+	}
+
+	var m app.Metrics
+	err = json.Unmarshal(body, &m)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	h.services.MetricsService.Add(m)
+
+	m, _ = h.services.MetricsService.Get(m.ID, m.Type)
+	body, err = json.Marshal(m)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Header().Add(contentType, appJSON)
+	w.Write(body)
 }
