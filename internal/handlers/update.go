@@ -18,7 +18,6 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 		Type:      chi.URLParam(r, "mType"),
 		Name:      chi.URLParam(r, "name"),
 		Value:     chi.URLParam(r, "value"),
-		Timestamp: 0,
 	}
 
 	err := h.services.MetricsService.Add(m)

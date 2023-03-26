@@ -66,10 +66,9 @@ func (ms *MertricsService) getGuage(name string) (app.Metric, error) {
 	}
 
 	m = app.Metric{
-		Type:      app.Guage,
-		Value:     strconv.FormatFloat(val, 'f', -1, 64),
-		Timestamp: 0,
-		Name:      name,
+		Type:  app.Guage,
+		Value: strconv.FormatFloat(val, 'f', -1, 64),
+		Name:  name,
 	}
 
 	return m, nil
@@ -83,10 +82,9 @@ func (ms *MertricsService) getCounter(name string) (app.Metric, error) {
 	}
 
 	m := app.Metric{
-		Type:      app.Counter,
-		Value:     strconv.FormatInt(val, 10),
-		Timestamp: 0,
-		Name:      name,
+		Type:  app.Counter,
+		Value: strconv.FormatInt(val, 10),
+		Name:  name,
 	}
 
 	return m, nil
@@ -99,18 +97,16 @@ func (ms *MertricsService) List() []app.Metric {
 	res := make([]app.Metric, 0, len(counters)+len(gauges))
 	for _, val := range counters {
 		res = append(res, app.Metric{
-			Type:      app.Counter,
-			Value:     strconv.FormatInt(val.Value, 10),
-			Timestamp: 0,
-			Name:      val.Name,
+			Type:  app.Counter,
+			Value: strconv.FormatInt(val.Value, 10),
+			Name:  val.Name,
 		})
 	}
 	for _, val := range gauges {
 		res = append(res, app.Metric{
-			Type:      app.Guage,
-			Value:     strconv.FormatFloat(val.Value, 'f', -1, 64),
-			Timestamp: 0,
-			Name:      val.Name,
+			Type:  app.Guage,
+			Value: strconv.FormatFloat(val.Value, 'f', -1, 64),
+			Name:  val.Name,
 		})
 	}
 

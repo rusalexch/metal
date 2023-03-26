@@ -4,7 +4,6 @@ import (
 	"math/rand"
 	"runtime"
 	"strconv"
-	"time"
 
 	"github.com/rusalexch/metal/internal/app"
 )
@@ -58,10 +57,9 @@ func (m *Metrics) Scan() []app.Metric {
 // guage преобразование метрики типа goage
 func guage(v float64, name string) app.Metric {
 	return app.Metric{
-		Type:      app.Guage,
-		Value:     strconv.FormatFloat(v, 'f', -1, 64),
-		Timestamp: time.Now().Unix(),
-		Name:      name,
+		Type:  app.Guage,
+		Value: strconv.FormatFloat(v, 'f', -1, 64),
+		Name:  name,
 	}
 }
 

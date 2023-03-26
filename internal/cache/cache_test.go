@@ -39,19 +39,16 @@ func TestCache_Add(t *testing.T) {
 		{
 			Type:      app.Counter,
 			Value:     "123",
-			Timestamp: 0,
 			Name:      "testCounter1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "1.23",
-			Timestamp: 0,
 			Name:      "testGuage1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "-1.000001",
-			Timestamp: 0,
 			Name:      "testGuage2",
 		},
 	}
@@ -59,7 +56,6 @@ func TestCache_Add(t *testing.T) {
 		{
 			Type:      app.Counter,
 			Value:     "1230",
-			Timestamp: 1,
 			Name:      "testCounter5",
 		},
 	}
@@ -102,19 +98,16 @@ func TestCache_Reset(t *testing.T) {
 		{
 			Type:      app.Counter,
 			Value:     "123",
-			Timestamp: 0,
 			Name:      "testCounter1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "1.23",
-			Timestamp: 0,
 			Name:      "testGuage1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "-1.000001",
-			Timestamp: 0,
 			Name:      "testGuage2",
 		},
 	}
@@ -159,19 +152,16 @@ func TestCache_Get(t *testing.T) {
 		{
 			Type:      app.Counter,
 			Value:     "123",
-			Timestamp: 0,
 			Name:      "testCounter1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "1.23",
-			Timestamp: 0,
 			Name:      "testGuage1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "-1.000001",
-			Timestamp: 0,
 			Name:      "testGuage2",
 		},
 	}

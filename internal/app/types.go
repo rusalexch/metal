@@ -9,8 +9,6 @@ type Metric struct {
 	Type MetricType
 	// Value значение метрики в строковом формате
 	Value string
-	// Timestamp дата и время сбора метрики
-	Timestamp int64
 	// Name наименование метрики
 	Name string
 }

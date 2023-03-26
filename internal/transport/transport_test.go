@@ -37,7 +37,6 @@ func TestClient_url(t *testing.T) {
 				m: app.Metric{
 					Type:      app.Counter,
 					Value:     "123",
-					Timestamp: 100,
 					Name:      "testCounter",
 				},
 			},
@@ -50,7 +49,6 @@ func TestClient_url(t *testing.T) {
 				m: app.Metric{
 					Type:      app.Guage,
 					Value:     "0.123",
-					Timestamp: 100,
 					Name:      "testGuage",
 				},
 			},

@@ -57,7 +57,6 @@ func TestMertricsService_Add(t *testing.T) {
 			args: app.Metric{
 				Type:      app.Counter,
 				Value:     "777",
-				Timestamp: 0,
 				Name:      "testCounter1",
 			},
 			wantErr: false,
@@ -68,7 +67,6 @@ func TestMertricsService_Add(t *testing.T) {
 			args: app.Metric{
 				Type:      app.Guage,
 				Value:     "0.000002",
-				Timestamp: 0,
 				Name:      "testGuage2",
 			},
 			wantErr: false,
@@ -79,7 +77,6 @@ func TestMertricsService_Add(t *testing.T) {
 			args: app.Metric{
 				Type:      "wrongType",
 				Value:     "123",
-				Timestamp: 0,
 				Name:      "test3",
 			},
 			wantErr: true,
@@ -90,7 +87,6 @@ func TestMertricsService_Add(t *testing.T) {
 			args: app.Metric{
 				Type:      app.Counter,
 				Value:     "wer",
-				Timestamp: 0,
 				Name:      "testCounter4",
 			},
 			wantErr: true,
@@ -101,7 +97,6 @@ func TestMertricsService_Add(t *testing.T) {
 			args: app.Metric{
 				Type:      app.Guage,
 				Value:     "swq",
-				Timestamp: 0,
 				Name:      "testCounter5",
 			},
 			wantErr: true,
@@ -159,7 +154,6 @@ func TestMertricsService_Get(t *testing.T) {
 				m: app.Metric{
 					Type:      app.Counter,
 					Value:     "-10005",
-					Timestamp: 0,
 					Name:      "testCounter3",
 				},
 			},
@@ -176,7 +170,6 @@ func TestMertricsService_Get(t *testing.T) {
 				m: app.Metric{
 					Type:      app.Guage,
 					Value:     "5.3",
-					Timestamp: 0,
 					Name:      "testGuage2",
 				},
 			},
