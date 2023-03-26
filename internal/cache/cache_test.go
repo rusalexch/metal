@@ -25,7 +25,7 @@ func TestNew(t *testing.T) {
 	}
 }
 
-func TestCashe_Add(t *testing.T) {
+func TestCache_Add(t *testing.T) {
 	type want struct {
 		isErr bool
 		m1    []app.Metric
@@ -86,12 +86,12 @@ func TestCashe_Add(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
 			if err := c.Add(tt.args.firstAdd); (err != nil) != tt.want.isErr {
-				t.Errorf("Cashe.Add() error = %v, wantErr %v", err, tt.want.isErr)
+				t.Errorf("Cache.Add() error = %v, wantErr %v", err, tt.want.isErr)
 				return
 			}
 			assert.Equal(t, tt.want.m1, c.m)
 			if err := c.Add(tt.args.secondAdd); (err != nil) != tt.want.isErr {
-				t.Errorf("Cashe.Add() error = %v, wantErr %v", err, tt.want.isErr)
+				t.Errorf("Cache.Add() error = %v, wantErr %v", err, tt.want.isErr)
 				return
 			}
 			assert.Equal(t, tt.want.m2, c.m)
@@ -99,7 +99,7 @@ func TestCashe_Add(t *testing.T) {
 	}
 }
 
-func TestCashe_Reset(t *testing.T) {
+func TestCache_Reset(t *testing.T) {
 	type want struct {
 		isErr bool
 		m     []app.Metric
@@ -154,14 +154,14 @@ func TestCashe_Reset(t *testing.T) {
 				c.Add(tt.fields)
 			}
 			if err := c.Reset(); (err != nil) != tt.want.isErr {
-				t.Errorf("Cashe.Reset() error = %v, wantErr %v", err, tt.want.isErr)
+				t.Errorf("Cache.Reset() error = %v, wantErr %v", err, tt.want.isErr)
 			}
 			assert.Equal(t, tt.want.m, c.m)
 		})
 	}
 }
 
-func TestCashe_Get(t *testing.T) {
+func TestCache_Get(t *testing.T) {
 	type want struct {
 		isErr bool
 		m     []app.Metric
@@ -216,7 +216,7 @@ func TestCashe_Get(t *testing.T) {
 			}
 			got, err := c.Get()
 			if (err != nil) != tt.want.isErr {
-				t.Errorf("Cashe.Get() error = %v, wantErr %v", err, tt.want.isErr)
+				t.Errorf("Cache.Get() error = %v, wantErr %v", err, tt.want.isErr)
 				return
 			}
 			assert.Equal(t, tt.want.m, got)
