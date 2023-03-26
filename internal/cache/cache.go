@@ -8,9 +8,9 @@ func New() *Cache {
 }
 
 // Add добавление значений метрик в кэш
-func (c *Cache) Add(m []app.Metric) {
+func (c *Cache) Add(m []app.Metrics) {
 	if c.m == nil {
-		c.m = make([]app.Metric, len(m))
+		c.m = make([]app.Metrics, len(m))
 		copy(c.m, m)
 	}
 	c.m = append(c.m, m...)
@@ -18,13 +18,13 @@ func (c *Cache) Add(m []app.Metric) {
 
 // Reset сброс кэша
 func (c *Cache) Reset() {
-	c.m = []app.Metric{}
+	c.m = []app.Metrics{}
 }
 
 // Get получение текущих значений кэша
-func (c *Cache) Get() []app.Metric {
+func (c *Cache) Get() []app.Metrics {
 	if c.m == nil {
-		c.m = []app.Metric{}
+		c.m = []app.Metrics{}
 	}
 	return c.m
 }

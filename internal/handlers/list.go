@@ -5,6 +5,9 @@ import (
 	"log"
 	"net/http"
 	"text/template"
+
+	"github.com/rusalexch/metal/internal/app"
+	"github.com/rusalexch/metal/internal/utils"
 )
 
 type item struct {
@@ -26,11 +29,18 @@ func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, v := range metrics {
-		item := item{
-			Name:  v.ID,
-			Value: v.Value,
+		switch v.Type {
+		case app.Counter:
+			res.Items = append(res.Items, item{
+				Name:  v.ID,
+				Value: utils.Int64ToStr(*v.Delta),
+			})
+		case app.Gauge:
+			res.Items = append(res.Items, item{
+				Name:  v.ID,
+				Value: utils.Float64ToStr(*v.Value),
+			})
 		}
-		res.Items = append(res.Items, item)
 	}
 
 	t, err := template.New("metrics").Parse(tmpl)

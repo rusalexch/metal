@@ -6,8 +6,10 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/services"
 	"github.com/rusalexch/metal/internal/storage"
+	"github.com/rusalexch/metal/internal/utils"
 )
 
 func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
@@ -27,5 +29,10 @@ func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	fmt.Fprint(w, m.Value)
+	switch m.Type {
+	case app.Counter:
+		fmt.Fprint(w, utils.Int64ToStr(*m.Delta))
+	case app.Gauge:
+		fmt.Fprint(w, utils.Float64ToStr(*m.Value))
+	}
 }

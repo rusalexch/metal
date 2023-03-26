@@ -1,8 +1,6 @@
 package services
 
 import (
-	"strconv"
-
 	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/storage"
 )
@@ -15,9 +13,9 @@ func NewMertricsService(storage storage.MetricsStorage) *MertricsService {
 }
 
 // Add метод сохранения новой метрики
-func (ms *MertricsService) Add(m app.Metric) error {
+func (ms *MertricsService) Add(m app.Metrics) error {
 	switch m.Type {
-	case app.Guage:
+	case app.Gauge:
 		return ms.addGuage(m)
 	case app.Counter:
 		return ms.addCounter(m)
@@ -27,86 +25,77 @@ func (ms *MertricsService) Add(m app.Metric) error {
 }
 
 // Get Метод получения метрики
-func (ms *MertricsService) Get(name string, mType app.MetricType) (app.Metric, error) {
+func (ms *MertricsService) Get(name string, mType app.MetricType) (app.Metrics, error) {
 	switch mType {
-	case app.Guage:
+	case app.Gauge:
 		return ms.getGuage(name)
 	case app.Counter:
 		return ms.getCounter(name)
 	default:
-		return app.Metric{}, ErrIncorrectType
+		return app.Metrics{}, ErrIncorrectType
 	}
 }
 
 // addGuage метода сохранения метрики типа guage
-func (ms *MertricsService) addGuage(m app.Metric) error {
-	val, err := strconv.ParseFloat(m.Value, 64)
-	if err != nil {
-		return err
-	}
-	return ms.storage.AddGauge(m.ID, val)
+func (ms *MertricsService) addGuage(m app.Metrics) error {
+	return ms.storage.AddGauge(m.ID, *m.Value)
 }
 
 // addCounter метод добавления метрики типа counter
-func (ms *MertricsService) addCounter(m app.Metric) error {
-	val, err := strconv.ParseInt(m.Value, 10, 64)
-	if err != nil {
-		return err
-	}
-
-	return ms.storage.AddCounter(m.ID, val)
+func (ms *MertricsService) addCounter(m app.Metrics) error {
+	return ms.storage.AddCounter(m.ID, *m.Delta)
 }
 
 // getGuage метод получения метрики типа guage
-func (ms *MertricsService) getGuage(name string) (app.Metric, error) {
-	var m app.Metric
+func (ms *MertricsService) getGuage(name string) (app.Metrics, error) {
+	var m app.Metrics
 	val, err := ms.storage.GetGauge(name)
 	if err != nil {
 		return m, err
 	}
 
-	m = app.Metric{
-		Type:  app.Guage,
-		Value: strconv.FormatFloat(val, 'f', -1, 64),
-		ID:  name,
+	m = app.Metrics{
+		Type:  app.Gauge,
+		Value: &val,
+		ID:    name,
 	}
 
 	return m, nil
 }
 
 // getCounter метод получения метрики типа counter
-func (ms *MertricsService) getCounter(name string) (app.Metric, error) {
+func (ms *MertricsService) getCounter(name string) (app.Metrics, error) {
 	val, err := ms.storage.GetCounter(name)
 	if err != nil {
-		return app.Metric{}, err
+		return app.Metrics{}, err
 	}
 
-	m := app.Metric{
+	m := app.Metrics{
 		Type:  app.Counter,
-		Value: strconv.FormatInt(val, 10),
-		ID:  name,
+		Delta: &val,
+		ID:    name,
 	}
 
 	return m, nil
 }
 
-func (ms *MertricsService) List() []app.Metric {
+func (ms *MertricsService) List() []app.Metrics {
 	counters := ms.storage.ListCounter()
 	gauges := ms.storage.ListGauge()
 
-	res := make([]app.Metric, 0, len(counters)+len(gauges))
+	res := make([]app.Metrics, 0, len(counters)+len(gauges))
 	for _, val := range counters {
-		res = append(res, app.Metric{
+		res = append(res, app.Metrics{
 			Type:  app.Counter,
-			Value: strconv.FormatInt(val.Value, 10),
-			ID:  val.Name,
+			Delta: &val.Value,
+			ID:    val.Name,
 		})
 	}
 	for _, val := range gauges {
-		res = append(res, app.Metric{
-			Type:  app.Guage,
-			Value: strconv.FormatFloat(val.Value, 'f', -1, 64),
-			ID:  val.Name,
+		res = append(res, app.Metrics{
+			Type:  app.Gauge,
+			Value: &val.Value,
+			ID:    val.Name,
 		})
 	}
 

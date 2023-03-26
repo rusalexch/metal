@@ -1,8 +1,8 @@
 package app
 
 const (
-	// Guage название типа метрики с плавающей запятой
-	Guage MetricType = "gauge"
+	// Gauge название типа метрики с плавающей запятой
+	Gauge MetricType = "gauge"
 	// Counter название типа метрики счетчика
 	Counter MetricType = "counter"
 )

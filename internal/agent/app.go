@@ -58,7 +58,7 @@ func (a *App) scanAndSave() {
 	a.save(m)
 }
 
-func (a *App) save(m []app.Metric) {
+func (a *App) save(m []app.Metrics) {
 	a.cache.Add(m)
 }
 

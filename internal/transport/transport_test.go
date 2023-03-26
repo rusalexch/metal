@@ -8,6 +8,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func int64AsPointer(v int64) *int64 {
+	return &v
+}
+
+func float64AsPointer(v float64) *float64 {
+	return &v
+}
+
 func TestClient_url(t *testing.T) {
 	type fields struct {
 		addr   string
@@ -15,7 +23,7 @@ func TestClient_url(t *testing.T) {
 		client *http.Client
 	}
 	type args struct {
-		m app.Metric
+		m app.Metrics
 	}
 
 	f := fields{
@@ -34,10 +42,10 @@ func TestClient_url(t *testing.T) {
 			name:   "test generation url for counter metric",
 			fields: f,
 			args: args{
-				m: app.Metric{
-					Type:      app.Counter,
-					Value:     "123",
-					ID:      "testCounter",
+				m: app.Metrics{
+					Type:  app.Counter,
+					Delta: int64AsPointer(123),
+					ID:    "testCounter",
 				},
 			},
 			want: "http://127.0.0.1:8080/update/counter/testCounter/123",
@@ -46,10 +54,10 @@ func TestClient_url(t *testing.T) {
 			name:   "test generation url for guage metric",
 			fields: f,
 			args: args{
-				m: app.Metric{
-					Type:      app.Guage,
-					Value:     "0.123",
-					ID:      "testGuage",
+				m: app.Metrics{
+					Type:  app.Gauge,
+					Value: float64AsPointer(0.123),
+					ID:    "testGuage",
 				},
 			},
 			want: "http://127.0.0.1:8080/update/gauge/testGuage/0.123",
