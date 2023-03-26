@@ -75,7 +75,7 @@ func (a *App) send() error {
 			log.Println(err)
 			cntErr++
 		} else {
-			log.Println(fmt.Scanf("metric: %s was sended", item.Name))
+			log.Println(fmt.Scanf("metric: %s was sended", item.ID))
 		}
 	}
 	if cntErr == 0 {

@@ -12,9 +12,9 @@ import (
 
 func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("value")
-	name := chi.URLParam(r, "name")
+	ID := chi.URLParam(r, "ID")
 	mType := chi.URLParam(r, "mType")
-	m, err := h.services.MetricsService.Get(name, mType)
+	m, err := h.services.MetricsService.Get(ID, mType)
 	if err != nil {
 		if errors.Is(err, services.ErrIncorrectType) {
 			w.WriteHeader(http.StatusNotImplemented)

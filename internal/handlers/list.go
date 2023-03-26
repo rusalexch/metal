@@ -27,7 +27,7 @@ func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
 
 	for _, v := range metrics {
 		item := item{
-			Name:  v.Name,
+			Name:  v.ID,
 			Value: v.Value,
 		}
 		res.Items = append(res.Items, item)

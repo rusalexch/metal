@@ -59,7 +59,7 @@ func guage(v float64, name string) app.Metric {
 	return app.Metric{
 		Type:  app.Guage,
 		Value: strconv.FormatFloat(v, 'f', -1, 64),
-		Name:  name,
+		ID:  name,
 	}
 }
 
@@ -68,7 +68,7 @@ func counter(v int64, name string) app.Metric {
 	return app.Metric{
 		Type:  app.Counter,
 		Value: strconv.FormatInt(v, 10),
-		Name:  name,
+		ID:  name,
 	}
 }
 

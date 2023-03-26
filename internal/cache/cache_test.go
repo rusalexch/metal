@@ -39,24 +39,24 @@ func TestCache_Add(t *testing.T) {
 		{
 			Type:      app.Counter,
 			Value:     "123",
-			Name:      "testCounter1",
+			ID:      "testCounter1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "1.23",
-			Name:      "testGuage1",
+			ID:      "testGuage1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "-1.000001",
-			Name:      "testGuage2",
+			ID:      "testGuage2",
 		},
 	}
 	metricsSecond := []app.Metric{
 		{
 			Type:      app.Counter,
 			Value:     "1230",
-			Name:      "testCounter5",
+			ID:      "testCounter5",
 		},
 	}
 	tests := []struct {
@@ -98,17 +98,17 @@ func TestCache_Reset(t *testing.T) {
 		{
 			Type:      app.Counter,
 			Value:     "123",
-			Name:      "testCounter1",
+			ID:      "testCounter1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "1.23",
-			Name:      "testGuage1",
+			ID:      "testGuage1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "-1.000001",
-			Name:      "testGuage2",
+			ID:      "testGuage2",
 		},
 	}
 
@@ -152,17 +152,17 @@ func TestCache_Get(t *testing.T) {
 		{
 			Type:      app.Counter,
 			Value:     "123",
-			Name:      "testCounter1",
+			ID:      "testCounter1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "1.23",
-			Name:      "testGuage1",
+			ID:      "testGuage1",
 		},
 		{
 			Type:      app.Guage,
 			Value:     "-1.000001",
-			Name:      "testGuage2",
+			ID:      "testGuage2",
 		},
 	}
 	tests := []struct {

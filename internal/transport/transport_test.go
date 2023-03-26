@@ -37,7 +37,7 @@ func TestClient_url(t *testing.T) {
 				m: app.Metric{
 					Type:      app.Counter,
 					Value:     "123",
-					Name:      "testCounter",
+					ID:      "testCounter",
 				},
 			},
 			want: "http://127.0.0.1:8080/update/counter/testCounter/123",
@@ -49,7 +49,7 @@ func TestClient_url(t *testing.T) {
 				m: app.Metric{
 					Type:      app.Guage,
 					Value:     "0.123",
-					Name:      "testGuage",
+					ID:      "testGuage",
 				},
 			},
 			want: "http://127.0.0.1:8080/update/gauge/testGuage/0.123",

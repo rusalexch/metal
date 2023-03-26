@@ -62,8 +62,8 @@ func TestMetrics_Scan(t *testing.T) {
 
 	assert.Equal(t, 30, len(got))
 	for _, item := range got {
-		assert.Contains(t, mNames, item.Name)
-		if item.Name == "PollCount" {
+		assert.Contains(t, mNames, item.ID)
+		if item.ID == "PollCount" {
 			assert.Equal(t, item.Value, "1")
 		}
 	}

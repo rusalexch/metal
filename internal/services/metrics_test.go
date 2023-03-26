@@ -57,7 +57,7 @@ func TestMertricsService_Add(t *testing.T) {
 			args: app.Metric{
 				Type:      app.Counter,
 				Value:     "777",
-				Name:      "testCounter1",
+				ID:      "testCounter1",
 			},
 			wantErr: false,
 		},
@@ -67,7 +67,7 @@ func TestMertricsService_Add(t *testing.T) {
 			args: app.Metric{
 				Type:      app.Guage,
 				Value:     "0.000002",
-				Name:      "testGuage2",
+				ID:      "testGuage2",
 			},
 			wantErr: false,
 		},
@@ -77,7 +77,7 @@ func TestMertricsService_Add(t *testing.T) {
 			args: app.Metric{
 				Type:      "wrongType",
 				Value:     "123",
-				Name:      "test3",
+				ID:      "test3",
 			},
 			wantErr: true,
 		},
@@ -87,7 +87,7 @@ func TestMertricsService_Add(t *testing.T) {
 			args: app.Metric{
 				Type:      app.Counter,
 				Value:     "wer",
-				Name:      "testCounter4",
+				ID:      "testCounter4",
 			},
 			wantErr: true,
 		},
@@ -97,7 +97,7 @@ func TestMertricsService_Add(t *testing.T) {
 			args: app.Metric{
 				Type:      app.Guage,
 				Value:     "swq",
-				Name:      "testCounter5",
+				ID:      "testCounter5",
 			},
 			wantErr: true,
 		},
@@ -154,7 +154,7 @@ func TestMertricsService_Get(t *testing.T) {
 				m: app.Metric{
 					Type:      app.Counter,
 					Value:     "-10005",
-					Name:      "testCounter3",
+					ID:      "testCounter3",
 				},
 			},
 		},
@@ -170,7 +170,7 @@ func TestMertricsService_Get(t *testing.T) {
 				m: app.Metric{
 					Type:      app.Guage,
 					Value:     "5.3",
-					Name:      "testGuage2",
+					ID:      "testGuage2",
 				},
 			},
 		},

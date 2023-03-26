@@ -44,7 +44,7 @@ func (ms *MertricsService) addGuage(m app.Metric) error {
 	if err != nil {
 		return err
 	}
-	return ms.storage.AddGauge(m.Name, val)
+	return ms.storage.AddGauge(m.ID, val)
 }
 
 // addCounter метод добавления метрики типа counter
@@ -54,7 +54,7 @@ func (ms *MertricsService) addCounter(m app.Metric) error {
 		return err
 	}
 
-	return ms.storage.AddCounter(m.Name, val)
+	return ms.storage.AddCounter(m.ID, val)
 }
 
 // getGuage метод получения метрики типа guage
@@ -68,7 +68,7 @@ func (ms *MertricsService) getGuage(name string) (app.Metric, error) {
 	m = app.Metric{
 		Type:  app.Guage,
 		Value: strconv.FormatFloat(val, 'f', -1, 64),
-		Name:  name,
+		ID:  name,
 	}
 
 	return m, nil
@@ -84,7 +84,7 @@ func (ms *MertricsService) getCounter(name string) (app.Metric, error) {
 	m := app.Metric{
 		Type:  app.Counter,
 		Value: strconv.FormatInt(val, 10),
-		Name:  name,
+		ID:  name,
 	}
 
 	return m, nil
@@ -99,14 +99,14 @@ func (ms *MertricsService) List() []app.Metric {
 		res = append(res, app.Metric{
 			Type:  app.Counter,
 			Value: strconv.FormatInt(val.Value, 10),
-			Name:  val.Name,
+			ID:  val.Name,
 		})
 	}
 	for _, val := range gauges {
 		res = append(res, app.Metric{
 			Type:  app.Guage,
 			Value: strconv.FormatFloat(val.Value, 'f', -1, 64),
-			Name:  val.Name,
+			ID:  val.Name,
 		})
 	}
 

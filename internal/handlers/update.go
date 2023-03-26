@@ -16,7 +16,7 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 
 	m := app.Metric{
 		Type:      chi.URLParam(r, "mType"),
-		Name:      chi.URLParam(r, "name"),
+		ID:      	 chi.URLParam(r, "ID"),
 		Value:     chi.URLParam(r, "value"),
 	}
 

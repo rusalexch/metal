@@ -42,5 +42,5 @@ func (c *Client) SendOne(m app.Metric) error {
 
 // url метод получения url
 func (c Client) url(m app.Metric) string {
-	return fmt.Sprintf("%s:%d/update/%s/%s/%s", c.addr, c.port, m.Type, m.Name, m.Value)
+	return fmt.Sprintf("%s:%d/update/%s/%s/%s", c.addr, c.port, m.Type, m.ID, m.Value)
 }
