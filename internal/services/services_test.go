@@ -1,0 +1,37 @@
+package services
+
+import (
+	"testing"
+
+	"github.com/rusalexch/metal/internal/storage"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestNew(t *testing.T) {
+	type args struct {
+		storage storage.MetricsStorage
+	}
+	s := storage.New()
+	ms := NewMertricsService(s)
+	tests := []struct {
+		name string
+		args args
+		want *Services
+	}{
+		{
+			name: "should created services",
+			args: args{
+				storage: s,
+			},
+			want: &Services{
+				MetricsService: ms,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := New(tt.args.storage)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
