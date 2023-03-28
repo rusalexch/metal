@@ -1,6 +1,8 @@
 package transport
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -33,6 +35,26 @@ func (c *Client) SendOne(m app.Metrics) error {
 		return err
 	}
 	req.Header.Add("Content-Type", "text/plain")
+	res, err := c.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	return nil
+}
+
+func (c *Client) SendOneJSON(m app.Metrics) error {
+	url := fmt.Sprintf("%s:%d/update/", c.addr, c.port)
+	body, err := json.Marshal(m)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
 	res, err := c.client.Do(req)
 	if err != nil {
 		return err

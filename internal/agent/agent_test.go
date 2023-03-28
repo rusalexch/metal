@@ -20,7 +20,7 @@ func TestNew(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *App
+		want *Agent
 	}{
 		{
 			name: "should be created",
@@ -33,7 +33,7 @@ func TestNew(t *testing.T) {
 					Transport:      tr,
 				},
 			},
-			want: &App{
+			want: &Agent{
 				pollInterval:   2 * time.Second,
 				reportInterval: 10 * time.Second,
 				metrics:        m,
@@ -49,4 +49,3 @@ func TestNew(t *testing.T) {
 		})
 	}
 }
-

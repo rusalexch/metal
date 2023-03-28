@@ -14,9 +14,9 @@ import (
 // reportInterval - частота отправки метрик на сервер
 // url - адрес сервера, по умолчанию "http://127.0.0.1"
 // port - порт сервера, по умолчанию 8080
-func New(conf Config) *App {
+func New(conf Config) *Agent {
 
-	return &App{
+	return &Agent{
 		pollInterval:   conf.PollInterval,
 		reportInterval: conf.ReportInterval,
 		metrics:        conf.Metrics,
@@ -26,7 +26,7 @@ func New(conf Config) *App {
 }
 
 // Start метод запуска клиента сбора и отправки метрик на сервер
-func (a *App) Start() error {
+func (a *Agent) Start() error {
 	pollTicker := time.NewTicker(a.pollInterval)
 	defer pollTicker.Stop()
 	reportTicker := time.NewTicker(a.reportInterval)
@@ -52,17 +52,17 @@ func (a *App) Start() error {
 	}
 }
 
-func (a *App) scanAndSave() {
+func (a *Agent) scanAndSave() {
 	m := a.metrics.Scan()
 
 	a.save(m)
 }
 
-func (a *App) save(m []app.Metrics) {
+func (a *Agent) save(m []app.Metrics) {
 	a.cache.Add(m)
 }
 
-func (a *App) send() error {
+func (a *Agent) send() error {
 	if a.transport == nil {
 		return errors.New(TransportNotProvided)
 	}
