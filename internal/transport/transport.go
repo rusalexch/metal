@@ -11,19 +11,11 @@ import (
 )
 
 // New конструктор клиента
-func New(addr string, port int) *Client {
-	if addr == "" {
-		addr = defaultAddr
-	}
-	if port == 0 {
-		port = defaultPort
-	}
-
+func New(addr string) *Client {
 	client := &http.Client{}
 
 	return &Client{
 		addr:   addr,
-		port:   port,
 		client: client,
 	}
 }
@@ -44,7 +36,7 @@ func (c *Client) SendOne(m app.Metrics) error {
 }
 
 func (c *Client) SendOneJSON(m app.Metrics) error {
-	url := fmt.Sprintf("%s:%d/update/", c.addr, c.port)
+	url := fmt.Sprintf("%s/update/", c.addr)
 	body, err := json.Marshal(m)
 	if err != nil {
 		return err
@@ -72,5 +64,5 @@ func (c Client) url(m app.Metrics) string {
 	case app.Gauge:
 		val = utils.Float64ToStr(*m.Value)
 	}
-	return fmt.Sprintf("%s:%d/update/%s/%s/%s", c.addr, c.port, m.Type, m.ID, val)
+	return fmt.Sprintf("%s/update/%s/%s/%s", c.addr, m.Type, m.ID, val)
 }

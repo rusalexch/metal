@@ -5,26 +5,22 @@ import (
 
 	"github.com/rusalexch/metal/internal/agent"
 	"github.com/rusalexch/metal/internal/cache"
+	"github.com/rusalexch/metal/internal/config"
 	"github.com/rusalexch/metal/internal/metric"
 	"github.com/rusalexch/metal/internal/transport"
 )
 
-const (
-	pollInterval   = 2 * time.Second
-	reportInterval = 10 * time.Second
-)
 
 func main() {
-	var url string
-	var port int
+	env := config.NewAgentConfig()
 
 	m := metric.New()
 	c := cache.New()
-	t := transport.New(url, port)
+	t := transport.New(env.Addr)
 
 	conf := agent.Config{
-		PollInterval:   pollInterval,
-		ReportInterval: reportInterval,
+		PollInterval:   time.Second * time.Duration(env.PoolInterval),
+		ReportInterval: time.Second * time.Duration(env.ReportInterval),
 		Metrics:        m,
 		Cache:          c,
 		Transport:      t,

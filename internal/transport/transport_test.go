@@ -19,7 +19,6 @@ func float64AsPointer(v float64) *float64 {
 func TestClient_url(t *testing.T) {
 	type fields struct {
 		addr   string
-		port   int
 		client *http.Client
 	}
 	type args struct {
@@ -27,8 +26,7 @@ func TestClient_url(t *testing.T) {
 	}
 
 	f := fields{
-		addr:   "http://127.0.0.1",
-		port:   8080,
+		addr:   "http://127.0.0.1:8080",
 		client: &http.Client{},
 	}
 
@@ -68,7 +66,6 @@ func TestClient_url(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := Client{
 				addr:   tt.fields.addr,
-				port:   tt.fields.port,
 				client: tt.fields.client,
 			}
 			if got := c.url(tt.args.m); got != tt.want {
@@ -81,7 +78,6 @@ func TestClient_url(t *testing.T) {
 func TestNew(t *testing.T) {
 	type args struct {
 		addr string
-		port int
 	}
 	tests := []struct {
 		name string
@@ -91,43 +87,17 @@ func TestNew(t *testing.T) {
 		{
 			name: "created client, with addr and port",
 			args: args{
-				addr: "http://127.0.0.1",
-				port: 8080,
+				addr: "http://127.0.0.1:8080",
 			},
 			want: &Client{
-				addr:   "http://127.0.0.1",
-				port:   8080,
-				client: &http.Client{},
-			},
-		},
-		{
-			name: "created client, without addr",
-			args: args{
-				addr: "",
-				port: 8080,
-			},
-			want: &Client{
-				addr:   "http://127.0.0.1",
-				port:   8080,
-				client: &http.Client{},
-			},
-		},
-		{
-			name: "created client, without port",
-			args: args{
-				addr: "http://127.0.0.1",
-				port: 0,
-			},
-			want: &Client{
-				addr:   "http://127.0.0.1",
-				port:   8080,
+				addr:   "http://127.0.0.1:8080",
 				client: &http.Client{},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := New(tt.args.addr, tt.args.port)
+			got := New(tt.args.addr)
 			assert.Equal(t, tt.want, got)
 		})
 	}

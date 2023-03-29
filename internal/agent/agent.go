@@ -36,12 +36,10 @@ func (a *Agent) Start() error {
 		select {
 		case <-pollTicker.C:
 			{
-				fmt.Println("poll")
 				a.scanAndSave()
 			}
 		case <-reportTicker.C:
 			{
-				fmt.Println("report")
 				err := a.send()
 				if err != nil {
 					log.Println(err)
@@ -68,18 +66,25 @@ func (a *Agent) send() error {
 	}
 	list := a.cache.Get()
 
-	cntErr := 0
+	isError := false
 	for _, item := range list {
 		err := a.transport.SendOne(item)
 		if err != nil {
 			log.Println(err)
-			cntErr++
+			isError = true
+		} else {
+			log.Println(fmt.Scanf("metric: %s was sended", item.ID))
+		}
+		err = a.transport.SendOneJSON(item)
+		if err != nil {
+			log.Println(err)
+			isError = true
 		} else {
 			log.Println(fmt.Scanf("metric: %s was sended", item.ID))
 		}
 	}
-	if cntErr == 0 {
-		return nil
+	if isError {
+		return errors.New(NotAllMetricsSent)
 	}
-	return errors.New(NotAllMetricsSent)
+	return nil
 }
