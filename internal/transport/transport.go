@@ -36,7 +36,7 @@ func (c *Client) SendOne(m app.Metrics) error {
 }
 
 func (c *Client) SendOneJSON(m app.Metrics) error {
-	url := fmt.Sprintf("%s/update/", c.addr)
+	url := fmt.Sprintf("http://%s/update/", c.addr)
 	body, err := json.Marshal(m)
 	if err != nil {
 		return err
@@ -64,5 +64,5 @@ func (c Client) url(m app.Metrics) string {
 	case app.Gauge:
 		val = utils.Float64ToStr(*m.Value)
 	}
-	return fmt.Sprintf("%s/update/%s/%s/%s", c.addr, m.Type, m.ID, val)
+	return fmt.Sprintf("http://%s/update/%s/%s/%s", c.addr, m.Type, m.ID, val)
 }
