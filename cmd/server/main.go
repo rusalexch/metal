@@ -11,11 +11,11 @@ import (
 )
 
 func main() {
-	conf := config.NewServerConfig()
+	envConf := config.NewServerConfig()
 	stor := storage.New()
 	srv := services.New(stor)
 	h := handlers.New(srv)
-	s := server.New(h, conf.Addr)
+	s := server.New(h, envConf.Addr)
 
 	err := s.Start()
 	if err != nil {
