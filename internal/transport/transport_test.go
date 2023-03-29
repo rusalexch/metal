@@ -26,7 +26,7 @@ func TestClient_url(t *testing.T) {
 	}
 
 	f := fields{
-		addr:   "http://127.0.0.1:8080",
+		addr:   "127.0.0.1:8080",
 		client: &http.Client{},
 	}
 
@@ -87,10 +87,10 @@ func TestNew(t *testing.T) {
 		{
 			name: "created client, with addr and port",
 			args: args{
-				addr: "http://127.0.0.1:8080",
+				addr: "127.0.0.1:8080",
 			},
 			want: &Client{
-				addr:   "http://127.0.0.1:8080",
+				addr:   "127.0.0.1:8080",
 				client: &http.Client{},
 			},
 		},
