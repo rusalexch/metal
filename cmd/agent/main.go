@@ -1,7 +1,7 @@
 package main
 
 import (
-	"time"
+	"fmt"
 
 	"github.com/rusalexch/metal/internal/agent"
 	"github.com/rusalexch/metal/internal/cache"
@@ -9,7 +9,6 @@ import (
 	"github.com/rusalexch/metal/internal/metric"
 	"github.com/rusalexch/metal/internal/transport"
 )
-
 
 func main() {
 	env := config.NewAgentConfig()
@@ -19,8 +18,8 @@ func main() {
 	t := transport.New(env.Addr)
 
 	conf := agent.Config{
-		PollInterval:   time.Second * time.Duration(env.PoolInterval),
-		ReportInterval: time.Second * time.Duration(env.ReportInterval),
+		PollInterval:   env.PoolInterval,
+		ReportInterval: env.ReportInterval,
 		Metrics:        m,
 		Cache:          c,
 		Transport:      t,
