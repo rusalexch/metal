@@ -1,8 +1,6 @@
 package services
 
 import (
-	"log"
-
 	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/storage"
 )
@@ -49,16 +47,18 @@ func (ms *MertricsService) List() []app.Metrics {
 
 	res := make([]app.Metrics, 0, len(counters)+len(gauges))
 	for _, val := range counters {
+		delta := val.Value
 		res = append(res, app.Metrics{
 			Type:  app.Counter,
-			Delta: &val.Value,
+			Delta: &delta,
 			ID:    val.Name,
 		})
 	}
 	for _, val := range gauges {
+		value := val.Value
 		res = append(res, app.Metrics{
 			Type:  app.Gauge,
-			Value: &val.Value,
+			Value: &value,
 			ID:    val.Name,
 		})
 	}
@@ -118,7 +118,6 @@ func (ms *MertricsService) getCounter(name string) (app.Metrics, error) {
 }
 
 func (ms *MertricsService) eventAdd() {
-	log.Println(ms.subscribers)
 	if ms.subscribers != nil && len(ms.subscribers) > 0 {
 		for _, f := range ms.subscribers {
 			f()

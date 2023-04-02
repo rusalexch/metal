@@ -40,6 +40,11 @@ func (s *Store) Start() {
 	}
 }
 
+func (s *Store) clear() {
+	s.file.Seek(0, io.SeekStart)
+	s.file.Truncate(0)
+}
+
 func (s *Store) Close() error {
 	return s.file.Close()
 }
@@ -49,6 +54,7 @@ func (s *Store) download() {
 	store := StoreMetrics{
 		Metrics: m,
 	}
+	s.clear()
 	err := s.encoder.Encode(store)
 	if err != nil {
 		log.Println(err)
