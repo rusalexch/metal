@@ -20,6 +20,6 @@ type MetricGauge struct {
 type Storage struct {
 	// counters мапа хранения для метрик типа counter
 	counters map[string]MetricCounter
-	// guages апа хранения для метрик типа guage
+	// guages мапа хранения для метрик типа guage
 	gauges map[string]MetricGauge
 }

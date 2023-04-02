@@ -7,4 +7,5 @@ type Mertrics interface {
 	Add(m app.Metrics) error
 	Get(name string, mType app.MetricType) (app.Metrics, error)
 	List() []app.Metrics
+	Subscribe(f func())
 }

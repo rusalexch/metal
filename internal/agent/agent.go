@@ -36,10 +36,12 @@ func (a *Agent) Start() error {
 		select {
 		case <-pollTicker.C:
 			{
+				// log.Println("agent scan")
 				a.scanAndSave()
 			}
 		case <-reportTicker.C:
 			{
+				// log.Println("agent send")
 				err := a.send()
 				if err != nil {
 					log.Println(err)
@@ -80,7 +82,7 @@ func (a *Agent) send() error {
 			log.Println(err)
 			isError = true
 		} else {
-			log.Println(fmt.Scanf("metric: %s was sended", item.ID))
+			log.Println(fmt.Scanf("metric as json: %s was sended", item.ID))
 		}
 	}
 	if isError {
