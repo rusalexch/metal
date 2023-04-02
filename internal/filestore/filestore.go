@@ -70,9 +70,7 @@ func (s *Store) start() {
 	ticker := time.NewTicker(s.storeInterval)
 	defer ticker.Stop()
 	for {
-		select {
-		case <-ticker.C:
-			s.download()
-		}
+		<-ticker.C
+		s.download()
 	}
 }
