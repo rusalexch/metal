@@ -24,7 +24,7 @@ func StrToInt64(v string) (int64, error) {
 }
 
 func Float64ToStr(v float64) string {
-	return strconv.FormatFloat(v, 'f', -1, 64)
+	return strconv.FormatFloat(v, 'f', 3, 64)
 }
 
 func Int64ToStr(v int64) string {
