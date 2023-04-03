@@ -20,6 +20,8 @@ func (h *Handlers) Init() {
 	h.Use(middleware.RealIP)
 	h.Use(middleware.Logger)
 	h.Use(middleware.Recoverer)
+	h.Use(compressMiddleware)
+	h.Use(decompressMiddleware)
 
 	h.Get("/", h.list)
 	h.Get("/ping", ping)
