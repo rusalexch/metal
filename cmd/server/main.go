@@ -18,6 +18,8 @@ func main() {
 	h := handlers.New(srv)
 	s := server.New(h, envConf.Addr)
 
+	log.Println(envConf)
+
 	fs := filestore.New(envConf.StoreFile, envConf.StoreInterval, envConf.Restore, srv.MetricsService)
 	defer fs.Close()
 	fs.Start()
