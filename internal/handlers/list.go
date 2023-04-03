@@ -45,6 +45,7 @@ func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
+	w.Header().Add(contentType, text)
 	err = t.Execute(w, res)
 	if err != nil {
 		log.Println(err)
