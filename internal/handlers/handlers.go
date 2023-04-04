@@ -20,9 +20,13 @@ func (h *Handlers) Init() {
 	h.Use(middleware.RealIP)
 	h.Use(middleware.Logger)
 	h.Use(middleware.Recoverer)
+	h.Use(compressMiddleware)
+	h.Use(decompressMiddleware)
 
 	h.Get("/", h.list)
 	h.Get("/ping", ping)
-	h.Get("/value/{mType}/{name}", h.find)
-	h.Post("/update/{mType}/{name}/{value}", h.update)
+	h.Get("/value/{mType}/{ID}", h.find)
+	h.Post("/update/{mType}/{ID}/{value}", h.update)
+	h.Post("/update/", h.updateJSON)
+	h.Post("/value/", h.valueJSON)
 }

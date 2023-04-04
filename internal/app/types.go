@@ -3,14 +3,14 @@ package app
 // MetricType тип для типа метрики
 type MetricType = string
 
-// Metric структура метрики
-type Metric struct {
+// Metrics структура метрики
+type Metrics struct {
+	// ID наименование метрики
+	ID string `json:"id"`
 	// Type наименование типа метрики
-	Type MetricType
-	// Value значение метрики в строковом формате
-	Value string
-	// Timestamp дата и время сбора метрики
-	Timestamp int64
-	// Name наименование метрики
-	Name string
+	Type MetricType `json:"type"`
+	// Value значение метрики в случае передачи counter
+	Delta *int64 `json:"delta,omitempty"`
+	// Value значение метрики в случае передачи gauge
+	Value *float64 `json:"value,omitempty"`
 }

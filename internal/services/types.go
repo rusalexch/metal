@@ -11,5 +11,6 @@ type Services struct {
 
 // MertricsService структура сервиса метрик
 type MertricsService struct {
-	storage storage.MetricsStorage
+	storage     storage.MetricsStorage
+	subscribers []func()
 }

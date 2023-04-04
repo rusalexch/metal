@@ -3,8 +3,6 @@ package metric
 import (
 	"math/rand"
 	"runtime"
-	"strconv"
-	"time"
 
 	"github.com/rusalexch/metal/internal/app"
 )
@@ -15,10 +13,10 @@ func New() *Metrics {
 }
 
 // Scan сканирование метрики
-func (m *Metrics) Scan() []app.Metric {
+func (m *Metrics) Scan() []app.Metrics {
 	rm := runtime.MemStats{}
 	runtime.ReadMemStats(&rm)
-	res := make([]app.Metric, 0, 29)
+	res := make([]app.Metrics, 0, 29)
 	m.cnt += 1
 
 	res = append(res, guage(float64(rm.Alloc), "Alloc"))
@@ -56,21 +54,20 @@ func (m *Metrics) Scan() []app.Metric {
 }
 
 // guage преобразование метрики типа goage
-func guage(v float64, name string) app.Metric {
-	return app.Metric{
-		Type:      app.Guage,
-		Value:     strconv.FormatFloat(v, 'f', -1, 64),
-		Timestamp: time.Now().Unix(),
-		Name:      name,
+func guage(v float64, name string) app.Metrics {
+	return app.Metrics{
+		Type:  app.Gauge,
+		Value: &v,
+		ID:    name,
 	}
 }
 
 // counter преобразование метрики типа counter
-func counter(v int64, name string) app.Metric {
-	return app.Metric{
+func counter(v int64, name string) app.Metrics {
+	return app.Metrics{
 		Type:  app.Counter,
-		Value: strconv.FormatInt(v, 10),
-		Name:  name,
+		Delta: &v,
+		ID:    name,
 	}
 }
 

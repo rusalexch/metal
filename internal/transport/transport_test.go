@@ -8,19 +8,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func int64AsPointer(v int64) *int64 {
+	return &v
+}
+
+func float64AsPointer(v float64) *float64 {
+	return &v
+}
+
 func TestClient_url(t *testing.T) {
 	type fields struct {
 		addr   string
-		port   int
 		client *http.Client
 	}
 	type args struct {
-		m app.Metric
+		m app.Metrics
 	}
 
 	f := fields{
-		addr:   "http://127.0.0.1",
-		port:   8080,
+		addr:   "127.0.0.1:8080",
 		client: &http.Client{},
 	}
 
@@ -34,11 +40,10 @@ func TestClient_url(t *testing.T) {
 			name:   "test generation url for counter metric",
 			fields: f,
 			args: args{
-				m: app.Metric{
-					Type:      app.Counter,
-					Value:     "123",
-					Timestamp: 100,
-					Name:      "testCounter",
+				m: app.Metrics{
+					Type:  app.Counter,
+					Delta: int64AsPointer(123),
+					ID:    "testCounter",
 				},
 			},
 			want: "http://127.0.0.1:8080/update/counter/testCounter/123",
@@ -47,11 +52,10 @@ func TestClient_url(t *testing.T) {
 			name:   "test generation url for guage metric",
 			fields: f,
 			args: args{
-				m: app.Metric{
-					Type:      app.Guage,
-					Value:     "0.123",
-					Timestamp: 100,
-					Name:      "testGuage",
+				m: app.Metrics{
+					Type:  app.Gauge,
+					Value: float64AsPointer(0.123),
+					ID:    "testGuage",
 				},
 			},
 			want: "http://127.0.0.1:8080/update/gauge/testGuage/0.123",
@@ -62,7 +66,6 @@ func TestClient_url(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := Client{
 				addr:   tt.fields.addr,
-				port:   tt.fields.port,
 				client: tt.fields.client,
 			}
 			if got := c.url(tt.args.m); got != tt.want {
@@ -75,7 +78,6 @@ func TestClient_url(t *testing.T) {
 func TestNew(t *testing.T) {
 	type args struct {
 		addr string
-		port int
 	}
 	tests := []struct {
 		name string
@@ -85,43 +87,17 @@ func TestNew(t *testing.T) {
 		{
 			name: "created client, with addr and port",
 			args: args{
-				addr: "http://127.0.0.1",
-				port: 8080,
+				addr: "127.0.0.1:8080",
 			},
 			want: &Client{
-				addr:   "http://127.0.0.1",
-				port:   8080,
-				client: &http.Client{},
-			},
-		},
-		{
-			name: "created client, without addr",
-			args: args{
-				addr: "",
-				port: 8080,
-			},
-			want: &Client{
-				addr:   "http://127.0.0.1",
-				port:   8080,
-				client: &http.Client{},
-			},
-		},
-		{
-			name: "created client, without port",
-			args: args{
-				addr: "http://127.0.0.1",
-				port: 0,
-			},
-			want: &Client{
-				addr:   "http://127.0.0.1",
-				port:   8080,
+				addr:   "127.0.0.1:8080",
 				client: &http.Client{},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := New(tt.args.addr, tt.args.port)
+			got := New(tt.args.addr)
 			assert.Equal(t, tt.want, got)
 		})
 	}

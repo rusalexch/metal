@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-// App структура настроек приложения
-type App struct {
+// Agent структура настроек приложения
+type Agent struct {
 	// pollInterval частота сбора метрик
 	pollInterval time.Duration
 	// reportInterval частота отправки метрик на сервер

@@ -8,6 +8,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func int64AsPointer(v int64) *int64 {
+	return &v
+}
+
+func float64AsPointer(v float64) *float64 {
+	return &v
+}
+
 func TestNewMertricsService(t *testing.T) {
 	type args struct {
 		storage storage.MetricsStorage
@@ -26,6 +34,7 @@ func TestNewMertricsService(t *testing.T) {
 			},
 			want: &MertricsService{
 				storage: s,
+				subscribers: []func(){},
 			},
 		},
 	}
@@ -48,61 +57,36 @@ func TestMertricsService_Add(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		args    app.Metric
+		args    app.Metrics
 		wantErr bool
 	}{
 		{
 			name:   "add new counter metric",
 			fields: f,
-			args: app.Metric{
-				Type:      app.Counter,
-				Value:     "777",
-				Timestamp: 0,
-				Name:      "testCounter1",
+			args: app.Metrics{
+				Type:  app.Counter,
+				Delta: int64AsPointer(777),
+				ID:    "testCounter1",
 			},
 			wantErr: false,
 		},
 		{
 			name:   "add new guage metric",
 			fields: f,
-			args: app.Metric{
-				Type:      app.Guage,
-				Value:     "0.000002",
-				Timestamp: 0,
-				Name:      "testGuage2",
+			args: app.Metrics{
+				Type:  app.Gauge,
+				Value: float64AsPointer(0.000002),
+				ID:    "testGuage2",
 			},
 			wantErr: false,
 		},
 		{
 			name:   "fault with wrong type",
 			fields: f,
-			args: app.Metric{
-				Type:      "wrongType",
-				Value:     "123",
-				Timestamp: 0,
-				Name:      "test3",
-			},
-			wantErr: true,
-		},
-		{
-			name:   "fault with wrong counter value",
-			fields: f,
-			args: app.Metric{
-				Type:      app.Counter,
-				Value:     "wer",
-				Timestamp: 0,
-				Name:      "testCounter4",
-			},
-			wantErr: true,
-		},
-		{
-			name:   "fault with wrong guage value",
-			fields: f,
-			args: app.Metric{
-				Type:      app.Guage,
-				Value:     "swq",
-				Timestamp: 0,
-				Name:      "testCounter5",
+			args: app.Metrics{
+				Type:  "wrongType",
+				Value: float64AsPointer(123),
+				ID:    "test3",
 			},
 			wantErr: true,
 		},
@@ -129,7 +113,7 @@ func TestMertricsService_Get(t *testing.T) {
 	}
 	type want struct {
 		isErr bool
-		m     app.Metric
+		m     app.Metrics
 	}
 
 	f := fields{
@@ -156,11 +140,10 @@ func TestMertricsService_Get(t *testing.T) {
 			},
 			want: want{
 				isErr: false,
-				m: app.Metric{
-					Type:      app.Counter,
-					Value:     "-10005",
-					Timestamp: 0,
-					Name:      "testCounter3",
+				m: app.Metrics{
+					Type:  app.Counter,
+					Delta: int64AsPointer(-10005),
+					ID:    "testCounter3",
 				},
 			},
 		},
@@ -169,15 +152,14 @@ func TestMertricsService_Get(t *testing.T) {
 			fields: f,
 			args: args{
 				name:  "testGuage2",
-				mType: app.Guage,
+				mType: app.Gauge,
 			},
 			want: want{
 				isErr: false,
-				m: app.Metric{
-					Type:      app.Guage,
-					Value:     "5.3",
-					Timestamp: 0,
-					Name:      "testGuage2",
+				m: app.Metrics{
+					Type:  app.Gauge,
+					Value: float64AsPointer(5.3),
+					ID:    "testGuage2",
 				},
 			},
 		},
@@ -190,7 +172,7 @@ func TestMertricsService_Get(t *testing.T) {
 			},
 			want: want{
 				isErr: true,
-				m:     app.Metric{},
+				m:     app.Metrics{},
 			},
 		},
 		{
@@ -198,11 +180,11 @@ func TestMertricsService_Get(t *testing.T) {
 			fields: f,
 			args: args{
 				name:  "testGuage23",
-				mType: app.Guage,
+				mType: app.Gauge,
 			},
 			want: want{
 				isErr: true,
-				m:     app.Metric{},
+				m:     app.Metrics{},
 			},
 		},
 		{
@@ -214,7 +196,7 @@ func TestMertricsService_Get(t *testing.T) {
 			},
 			want: want{
 				isErr: true,
-				m:     app.Metric{},
+				m:     app.Metrics{},
 			},
 		},
 	}

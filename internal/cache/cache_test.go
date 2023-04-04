@@ -7,6 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func int64AsPointer(v int64) *int64 {
+	return &v
+}
+
+func float64AsPointer(v float64) *float64 {
+	return &v
+}
+
 func TestNew(t *testing.T) {
 	tests := []struct {
 		name string
@@ -27,40 +35,36 @@ func TestNew(t *testing.T) {
 
 func TestCache_Add(t *testing.T) {
 	type want struct {
-		m1 []app.Metric
-		m2 []app.Metric
+		m1 []app.Metrics
+		m2 []app.Metrics
 	}
 	type args struct {
-		firstAdd  []app.Metric
-		secondAdd []app.Metric
+		firstAdd  []app.Metrics
+		secondAdd []app.Metrics
 	}
 
-	metricsFirst := []app.Metric{
+	metricsFirst := []app.Metrics{
 		{
-			Type:      app.Counter,
-			Value:     "123",
-			Timestamp: 0,
-			Name:      "testCounter1",
+			Type:  app.Counter,
+			Delta: int64AsPointer(64),
+			ID:    "testCounter1",
 		},
 		{
-			Type:      app.Guage,
-			Value:     "1.23",
-			Timestamp: 0,
-			Name:      "testGuage1",
+			Type:  app.Gauge,
+			Value: float64AsPointer(1.23),
+			ID:    "testGuage1",
 		},
 		{
-			Type:      app.Guage,
-			Value:     "-1.000001",
-			Timestamp: 0,
-			Name:      "testGuage2",
+			Type:  app.Gauge,
+			Value: float64AsPointer(-1.000001),
+			ID:    "testGuage2",
 		},
 	}
-	metricsSecond := []app.Metric{
+	metricsSecond := []app.Metrics{
 		{
-			Type:      app.Counter,
-			Value:     "1230",
-			Timestamp: 1,
-			Name:      "testCounter5",
+			Type:  app.Counter,
+			Delta: int64AsPointer(1230),
+			ID:    "testCounter5",
 		},
 	}
 	tests := []struct {
@@ -96,46 +100,43 @@ func TestCache_Add(t *testing.T) {
 
 func TestCache_Reset(t *testing.T) {
 	type want struct {
-		m []app.Metric
+		m []app.Metrics
 	}
-	metrics := []app.Metric{
+	metrics := []app.Metrics{
 		{
-			Type:      app.Counter,
-			Value:     "123",
-			Timestamp: 0,
-			Name:      "testCounter1",
+			Type:  app.Counter,
+			Delta: int64AsPointer(123),
+			ID:    "testCounter1",
 		},
 		{
-			Type:      app.Guage,
-			Value:     "1.23",
-			Timestamp: 0,
-			Name:      "testGuage1",
+			Type:  app.Gauge,
+			Value: float64AsPointer(1.23),
+			ID:    "testGuage1",
 		},
 		{
-			Type:      app.Guage,
-			Value:     "-1.000001",
-			Timestamp: 0,
-			Name:      "testGuage2",
+			Type:  app.Gauge,
+			Value: float64AsPointer(-1.000001),
+			ID:    "testGuage2",
 		},
 	}
 
 	tests := []struct {
 		name   string
-		fields []app.Metric
+		fields []app.Metrics
 		want   want
 	}{
 		{
 			name:   "reset when empty",
-			fields: []app.Metric{},
+			fields: []app.Metrics{},
 			want: want{
-				m: []app.Metric{},
+				m: []app.Metrics{},
 			},
 		},
 		{
 			name:   "reset `when exist",
 			fields: metrics,
 			want: want{
-				m: []app.Metric{},
+				m: []app.Metrics{},
 			},
 		},
 	}
@@ -153,38 +154,35 @@ func TestCache_Reset(t *testing.T) {
 
 func TestCache_Get(t *testing.T) {
 	type want struct {
-		m []app.Metric
+		m []app.Metrics
 	}
-	metrics := []app.Metric{
+	metrics := []app.Metrics{
 		{
-			Type:      app.Counter,
-			Value:     "123",
-			Timestamp: 0,
-			Name:      "testCounter1",
+			Type:  app.Counter,
+			Delta: int64AsPointer(123),
+			ID:    "testCounter1",
 		},
 		{
-			Type:      app.Guage,
-			Value:     "1.23",
-			Timestamp: 0,
-			Name:      "testGuage1",
+			Type:  app.Gauge,
+			Value: float64AsPointer(1.23),
+			ID:    "testGuage1",
 		},
 		{
-			Type:      app.Guage,
-			Value:     "-1.000001",
-			Timestamp: 0,
-			Name:      "testGuage2",
+			Type:  app.Gauge,
+			Value: float64AsPointer(-1.000001),
+			ID:    "testGuage2",
 		},
 	}
 	tests := []struct {
 		name   string
-		fields []app.Metric
+		fields []app.Metrics
 		want   want
 	}{
 		{
 			name:   "get empty cache",
-			fields: []app.Metric{},
+			fields: []app.Metrics{},
 			want: want{
-				m: []app.Metric{},
+				m: []app.Metrics{},
 			},
 		},
 		{

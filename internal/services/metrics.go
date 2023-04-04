@@ -1,8 +1,6 @@
 package services
 
 import (
-	"strconv"
-
 	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/storage"
 )
@@ -10,109 +8,119 @@ import (
 // NewMertricsService конструктор сервиса обработки метрик
 func NewMertricsService(storage storage.MetricsStorage) *MertricsService {
 	return &MertricsService{
-		storage: storage,
+		storage:     storage,
+		subscribers: []func(){},
 	}
 }
 
 // Add метод сохранения новой метрики
-func (ms *MertricsService) Add(m app.Metric) error {
+func (ms *MertricsService) Add(m app.Metrics) (err error) {
 	switch m.Type {
-	case app.Guage:
-		return ms.addGuage(m)
+	case app.Gauge:
+		err = ms.addGuage(m)
 	case app.Counter:
-		return ms.addCounter(m)
+		err = ms.addCounter(m)
 	default:
-		return ErrIncorrectType
+		err = ErrIncorrectType
 	}
+	if err == nil {
+		ms.eventAdd()
+	}
+	return
 }
 
 // Get Метод получения метрики
-func (ms *MertricsService) Get(name string, mType app.MetricType) (app.Metric, error) {
+func (ms *MertricsService) Get(name string, mType app.MetricType) (app.Metrics, error) {
 	switch mType {
-	case app.Guage:
+	case app.Gauge:
 		return ms.getGuage(name)
 	case app.Counter:
 		return ms.getCounter(name)
 	default:
-		return app.Metric{}, ErrIncorrectType
+		return app.Metrics{}, ErrIncorrectType
 	}
+}
+
+func (ms *MertricsService) List() []app.Metrics {
+	counters := ms.storage.ListCounter()
+	gauges := ms.storage.ListGauge()
+
+	res := make([]app.Metrics, 0, len(counters)+len(gauges))
+	for _, val := range counters {
+		delta := val.Value
+		res = append(res, app.Metrics{
+			Type:  app.Counter,
+			Delta: &delta,
+			ID:    val.Name,
+		})
+	}
+	for _, val := range gauges {
+		value := val.Value
+		res = append(res, app.Metrics{
+			Type:  app.Gauge,
+			Value: &value,
+			ID:    val.Name,
+		})
+	}
+
+	return res
+}
+
+func (ms *MertricsService) Subscribe(f func()) {
+	if ms.subscribers != nil {
+		ms.subscribers = append(ms.subscribers, f)
+	}
+	ms.subscribers = []func(){f}
+
 }
 
 // addGuage метода сохранения метрики типа guage
-func (ms *MertricsService) addGuage(m app.Metric) error {
-	val, err := strconv.ParseFloat(m.Value, 64)
-	if err != nil {
-		return err
-	}
-	return ms.storage.AddGauge(m.Name, val)
+func (ms *MertricsService) addGuage(m app.Metrics) error {
+	return ms.storage.AddGauge(m.ID, *m.Value)
 }
 
 // addCounter метод добавления метрики типа counter
-func (ms *MertricsService) addCounter(m app.Metric) error {
-	val, err := strconv.ParseInt(m.Value, 10, 64)
-	if err != nil {
-		return err
-	}
-
-	return ms.storage.AddCounter(m.Name, val)
+func (ms *MertricsService) addCounter(m app.Metrics) error {
+	return ms.storage.AddCounter(m.ID, *m.Delta)
 }
 
 // getGuage метод получения метрики типа guage
-func (ms *MertricsService) getGuage(name string) (app.Metric, error) {
-	var m app.Metric
+func (ms *MertricsService) getGuage(name string) (app.Metrics, error) {
+	var m app.Metrics
 	val, err := ms.storage.GetGauge(name)
 	if err != nil {
 		return m, err
 	}
 
-	m = app.Metric{
-		Type:      app.Guage,
-		Value:     strconv.FormatFloat(val, 'f', -1, 64),
-		Timestamp: 0,
-		Name:      name,
+	m = app.Metrics{
+		Type:  app.Gauge,
+		Value: &val,
+		ID:    name,
 	}
 
 	return m, nil
 }
 
 // getCounter метод получения метрики типа counter
-func (ms *MertricsService) getCounter(name string) (app.Metric, error) {
+func (ms *MertricsService) getCounter(name string) (app.Metrics, error) {
 	val, err := ms.storage.GetCounter(name)
 	if err != nil {
-		return app.Metric{}, err
+		return app.Metrics{}, err
 	}
 
-	m := app.Metric{
-		Type:      app.Counter,
-		Value:     strconv.FormatInt(val, 10),
-		Timestamp: 0,
-		Name:      name,
+	m := app.Metrics{
+		Type:  app.Counter,
+		Delta: &val,
+		ID:    name,
 	}
 
 	return m, nil
 }
 
-func (ms *MertricsService) List() []app.Metric {
-	counters := ms.storage.ListCounter()
-	gauges := ms.storage.ListGauge()
-
-	res := make([]app.Metric, 0, len(counters)+len(gauges))
-	for _, val := range counters {
-		res = append(res, app.Metric{
-			Type:      app.Counter,
-			Value:     strconv.FormatInt(val.Value, 10),
-			Timestamp: 0,
-			Name:      val.Name,
-		})
+func (ms *MertricsService) eventAdd() {
+	if ms.subscribers != nil && len(ms.subscribers) > 0 {
+		for _, f := range ms.subscribers {
+			f()
+		}
 	}
-	for _, val := range gauges {
-		res = append(res, app.Metric{
-			Type:      app.Guage,
-			Value:     strconv.FormatFloat(val.Value, 'f', -1, 64),
-			Timestamp: 0,
-			Name:      val.Name,
-		})
-	}
-
-	return res
 }

@@ -24,15 +24,14 @@ func TestNew(t *testing.T) {
 				handler: h,
 			},
 			want: &Server{
-				baseURL: "127.0.0.1",
-				port:    8080,
+				addr:    "127.0.0.1:8080",
 				handler: h,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := New(tt.args.handler, "", 0)
+			got := New(tt.args.handler, "127.0.0.1:8080")
 			assert.Equal(t, tt.want, got)
 		})
 	}

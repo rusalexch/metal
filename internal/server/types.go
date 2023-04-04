@@ -7,9 +7,7 @@ import (
 // Server структура сервера
 type Server struct {
 	// addr адрес сервера
-	baseURL string
-	// port порт сервера
-	port int
+	addr string
 	// handler указатель на Хендлеры
 	handler *handlers.Handlers
 }

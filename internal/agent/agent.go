@@ -14,9 +14,9 @@ import (
 // reportInterval - частота отправки метрик на сервер
 // url - адрес сервера, по умолчанию "http://127.0.0.1"
 // port - порт сервера, по умолчанию 8080
-func New(conf Config) *App {
+func New(conf Config) *Agent {
 
-	return &App{
+	return &Agent{
 		pollInterval:   conf.PollInterval,
 		reportInterval: conf.ReportInterval,
 		metrics:        conf.Metrics,
@@ -26,7 +26,7 @@ func New(conf Config) *App {
 }
 
 // Start метод запуска клиента сбора и отправки метрик на сервер
-func (a *App) Start() error {
+func (a *Agent) Start() error {
 	pollTicker := time.NewTicker(a.pollInterval)
 	defer pollTicker.Stop()
 	reportTicker := time.NewTicker(a.reportInterval)
@@ -36,12 +36,10 @@ func (a *App) Start() error {
 		select {
 		case <-pollTicker.C:
 			{
-				fmt.Println("poll")
 				a.scanAndSave()
 			}
 		case <-reportTicker.C:
 			{
-				fmt.Println("report")
 				err := a.send()
 				if err != nil {
 					log.Println(err)
@@ -52,34 +50,41 @@ func (a *App) Start() error {
 	}
 }
 
-func (a *App) scanAndSave() {
+func (a *Agent) scanAndSave() {
 	m := a.metrics.Scan()
 
 	a.save(m)
 }
 
-func (a *App) save(m []app.Metric) {
+func (a *Agent) save(m []app.Metrics) {
 	a.cache.Add(m)
 }
 
-func (a *App) send() error {
+func (a *Agent) send() error {
 	if a.transport == nil {
 		return errors.New(TransportNotProvided)
 	}
 	list := a.cache.Get()
 
-	cntErr := 0
+	isError := false
 	for _, item := range list {
 		err := a.transport.SendOne(item)
 		if err != nil {
 			log.Println(err)
-			cntErr++
+			isError = true
 		} else {
-			log.Println(fmt.Scanf("metric: %s was sended", item.Name))
+			log.Println(fmt.Scanf("metric: %s was sended", item.ID))
+		}
+		err = a.transport.SendOneJSON(item)
+		if err != nil {
+			log.Println(err)
+			isError = true
+		} else {
+			log.Println(fmt.Scanf("metric as json: %s was sended", item.ID))
 		}
 	}
-	if cntErr == 0 {
-		return nil
+	if isError {
+		return errors.New(NotAllMetricsSent)
 	}
-	return errors.New(NotAllMetricsSent)
+	return nil
 }
