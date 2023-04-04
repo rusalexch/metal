@@ -46,7 +46,7 @@ func decompressMiddleware(next http.Handler) http.Handler {
 			defer gz.Close()
 			r.Body = gz
 		}
-		// defer r.Body.Close()
+		defer r.Body.Close()
 
 		next.ServeHTTP(w, r)
 	})
