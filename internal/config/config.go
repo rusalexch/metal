@@ -7,9 +7,18 @@ import (
 	"time"
 )
 
-func NewAgentConfig() AgentConfig {
-	addr := flag.String("a", defaultAddr, "set address")
-	reportInterval := defaultReportInterval
+var (
+	addr           *string
+	reportInterval time.Duration
+	pollInterval   time.Duration
+	storeInterval  time.Duration
+	storeFile      *string
+	restore        *string
+)
+
+func init() {
+	addr = flag.String("a", defaultAddr, "set address")
+	reportInterval = defaultReportInterval
 	flag.Func("r", "report interval", func(s string) (err error) {
 		reportInterval, err = time.ParseDuration(s)
 		if err != nil {
@@ -17,7 +26,7 @@ func NewAgentConfig() AgentConfig {
 		}
 		return nil
 	})
-	pollInterval := defaultPoolInterval
+	pollInterval = defaultPoolInterval
 	flag.Func("p", "poool interval", func(s string) (err error) {
 		reportInterval, err = time.ParseDuration(s)
 		if err != nil {
@@ -25,6 +34,16 @@ func NewAgentConfig() AgentConfig {
 		}
 		return nil
 	})
+	storeInterval = defaultStoreInterval
+	flag.Func("i", "store interval", func(i string) (err error) {
+		storeInterval, err = time.ParseDuration(i)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	storeFile = flag.String("f", defaultStoreFile, "store file")
+	restore = flag.String("r", defaultRestore, "is restore from file")
 	flag.Parse()
 
 	if addrEnv, isSet := os.LookupEnv("ADDRESS"); isSet {
@@ -44,31 +63,6 @@ func NewAgentConfig() AgentConfig {
 		}
 		pollInterval = t
 	}
-
-	return AgentConfig{
-		Addr:           *addr,
-		ReportInterval: reportInterval,
-		PoolInterval:   pollInterval,
-	}
-}
-
-func NewServerConfig() ServerConfig {
-	addr := flag.String("a", defaultAddr, "set address")
-	storeInterval := defaultStoreInterval
-	flag.Func("i", "store interval", func(i string) (err error) {
-		storeInterval, err = time.ParseDuration(i)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	storeFile := flag.String("f", defaultStoreFile, "store file")
-	restore := flag.String("r", defaultRestore, "is restore from file")
-	flag.Parse()
-
-	if addrEnv, isSet := os.LookupEnv("ADDRESS"); isSet {
-		addr = &addrEnv
-	}
 	if storeIntervalEnv, isSet := os.LookupEnv("STORE_INTERVAL"); isSet {
 		s, err := time.ParseDuration(storeIntervalEnv)
 		if err != nil {
@@ -82,7 +76,17 @@ func NewServerConfig() ServerConfig {
 	if restoreEnv, isSet := os.LookupEnv("RESTORE"); isSet {
 		restore = &restoreEnv
 	}
+}
 
+func NewAgentConfig() AgentConfig {
+	return AgentConfig{
+		Addr:           *addr,
+		ReportInterval: reportInterval,
+		PoolInterval:   pollInterval,
+	}
+}
+
+func NewServerConfig() ServerConfig {
 	return ServerConfig{
 		Addr:          *addr,
 		StoreInterval: storeInterval,

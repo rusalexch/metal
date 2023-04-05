@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/rusalexch/metal/internal/agent"
 	"github.com/rusalexch/metal/internal/cache"
 	"github.com/rusalexch/metal/internal/config"
@@ -10,7 +12,7 @@ import (
 
 func main() {
 	env := config.NewAgentConfig()
-
+	log.Println(env)
 	m := metric.New()
 	c := cache.New()
 	t := transport.New(env.Addr)
