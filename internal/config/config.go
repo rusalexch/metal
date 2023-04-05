@@ -19,14 +19,6 @@ var (
 
 func init() {
 	addr = flag.String("a", defaultAddr, "set address")
-	reportInterval = defaultReportInterval
-	flag.Func("r", "report interval", func(s string) (err error) {
-		reportInterval, err = time.ParseDuration(s)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
 	pollInterval = defaultPoolInterval
 	flag.Func("p", "poool interval", func(s string) (err error) {
 		reportInterval, err = time.ParseDuration(s)
@@ -44,10 +36,43 @@ func init() {
 		return nil
 	})
 	storeFile = flag.String("f", defaultStoreFile, "store file")
-	restore = flag.String("r", defaultRestore, "is restore from file")
 	key = flag.String("k", defaultKey, "hash secret key")
-	flag.Parse()
 
+}
+
+func NewAgentConfig() AgentConfig {
+	reportInterval = defaultReportInterval
+	flag.Func("r", "report interval", func(s string) (err error) {
+		reportInterval, err = time.ParseDuration(s)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	flag.Parse()
+	checkENV()
+	return AgentConfig{
+		Addr:           *addr,
+		ReportInterval: reportInterval,
+		PoolInterval:   pollInterval,
+		HashKey:        *key,
+	}
+}
+
+func NewServerConfig() ServerConfig {
+	restore = flag.String("r", defaultRestore, "is restore from file")
+	flag.Parse()
+	checkENV()
+	return ServerConfig{
+		Addr:          *addr,
+		StoreInterval: storeInterval,
+		StoreFile:     *storeFile,
+		Restore:       *restore == "true",
+		HashKey:       *key,
+	}
+}
+
+func checkENV() {
 	if addrEnv, isSet := os.LookupEnv("ADDRESS"); isSet {
 		addr = &addrEnv
 	}
@@ -80,24 +105,5 @@ func init() {
 	}
 	if keyEnv, isSet := os.LookupEnv("KEY"); isSet {
 		key = &keyEnv
-	}
-}
-
-func NewAgentConfig() AgentConfig {
-	return AgentConfig{
-		Addr:           *addr,
-		ReportInterval: reportInterval,
-		PoolInterval:   pollInterval,
-		HashKey:        *key,
-	}
-}
-
-func NewServerConfig() ServerConfig {
-	return ServerConfig{
-		Addr:          *addr,
-		StoreInterval: storeInterval,
-		StoreFile:     *storeFile,
-		Restore:       *restore == "true",
-		HashKey:       *key,
 	}
 }
