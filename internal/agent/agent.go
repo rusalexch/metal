@@ -1,8 +1,6 @@
 package agent
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
 	"errors"
 	"fmt"
 	"log"
@@ -24,7 +22,7 @@ func New(conf Config) *Agent {
 		metrics:        conf.Metrics,
 		cache:          conf.Cache,
 		transport:      conf.Transport,
-		hashKey:        conf.HashKey,
+		hash:           conf.Hash,
 	}
 }
 
@@ -78,7 +76,8 @@ func (a *Agent) send() error {
 		} else {
 			log.Println(fmt.Scanf("metric: %s was sended", item.ID))
 		}
-		a.addHash(&item)
+		a.hash.AddHash(&item)
+		log.Println(item)
 		err = a.transport.SendOneJSON(item)
 		if err != nil {
 			log.Println(err)
@@ -91,27 +90,4 @@ func (a *Agent) send() error {
 		return errors.New(NotAllMetricsSent)
 	}
 	return nil
-}
-
-func (a *Agent) addHash(m *app.Metrics) {
-	if a.hashKey == "" {
-		return
-	}
-	h := hmac.New(sha256.New, []byte(a.hashKey))
-
-	str := ""
-	switch m.Type {
-	case app.Counter:
-		str = fmt.Sprintf("%s:counter:%d", m.ID, *m.Delta)
-	case app.Gauge:
-		str = fmt.Sprintf("%s:gauge:%f", m.ID, *m.Value)
-	}
-	_, err := h.Write([]byte(str))
-	if err != nil {
-		if err != nil {
-			log.Println("addHash error:", err)
-		}
-	}
-	hash := h.Sum(nil)
-	m.Hash = string(hash)
 }

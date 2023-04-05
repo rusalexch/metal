@@ -9,5 +9,6 @@ import (
 type Handlers struct {
 	// services указатель на сервисы
 	services *services.Services
+	hashKey  string
 	*chi.Mux
 }

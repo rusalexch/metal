@@ -4,6 +4,7 @@ import (
 	"github.com/rusalexch/metal/internal/agent"
 	"github.com/rusalexch/metal/internal/cache"
 	"github.com/rusalexch/metal/internal/config"
+	"github.com/rusalexch/metal/internal/hash"
 	"github.com/rusalexch/metal/internal/metric"
 	"github.com/rusalexch/metal/internal/transport"
 )
@@ -14,6 +15,7 @@ func main() {
 	m := metric.New()
 	c := cache.New()
 	t := transport.New(env.Addr)
+	h := hash.New(env.HashKey)
 
 	conf := agent.Config{
 		PollInterval:   env.PoolInterval,
@@ -21,7 +23,7 @@ func main() {
 		Metrics:        m,
 		Cache:          c,
 		Transport:      t,
-		HashKey:        env.HashKey,
+		Hash:        h,
 	}
 
 	a := agent.New(conf)

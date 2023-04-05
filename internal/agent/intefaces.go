@@ -25,3 +25,4 @@ type Cache interface {
 	// Get метод для получения кэша
 	Get() []app.Metrics
 }
+
