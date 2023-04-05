@@ -14,6 +14,7 @@ var (
 	storeInterval  time.Duration
 	storeFile      *string
 	restore        *string
+	key            *string
 )
 
 func init() {
@@ -44,6 +45,7 @@ func init() {
 	})
 	storeFile = flag.String("f", defaultStoreFile, "store file")
 	restore = flag.String("r", defaultRestore, "is restore from file")
+	key = flag.String("k", defaultKey, "hash secret key")
 	flag.Parse()
 
 	if addrEnv, isSet := os.LookupEnv("ADDRESS"); isSet {
@@ -76,6 +78,9 @@ func init() {
 	if restoreEnv, isSet := os.LookupEnv("RESTORE"); isSet {
 		restore = &restoreEnv
 	}
+	if keyEnv, isSet := os.LookupEnv("KEY"); isSet {
+		key = &keyEnv
+	}
 }
 
 func NewAgentConfig() AgentConfig {
@@ -83,6 +88,7 @@ func NewAgentConfig() AgentConfig {
 		Addr:           *addr,
 		ReportInterval: reportInterval,
 		PoolInterval:   pollInterval,
+		HashKey:        *key,
 	}
 }
 
@@ -92,5 +98,6 @@ func NewServerConfig() ServerConfig {
 		StoreInterval: storeInterval,
 		StoreFile:     *storeFile,
 		Restore:       *restore == "true",
+		HashKey:       *key,
 	}
 }

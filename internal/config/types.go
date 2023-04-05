@@ -6,6 +6,7 @@ type AgentConfig struct {
 	Addr           string        `env:"ADDRESS"`
 	ReportInterval time.Duration `env:"REPORT_INTERVAL"`
 	PoolInterval   time.Duration `env:"POLL_INTERVAL"`
+	HashKey        string        `env:"KEY"`
 }
 
 type ServerConfig struct {
@@ -13,4 +14,5 @@ type ServerConfig struct {
 	StoreInterval time.Duration `env:"STORE_INTERVAL"`
 	StoreFile     string        `env:"STORE_FILE"`
 	Restore       bool          `env:"RESTORE"`
+	HashKey       string        `env:"KEY"`
 }
