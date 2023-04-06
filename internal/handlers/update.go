@@ -86,9 +86,15 @@ func (h *Handlers) updateJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if isCheck := h.hash.Check(m); !isCheck {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	h.services.MetricsService.Add(m)
 
 	m, _ = h.services.MetricsService.Get(m.ID, m.Type)
+	h.hash.AddHash(&m)
 	body, err = json.Marshal(m)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

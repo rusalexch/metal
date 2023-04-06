@@ -9,8 +9,6 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
-
-
 func New(key string) *Hash {
 	isEnable := key != ""
 	return &Hash{
@@ -28,6 +26,9 @@ func (h Hash) AddHash(m *app.Metrics) {
 }
 
 func (h Hash) Check(m app.Metrics) bool {
+	if !h.isEnable {
+		return true
+	}
 	checkHash := h.createHash(m)
 
 	return checkHash == m.Hash

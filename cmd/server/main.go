@@ -6,6 +6,7 @@ import (
 	"github.com/rusalexch/metal/internal/config"
 	"github.com/rusalexch/metal/internal/filestore"
 	"github.com/rusalexch/metal/internal/handlers"
+	"github.com/rusalexch/metal/internal/hash"
 	"github.com/rusalexch/metal/internal/server"
 	"github.com/rusalexch/metal/internal/services"
 	"github.com/rusalexch/metal/internal/storage"
@@ -15,7 +16,8 @@ func main() {
 	envConf := config.NewServerConfig()
 	stor := storage.New()
 	srv := services.New(stor)
-	h := handlers.New(srv)
+	hs := hash.New(envConf.HashKey)
+	h := handlers.New(srv, hs)
 	s := server.New(h, envConf.Addr)
 
 	log.Println(envConf)

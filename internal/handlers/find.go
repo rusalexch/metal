@@ -71,6 +71,7 @@ func (h *Handlers) valueJSON(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	h.hash.AddHash(&m)
 	body, err = json.Marshal(m)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

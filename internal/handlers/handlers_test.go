@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/rusalexch/metal/internal/hash"
 	"github.com/rusalexch/metal/internal/services"
 	"github.com/rusalexch/metal/internal/storage"
 	"github.com/stretchr/testify/assert"
@@ -34,7 +35,7 @@ func testRequest(t *testing.T, ts *httptest.Server, method, path string, body io
 }
 
 func TestNew(t *testing.T) {
-	h := New(services.New(storage.New()))
+	h := New(services.New(storage.New()), hash.New(""))
 	h.Init()
 	ts := httptest.NewServer(h)
 	defer ts.Close()
