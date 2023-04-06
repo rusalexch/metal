@@ -155,7 +155,7 @@ func TestHash_Check(t *testing.T) {
 		m   app.Metrics
 		key string
 	}
-	var gauge float64 = 0.0000054
+	gauge := 0.0000054
 
 	tests := []struct {
 		name string
