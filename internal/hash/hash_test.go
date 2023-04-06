@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"fmt"
+	"log"
 	"testing"
 
 	"github.com/rusalexch/metal/internal/app"
@@ -19,7 +20,7 @@ func wantHash(key, id string, delta *int64, value *float64) string {
 		s = fmt.Sprintf("%s:gauge:%f", id, *value)
 	}
 	h.Write([]byte(s))
-	return string(h.Sum(nil))
+	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
 func TestNew(t *testing.T) {
@@ -95,6 +96,7 @@ func TestHash_createHash(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			h := New(tt.args.key)
 			got := h.createHash(tt.args.m)
+			log.Println(got)
 
 			assert.Equal(t, tt.want, got)
 		})

@@ -44,8 +44,8 @@ func (h Hash) createHash(m app.Metrics) string {
 	}
 	_, err := h.Write([]byte(str))
 	if err != nil {
-			log.Println("addHash error:", err)
+		log.Println("addHash error:", err)
 	}
 	hash := h.Sum(nil)
-	return string(hash)
+	return fmt.Sprintf("%x", hash)
 }

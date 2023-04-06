@@ -16,7 +16,6 @@ import (
 
 // update Хэндлер для обновления метрик
 func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("update")
 	m := app.Metrics{
 		Type: chi.URLParam(r, "mType"),
 		ID:   chi.URLParam(r, "ID"),
