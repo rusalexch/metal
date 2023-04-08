@@ -3,7 +3,6 @@ package hash
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"log"
 	"testing"
@@ -20,8 +19,8 @@ func wantHash(key, id string, delta *int64, value *float64) string {
 	} else if value != nil {
 		s = fmt.Sprintf("%s:gauge:%f", id, *value)
 	}
-	d := hex.EncodeToString([]byte(s))
-	h.Write([]byte(d))
+
+	h.Write([]byte(s))
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
@@ -97,7 +96,7 @@ func TestHash_createHash(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			h := New(tt.args.key)
-			got := h.createHash(tt.args.m)
+			got := h.createHash(&tt.args.m)
 			log.Println(got)
 
 			assert.Equal(t, tt.want, got)
