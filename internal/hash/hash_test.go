@@ -110,6 +110,7 @@ func TestHash_AddHash(t *testing.T) {
 		key string
 	}
 	var counter int64 = 54
+	gauge := 0.00001
 
 	tests := []struct {
 		name   string
@@ -130,13 +131,26 @@ func TestHash_AddHash(t *testing.T) {
 			isHash: false,
 		},
 		{
-			name: "with key",
+			name: "with key counter",
 			args: args{
 				m: app.Metrics{
 					ID:    "TestCounter",
 					Type:  app.Counter,
 					Delta: &counter,
 					Value: nil,
+				},
+				key: "testKey",
+			},
+			isHash: true,
+		},
+		{
+			name: "with key gauge",
+			args: args{
+				m: app.Metrics{
+					ID:    "TestGauge",
+					Type:  app.Gauge,
+					Delta: nil,
+					Value: &gauge,
 				},
 				key: "testKey",
 			},

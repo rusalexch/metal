@@ -33,7 +33,7 @@ func TestNewMertricsService(t *testing.T) {
 				storage: s,
 			},
 			want: &MertricsService{
-				storage: s,
+				storage:     s,
 				subscribers: []func(){},
 			},
 		},
