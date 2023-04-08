@@ -2,7 +2,6 @@ package agent
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -75,8 +74,7 @@ func (a *Agent) send() error {
 			log.Println(err)
 			isError = true
 		} else {
-			l := fmt.Sprintf("metric: %s was sended", item.ID)
-			log.Println(l)
+			log.Printf("metric: %s was sended\n", item.ID)
 
 		}
 		a.hash.AddHash(&item)
@@ -86,8 +84,7 @@ func (a *Agent) send() error {
 			log.Println(err)
 			isError = true
 		} else {
-			l := fmt.Sprintf("metric as json: %s was sended", item.ID)
-			log.Println(l)
+			log.Printf("metric as json: %s was sended\n", item.ID)
 		}
 	}
 	if isError {

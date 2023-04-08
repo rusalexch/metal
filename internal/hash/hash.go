@@ -47,6 +47,5 @@ func (h Hash) createHash(m *app.Metrics) string {
 		log.Println("addHash error:", err)
 	}
 	hash := h.Sum(nil)
-	log.Println(fmt.Sprintf("%x", hash))
 	return fmt.Sprintf("%x", hash)
 }
