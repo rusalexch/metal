@@ -149,6 +149,9 @@ func TestHash_AddHash(t *testing.T) {
 			h.AddHash(&tt.args.m)
 
 			assert.Equal(t, tt.isHash, tt.args.m.Hash != "")
+			if tt.isHash {
+				assert.Equal(t, wantHash(tt.args.key, tt.args.m.ID, tt.args.m.Delta, tt.args.m.Value), tt.args.m.Hash)
+			}
 		})
 	}
 }

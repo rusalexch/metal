@@ -70,11 +70,14 @@ func (a *Agent) send() error {
 	isError := false
 	for _, item := range list {
 		err := a.transport.SendOne(item)
+
 		if err != nil {
 			log.Println(err)
 			isError = true
 		} else {
-			log.Println(fmt.Scanf("metric: %s was sended", item.ID))
+			l := fmt.Sprintf("metric: %s was sended", item.ID)
+			log.Println(l)
+
 		}
 		a.hash.AddHash(&item)
 		log.Println(item)
@@ -83,7 +86,8 @@ func (a *Agent) send() error {
 			log.Println(err)
 			isError = true
 		} else {
-			log.Println(fmt.Scanf("metric as json: %s was sended", item.ID))
+			l := fmt.Sprintf("metric as json: %s was sended", item.ID)
+			log.Println(l)
 		}
 	}
 	if isError {

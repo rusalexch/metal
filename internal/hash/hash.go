@@ -10,10 +10,9 @@ import (
 )
 
 func New(key string) *Hash {
-	needHash := key == ""
 	return &Hash{
-		hmac.New(sha256.New, []byte(key)),
-		needHash,
+		Hash:     hmac.New(sha256.New, []byte(key)),
+		needHash: key == "",
 	}
 }
 
@@ -48,5 +47,6 @@ func (h Hash) createHash(m *app.Metrics) string {
 		log.Println("addHash error:", err)
 	}
 	hash := h.Sum(nil)
+	log.Println(fmt.Sprintf("%x", hash))
 	return fmt.Sprintf("%x", hash)
 }
