@@ -3,6 +3,7 @@ package hash
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"log"
 
@@ -10,15 +11,15 @@ import (
 )
 
 func New(key string) *Hash {
-	isEnable := key != ""
+	needHash := key == ""
 	return &Hash{
 		hmac.New(sha256.New, []byte(key)),
-		isEnable,
+		needHash,
 	}
 }
 
 func (h Hash) AddHash(m *app.Metrics) {
-	if !h.isEnable {
+	if h.needHash {
 		return
 	}
 
@@ -26,7 +27,7 @@ func (h Hash) AddHash(m *app.Metrics) {
 }
 
 func (h Hash) Check(m app.Metrics) bool {
-	if !h.isEnable {
+	if h.needHash {
 		return true
 	}
 	checkHash := h.createHash(m)
@@ -42,7 +43,8 @@ func (h Hash) createHash(m app.Metrics) string {
 	case app.Gauge:
 		str = fmt.Sprintf("%s:gauge:%f", m.ID, *m.Value)
 	}
-	_, err := h.Write([]byte(str))
+	b := hex.EncodeToString([]byte(str))
+	_, err := h.Write([]byte(b))
 	if err != nil {
 		log.Println("addHash error:", err)
 	}
