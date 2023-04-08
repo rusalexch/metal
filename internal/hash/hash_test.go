@@ -3,6 +3,7 @@ package hash
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"testing"
@@ -19,7 +20,8 @@ func wantHash(key, id string, delta *int64, value *float64) string {
 	} else if value != nil {
 		s = fmt.Sprintf("%s:gauge:%f", id, *value)
 	}
-	h.Write([]byte(s))
+	d := hex.EncodeToString([]byte(s))
+	h.Write([]byte(d))
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
