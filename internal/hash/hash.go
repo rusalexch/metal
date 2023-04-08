@@ -3,7 +3,6 @@ package hash
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"log"
 
@@ -43,8 +42,7 @@ func (h Hash) createHash(m app.Metrics) string {
 	case app.Gauge:
 		str = fmt.Sprintf("%s:gauge:%f", m.ID, *m.Value)
 	}
-	b := hex.EncodeToString([]byte(str))
-	_, err := h.Write([]byte(b))
+	_, err := h.Write([]byte(str))
 	if err != nil {
 		log.Println("addHash error:", err)
 	}

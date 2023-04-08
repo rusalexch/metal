@@ -35,12 +35,12 @@ func TestNew(t *testing.T) {
 		{
 			name: "with empty key",
 			args: args{key: ""},
-			want: &Hash{hmac.New(sha256.New, []byte("")), false},
+			want: &Hash{hmac.New(sha256.New, []byte("")), true},
 		},
 		{
 			name: "with key",
 			args: args{key: "test"},
-			want: &Hash{hmac.New(sha256.New, []byte("test")), true},
+			want: &Hash{hmac.New(sha256.New, []byte("test")), false},
 		},
 	}
 	for _, tt := range tests {
