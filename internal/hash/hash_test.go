@@ -4,7 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"fmt"
-	"log"
 	"testing"
 
 	"github.com/rusalexch/metal/internal/app"
