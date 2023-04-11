@@ -71,7 +71,7 @@ func NewServerConfig() ServerConfig {
 		StoreFile:     *storeFile,
 		Restore:       *restore == "true",
 		HashKey:       *key,
-		DbURL:         *dbURL,
+		DBURL:         *dbURL,
 	}
 }
 

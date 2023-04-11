@@ -14,7 +14,7 @@ import (
 
 func main() {
 	envConf := config.NewServerConfig()
-	stor := storage.New(&envConf.DbURL)
+	stor := storage.New(&envConf.DBURL)
 	defer stor.Close()
 	srv := services.New(stor)
 	hs := hash.New(envConf.HashKey)

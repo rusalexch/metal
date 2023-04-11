@@ -13,6 +13,7 @@ func TestNew(t *testing.T) {
 	}
 	s := storage.New(nil)
 	ms := NewMertricsService(s)
+	hs := NewHealthCheck(s)
 	tests := []struct {
 		name string
 		args args
@@ -25,6 +26,7 @@ func TestNew(t *testing.T) {
 			},
 			want: &Services{
 				MetricsService: ms,
+				HealthCheck: hs,
 			},
 		},
 	}
