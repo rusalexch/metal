@@ -78,7 +78,6 @@ func (a *Agent) send() error {
 
 		}
 		a.hash.AddHash(&item)
-		log.Println(item)
 		err = a.transport.SendOneJSON(item)
 		if err != nil {
 			log.Println(err)

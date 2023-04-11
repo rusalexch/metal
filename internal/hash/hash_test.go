@@ -97,7 +97,6 @@ func TestHash_createHash(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			h := New(tt.args.key)
 			got := h.createHash(&tt.args.m)
-			log.Println(got)
 
 			assert.Equal(t, tt.want, got)
 		})

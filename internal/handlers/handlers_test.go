@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -16,7 +15,6 @@ import (
 )
 
 func testRequest(t *testing.T, ts *httptest.Server, method, path string, body io.Reader) (int, string) {
-	fmt.Println(ts.URL + path)
 	req, err := http.NewRequest(method, ts.URL+path, body)
 	require.NoError(t, err)
 	if body != nil {

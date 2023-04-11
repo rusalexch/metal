@@ -34,6 +34,7 @@ func (h Hash) Check(m app.Metrics) bool {
 }
 
 func (h Hash) createHash(m *app.Metrics) string {
+	h.Reset()
 	str := ""
 	switch m.Type {
 	case app.Counter:
@@ -47,6 +48,6 @@ func (h Hash) createHash(m *app.Metrics) string {
 		log.Println("addHash error:", err)
 	}
 	hash := h.Sum(nil)
-	log.Printf("%x\n", hash)
+
 	return fmt.Sprintf("%x", hash)
 }
