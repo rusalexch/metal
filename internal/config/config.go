@@ -15,6 +15,7 @@ var (
 	storeFile      *string
 	restore        *string
 	key            *string
+	dbURL          *string
 )
 
 func init() {
@@ -37,6 +38,7 @@ func init() {
 	})
 	storeFile = flag.String("f", defaultStoreFile, "store file")
 	key = flag.String("k", defaultKey, "hash secret key")
+	dbURL = flag.String("d", defaultKey, "database url string")
 
 }
 
@@ -69,6 +71,7 @@ func NewServerConfig() ServerConfig {
 		StoreFile:     *storeFile,
 		Restore:       *restore == "true",
 		HashKey:       *key,
+		DbURL:         *dbURL,
 	}
 }
 
@@ -105,5 +108,8 @@ func checkENV() {
 	}
 	if keyEnv, isSet := os.LookupEnv("KEY"); isSet {
 		key = &keyEnv
+	}
+	if dbURLEnv, isSet := os.LookupEnv("DATABASE_DSN"); isSet {
+		dbURL = &dbURLEnv
 	}
 }

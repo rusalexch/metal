@@ -15,4 +15,5 @@ type ServerConfig struct {
 	StoreFile     string        `env:"STORE_FILE"`
 	Restore       bool          `env:"RESTORE"`
 	HashKey       string        `env:"KEY"`
+	DbURL         string        `env:"DATABASE_DSN"`
 }
