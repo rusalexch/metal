@@ -1,5 +1,7 @@
 package storage
 
+import "github.com/jackc/pgx/v5/pgxpool"
+
 // MetricCounter структура метрики counter для хранения
 type MetricCounter struct {
 	// Value значение метрики в строковом формате
@@ -22,4 +24,6 @@ type Storage struct {
 	counters map[string]MetricCounter
 	// guages мапа хранения для метрик типа guage
 	gauges map[string]MetricGauge
+	// db pool connection для БД
+	db     *pgxpool.Pool
 }

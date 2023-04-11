@@ -1,11 +1,26 @@
 package storage
 
+import (
+	"context"
+	"log"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
 // New конструктор хранилища метрик
-func New() *Storage {
-	return &Storage{
+func New(dbURL *string) *Storage {
+	st := &Storage{
 		counters: map[string]MetricCounter{},
 		gauges:   map[string]MetricGauge{},
 	}
+	if dbURL != nil {
+		db, err := pgxpool.New(context.Background(), *dbURL)
+		if err != nil {
+			log.Panic(err)
+		}
+		st.db = db
+	}
+	return st
 }
 
 // AddCounter метод добавления метрики типа counter
@@ -75,4 +90,16 @@ func (s *Storage) ListGauge() []MetricGauge {
 	}
 
 	return res
+}
+
+func (s *Storage) Ping() error {
+	if s.db != nil {
+		return s.db.Ping(context.Background())
+	}
+
+	return nil
+}
+
+func (s *Storage) Close() {
+	s.db.Close()
 }

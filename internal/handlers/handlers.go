@@ -26,7 +26,7 @@ func (h *Handlers) Init() {
 	h.Use(decompressMiddleware)
 
 	h.Get("/", h.list)
-	h.Get("/ping", ping)
+	h.Get("/ping", h.ping)
 	h.Get("/value/{mType}/{ID}", h.find)
 	h.Post("/update/{mType}/{ID}/{value}", h.update)
 	h.Post("/update/", h.updateJSON)

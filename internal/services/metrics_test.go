@@ -21,7 +21,7 @@ func TestNewMertricsService(t *testing.T) {
 		storage storage.MetricsStorage
 	}
 
-	s := storage.New()
+	s := storage.New(nil)
 	tests := []struct {
 		name string
 		args args
@@ -52,7 +52,7 @@ func TestMertricsService_Add(t *testing.T) {
 	}
 
 	f := fields{
-		storage: storage.New(),
+		storage: storage.New(nil),
 	}
 	tests := []struct {
 		name    string
@@ -117,7 +117,7 @@ func TestMertricsService_Get(t *testing.T) {
 	}
 
 	f := fields{
-		storage: storage.New(),
+		storage: storage.New(nil),
 	}
 	f.storage.AddCounter("testCounter1", 777)
 	f.storage.AddCounter("testCounter2", 93245)

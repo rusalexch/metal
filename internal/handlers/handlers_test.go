@@ -33,14 +33,14 @@ func testRequest(t *testing.T, ts *httptest.Server, method, path string, body io
 }
 
 func TestNew(t *testing.T) {
-	h := New(services.New(storage.New()), hash.New(""))
+	h := New(services.New(storage.New(nil)), hash.New(""))
 	h.Init()
 	ts := httptest.NewServer(h)
 	defer ts.Close()
 
 	statusCode, body := testRequest(t, ts, http.MethodGet, "/ping", nil)
 	assert.Equal(t, http.StatusOK, statusCode)
-	assert.Equal(t, "pong", body)
+	assert.Equal(t, "", body)
 
 	statusCode, body = testRequest(t, ts, http.MethodGet, "/", nil)
 	assert.Equal(t, http.StatusOK, statusCode)

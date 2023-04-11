@@ -8,4 +8,5 @@ type MetricsStorage interface {
 	GetGauge(name string) (float64, error)
 	ListCounter() []MetricCounter
 	ListGauge() []MetricGauge
+	Ping() error
 }

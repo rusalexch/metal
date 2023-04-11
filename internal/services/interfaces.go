@@ -9,3 +9,11 @@ type Mertrics interface {
 	List() []app.Metrics
 	Subscribe(f func())
 }
+
+type Healther interface {
+	Ping() error
+}
+
+type Repositorier interface {
+	Ping() error
+}

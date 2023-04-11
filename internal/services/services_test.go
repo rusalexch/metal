@@ -11,7 +11,7 @@ func TestNew(t *testing.T) {
 	type args struct {
 		storage storage.MetricsStorage
 	}
-	s := storage.New()
+	s := storage.New(nil)
 	ms := NewMertricsService(s)
 	tests := []struct {
 		name string

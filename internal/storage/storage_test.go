@@ -21,7 +21,7 @@ func TestNew(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := New()
+			got := New(nil)
 			assert.Equal(t, tt.want, got)
 		})
 	}
