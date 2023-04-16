@@ -11,7 +11,7 @@ func TestNew(t *testing.T) {
 	type args struct {
 		storage storage.MetricsStorage
 	}
-	s := storage.New(nil)
+	s := storage.New("", "/tmp/testfile", true)
 	ms := NewMertricsService(s)
 	hs := NewHealthCheck(s)
 	tests := []struct {
@@ -26,7 +26,7 @@ func TestNew(t *testing.T) {
 			},
 			want: &Services{
 				MetricsService: ms,
-				HealthCheck: hs,
+				HealthCheck:    hs,
 			},
 		},
 	}

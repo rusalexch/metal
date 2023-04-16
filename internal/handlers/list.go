@@ -21,6 +21,7 @@ type res struct {
 
 func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
 	metrics := h.services.MetricsService.List()
+	log.Println(metrics)
 	res := res{
 		Title: "Метрики",
 		Items: make([]item, 0, len(metrics)),

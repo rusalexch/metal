@@ -21,7 +21,7 @@ func TestNewMertricsService(t *testing.T) {
 		storage storage.MetricsStorage
 	}
 
-	s := storage.New(nil)
+	s := storage.New("", "/tmp/test", false)
 	tests := []struct {
 		name string
 		args args
@@ -52,7 +52,7 @@ func TestMertricsService_Add(t *testing.T) {
 	}
 
 	f := fields{
-		storage: storage.New(nil),
+		storage: storage.New("", "/tmp/test", false),
 	}
 	tests := []struct {
 		name    string
@@ -117,14 +117,14 @@ func TestMertricsService_Get(t *testing.T) {
 	}
 
 	f := fields{
-		storage: storage.New(nil),
+		storage: storage.New("", "/tmp/test", false),
 	}
-	f.storage.AddCounter("testCounter1", 777)
-	f.storage.AddCounter("testCounter2", 93245)
-	f.storage.AddCounter("testCounter3", -10005)
-	f.storage.AddGauge("testGuage1", 0.00001)
-	f.storage.AddGauge("testGuage2", 5.3)
-	f.storage.AddGauge("testGuage3", -0.000000001)
+	f.storage.Add(app.Metrics{ID: "testCounter1", Delta: int64AsPointer(777), Type: app.Counter})
+	f.storage.Add(app.Metrics{ID: "testCounter2", Delta: int64AsPointer(93245), Type: app.Counter})
+	f.storage.Add(app.Metrics{ID: "testCounter3", Delta: int64AsPointer(-10005), Type: app.Counter})
+	f.storage.Add(app.Metrics{ID: "testGuage1", Value: float64AsPointer(0.00001), Type: app.Gauge})
+	f.storage.Add(app.Metrics{ID: "testGuage2", Value: float64AsPointer(5.3), Type: app.Gauge})
+	f.storage.Add(app.Metrics{ID: "testGuage3", Value: float64AsPointer(-0.000000001), Type: app.Gauge})
 	tests := []struct {
 		name   string
 		fields fields

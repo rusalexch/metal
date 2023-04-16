@@ -33,7 +33,7 @@ func testRequest(t *testing.T, ts *httptest.Server, method, path string, body io
 }
 
 func TestNew(t *testing.T) {
-	h := New(services.New(storage.New(nil)), hash.New(""))
+	h := New(services.New(storage.New("", "/tmp/test", false)), hash.New(""))
 	h.Init()
 	ts := httptest.NewServer(h)
 	defer ts.Close()

@@ -38,8 +38,7 @@ func init() {
 	})
 	storeFile = flag.String("f", defaultStoreFile, "store file")
 	key = flag.String("k", defaultKey, "hash secret key")
-	dbURL = flag.String("d", defaultKey, "database url string")
-
+	dbURL = flag.String("d", "", "database url string")
 }
 
 func NewAgentConfig() AgentConfig {
