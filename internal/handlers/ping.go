@@ -7,7 +7,7 @@ import (
 
 // ping хендлер для проверки работоспособности
 func (h *Handlers) ping(w http.ResponseWriter, r *http.Request) {
-	if err := h.services.HealthCheck.Ping(); err != nil {
+	if err := h.storage.Ping(); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}

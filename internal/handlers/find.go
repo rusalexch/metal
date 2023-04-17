@@ -10,22 +10,20 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/rusalexch/metal/internal/app"
-	"github.com/rusalexch/metal/internal/services"
-	"github.com/rusalexch/metal/internal/storage"
 	"github.com/rusalexch/metal/internal/utils"
 )
 
 func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
 	ID := chi.URLParam(r, "ID")
 	mType := chi.URLParam(r, "mType")
-	m, err := h.services.MetricsService.Get(ID, mType)
+	m, err := h.storage.Get(ID, mType)
 	if err != nil {
-		if errors.Is(err, services.ErrIncorrectType) {
+		if errors.Is(err, app.ErrIncorrectType) {
 			w.WriteHeader(http.StatusNotImplemented)
 			fmt.Fprint(w, "method not implemented")
 			return
 		}
-		if errors.Is(err, storage.ErrMetricNotFound) {
+		if errors.Is(err, app.ErrNotFound) {
 			w.WriteHeader(http.StatusNotFound)
 			fmt.Fprint(w, err)
 			return
@@ -61,9 +59,9 @@ func (h *Handlers) valueJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m, err = h.services.MetricsService.Get(m.ID, m.Type)
+	m, err = h.storage.Get(m.ID, m.Type)
 	if err != nil {
-		if errors.Is(err, storage.ErrMetricNotFound) {
+		if errors.Is(err, app.ErrNotFound) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}

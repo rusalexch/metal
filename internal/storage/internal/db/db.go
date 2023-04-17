@@ -47,41 +47,39 @@ func (db *dbStorage) Add(m app.Metrics) error {
 	case app.Gauge:
 		return db.saveGauge(m.ID, *m.Value)
 	default:
-		return app.ErrNotFound
+		return app.ErrIncorrectType
 	}
 }
 
 // Get получение метрики name с типом mType
-func (db *dbStorage) Get(name string, mType app.MetricType) (*app.Metrics, error) {
+func (db *dbStorage) Get(name string, mType app.MetricType) (app.Metrics, error) {
 	switch mType {
 	case app.Counter:
 		{
 			counter, err := db.findCounter(name)
 			if err != nil {
-				return nil, err
+				return app.Metrics{}, err
 			}
-			m := &app.Metrics{
+			return app.Metrics{
 				ID:    counter.ID,
 				Type:  app.Counter,
 				Delta: &counter.Delta,
-			}
-			return m, nil
+			}, nil
 		}
 	case app.Gauge:
 		{
 			gauge, err := db.findGauge(name)
 			if err != nil {
-				return nil, err
+				return app.Metrics{}, err
 			}
-			m := &app.Metrics{
+			return app.Metrics{
 				ID:    gauge.ID,
 				Type:  app.Gauge,
 				Value: &gauge.Value,
-			}
-			return m, nil
+			}, nil
 		}
 	default:
-		return nil, app.ErrNotFound
+		return app.Metrics{}, app.ErrIncorrectType
 	}
 }
 

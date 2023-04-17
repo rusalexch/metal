@@ -22,11 +22,16 @@ type store struct {
 }
 
 func New(file string, restore bool) *fileStorage {
-	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE, 0777)
+	flag := os.O_RDWR | os.O_CREATE
+	if !restore {
+		flag |= os.O_TRUNC
+	}
+	f, err := os.OpenFile(file, flag, 0777)
 	if err != nil {
 		log.Fatal(err)
 	}
 	encoder := json.NewEncoder(f)
+	encoder.SetEscapeHTML(false)
 	decoder := json.NewDecoder(f)
 
 	fs := &fileStorage{
@@ -35,21 +40,21 @@ func New(file string, restore bool) *fileStorage {
 		decoder: decoder,
 	}
 
-	if !restore {
-		fs.clear()
-	}
+	fs.save(emptyStore())
 
 	return fs
 }
 
 func (fs *fileStorage) Add(m app.Metrics) error {
 	if !app.IsMetricType(m.Type) {
-		return app.ErrNotFound
+		return app.ErrIncorrectType
 	}
 	st, err := fs.upload()
+
 	if err != nil {
 		return err
 	}
+
 	if m.Type == app.Counter {
 		delta, isExist := st.Counters[m.ID]
 		if isExist {
@@ -71,18 +76,18 @@ func (fs *fileStorage) Add(m app.Metrics) error {
 }
 
 // Get получение метрики с именем name и типом mType
-func (fs *fileStorage) Get(name string, mType app.MetricType) (*app.Metrics, error) {
+func (fs *fileStorage) Get(name string, mType app.MetricType) (app.Metrics, error) {
 	if !app.IsMetricType(mType) {
-		return nil, app.ErrNotFound
+		return app.Metrics{}, app.ErrIncorrectType
 	}
 	st, err := fs.upload()
 	if err != nil {
-		return nil, err
+		return app.Metrics{}, err
 	}
 	if mType == app.Counter {
 		m, isExist := st.Counters[name]
 		if isExist {
-			return &app.Metrics{
+			return app.Metrics{
 				ID:    name,
 				Type:  mType,
 				Delta: &m,
@@ -92,7 +97,7 @@ func (fs *fileStorage) Get(name string, mType app.MetricType) (*app.Metrics, err
 	if mType == app.Gauge {
 		m, isExist := st.Gauges[name]
 		if isExist {
-			return &app.Metrics{
+			return app.Metrics{
 				ID:    name,
 				Type:  mType,
 				Value: &m,
@@ -100,7 +105,7 @@ func (fs *fileStorage) Get(name string, mType app.MetricType) (*app.Metrics, err
 		}
 	}
 
-	return nil, app.ErrNotFound
+	return app.Metrics{}, app.ErrNotFound
 }
 
 // List получения всего списка метрик
@@ -127,7 +132,7 @@ func (fs *fileStorage) Close() {
 func (fs *fileStorage) save(s store) error {
 	fs.clear()
 	err := fs.encoder.Encode(s)
-	defer fs.seekStart()
+
 	if err != nil {
 		return err
 	}
@@ -138,8 +143,9 @@ func (fs *fileStorage) save(s store) error {
 // upload выгрузить метрики из файла
 func (fs *fileStorage) upload() (store, error) {
 	var st store
+	fs.seekStart()
 	err := fs.decoder.Decode(&st)
-	defer fs.seekStart()
+
 	if err != nil && !errors.Is(err, io.EOF) {
 		return emptyStore(), err
 	}

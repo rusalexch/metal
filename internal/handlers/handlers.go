@@ -4,15 +4,14 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/rusalexch/metal/internal/hash"
-	"github.com/rusalexch/metal/internal/services"
 )
 
 // New конструктор Хэндлераов
-func New(services *services.Services, h hash.Hasher) *Handlers {
+func New(stor storager, h hash.Hasher) *Handlers {
 	return &Handlers{
-		services: services,
-		hash:     h,
-		Mux:      chi.NewMux(),
+		storage: stor,
+		hash:    h,
+		Mux:     chi.NewMux(),
 	}
 }
 

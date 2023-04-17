@@ -1,9 +1,8 @@
-package storage
+package handlers
 
 import "github.com/rusalexch/metal/internal/app"
 
-// MetricsStorage интерфейс хранилища метрик
-type MetricsStorage interface {
+type storager interface {
 	Add(m app.Metrics) error
 	Get(name string, mType app.MetricType) (app.Metrics, error)
 	List() ([]app.Metrics, error)

@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/rusalexch/metal/internal/app"
-	"github.com/rusalexch/metal/internal/services"
 	"github.com/rusalexch/metal/internal/utils"
 )
 
@@ -51,9 +50,9 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err := h.services.MetricsService.Add(m)
+	err := h.storage.Add(m)
 	if err != nil {
-		if errors.Is(err, services.ErrIncorrectType) {
+		if errors.Is(err, app.ErrIncorrectType) {
 			w.WriteHeader(http.StatusNotImplemented)
 			fmt.Fprint(w, "method not implemented")
 			return
@@ -90,9 +89,9 @@ func (h *Handlers) updateJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.services.MetricsService.Add(m)
+	h.storage.Add(m)
 
-	m, _ = h.services.MetricsService.Get(m.ID, m.Type)
+	m, _ = h.storage.Get(m.ID, m.Type)
 	h.hash.AddHash(&m)
 	body, err = json.Marshal(m)
 	if err != nil {

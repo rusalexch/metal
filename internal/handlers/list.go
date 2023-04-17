@@ -20,8 +20,13 @@ type res struct {
 }
 
 func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
-	metrics := h.services.MetricsService.List()
-	log.Println(metrics)
+	metrics, err := h.storage.List()
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	res := res{
 		Title: "Метрики",
 		Items: make([]item, 0, len(metrics)),
