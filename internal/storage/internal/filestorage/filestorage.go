@@ -24,7 +24,7 @@ type store struct {
 func New(file string, restore bool) *fileStorage {
 	flag := os.O_RDWR | os.O_CREATE
 	if !restore {
-		flag |= os.O_TRUNC
+		flag = flag | os.O_TRUNC
 	}
 	f, err := os.OpenFile(file, flag, 0777)
 	if err != nil {
@@ -39,8 +39,7 @@ func New(file string, restore bool) *fileStorage {
 		encoder: encoder,
 		decoder: decoder,
 	}
-
-	fs.save(emptyStore())
+	fs.init()
 
 	return fs
 }
@@ -128,6 +127,13 @@ func (fs *fileStorage) Close() {
 	fs.file.Close()
 }
 
+func (fs *fileStorage) init() {
+	b, _ := io.ReadAll(fs.decoder.Buffered())
+	if len(b) == 0 {
+		fs.save(emptyStore())
+	}
+}
+
 // save сохранить метрики в файл
 func (fs *fileStorage) save(s store) error {
 	fs.clear()
@@ -148,6 +154,10 @@ func (fs *fileStorage) upload() (store, error) {
 
 	if err != nil && !errors.Is(err, io.EOF) {
 		return emptyStore(), err
+	}
+
+	if st.Counters == nil && st.Gauges == nil {
+		fs.save(emptyStore())
 	}
 
 	if st.Counters == nil {
