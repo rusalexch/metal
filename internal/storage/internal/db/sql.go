@@ -3,13 +3,13 @@ package db
 var createGaugeTableSQL = `
 	CREATE TABLE IF NOT EXISTS gauges (
 	id varchar PRIMARY KEY,
-	value double precision,
+	value double precision
 	)`
 
 var crteateCounterTableSQL = `
 	CREATE TABLE IF NOT EXISTS counters (
 	id varchar PRIMARY KEY,
-	delta bigint,
+	delta bigint
 	)`
 
 var insertGuageSQL = `INSERT INTO guages VALUES($1, $2)`
