@@ -11,9 +11,7 @@ import (
 )
 
 type fileStorage struct {
-	file    *os.File
-	encoder *json.Encoder
-	decoder *json.Decoder
+	file *os.File
 }
 
 type store struct {
@@ -30,14 +28,9 @@ func New(file string, restore bool) *fileStorage {
 	if err != nil {
 		log.Fatal(err)
 	}
-	encoder := json.NewEncoder(f)
-	encoder.SetEscapeHTML(false)
-	decoder := json.NewDecoder(f)
 
 	fs := &fileStorage{
-		file:    f,
-		encoder: encoder,
-		decoder: decoder,
+		file: f,
 	}
 	fs.init()
 
@@ -128,7 +121,7 @@ func (fs *fileStorage) Close() {
 }
 
 func (fs *fileStorage) init() {
-	b, _ := io.ReadAll(fs.decoder.Buffered())
+	b, _ := io.ReadAll(fs.file)
 	if len(b) == 0 {
 		fs.save(emptyStore())
 	}
@@ -137,8 +130,12 @@ func (fs *fileStorage) init() {
 // save сохранить метрики в файл
 func (fs *fileStorage) save(s store) error {
 	fs.clear()
-	err := fs.encoder.Encode(s)
+	data, err := json.Marshal(s)
+	if err != nil {
+		return err
+	}
 
+	_, err = fs.file.Write(data)
 	if err != nil {
 		return err
 	}
@@ -150,8 +147,12 @@ func (fs *fileStorage) save(s store) error {
 func (fs *fileStorage) upload() (store, error) {
 	var st store
 	fs.seekStart()
-	err := fs.decoder.Decode(&st)
+	data, err := io.ReadAll(fs.file)
+	if err != nil && !errors.Is(err, io.EOF) {
+		return emptyStore(), err
+	}
 
+	err = json.Unmarshal(data, &st)
 	if err != nil && !errors.Is(err, io.EOF) {
 		return emptyStore(), err
 	}
