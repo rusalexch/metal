@@ -14,7 +14,7 @@ var crteateCounterTableSQL = `
 
 var insertGaugeSQL = `INSERT INTO gauges VALUES($1, $2) ON CONFLICT (id) DO UPDATE SET value = $2`
 
-var insertCounterSQL = `INSERT INTO counters VALUES($1, $2) ON CONFLICT (id) DO UPDATE SET delta = $2`
+var insertCounterSQL = `INSERT INTO counters VALUES($1, $2) ON CONFLICT (id) DO UPDATE SET delta = delta + $2`
 
 var updateCounterSQL = `UPDATE counters SET delta = $2 WHERE id = $1`
 

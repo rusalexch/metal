@@ -78,7 +78,8 @@ func (db *dbStorage) AddList(m []app.Metrics) error {
 		switch v.Type {
 		case app.Counter:
 			{
-				if _, err = tx.Exec(ctx, "counterInsert", v.ID, *v.Delta); err != nil {
+				var d int64 = *v.Delta
+				if _, err = tx.Exec(ctx, "counterInsert", v.ID, d); err != nil {
 					if err = tx.Rollback(ctx); err != nil {
 						return err
 					}
@@ -87,7 +88,8 @@ func (db *dbStorage) AddList(m []app.Metrics) error {
 			}
 		case app.Gauge:
 			{
-				if _, err = tx.Exec(ctx, "gaugeInsert", v.ID, *v.Value); err != nil {
+				var vl float64 = *v.Value
+				if _, err = tx.Exec(ctx, "gaugeInsert", v.ID, vl); err != nil {
 					if err = tx.Rollback(ctx); err != nil {
 						return err
 					}
