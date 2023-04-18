@@ -16,6 +16,9 @@ type store struct {
 }
 
 func (st *store) addMetric(m app.Metrics) {
+	log.Println(st)
+	log.Println(st.Counters)
+	log.Println(m)
 	if m.Type == app.Counter {
 		delta, isExist := st.Counters[m.ID]
 		if isExist {
@@ -76,6 +79,7 @@ func (fs *fileStorage) AddList(m []app.Metrics) error {
 	if err != nil {
 		return err
 	}
+
 	for _, v := range m {
 		st.addMetric(v)
 	}

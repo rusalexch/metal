@@ -30,4 +30,5 @@ func (h *Handlers) Init() {
 	h.Post("/update/{mType}/{ID}/{value}", h.update)
 	h.Post("/update/", h.updateJSON)
 	h.Post("/value/", h.valueJSON)
+	h.Post("/updates/", h.updates)
 }
