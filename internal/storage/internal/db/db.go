@@ -205,7 +205,12 @@ func (db *dbStorage) init() error {
 
 // saveCounter сохранение метрики типа counter
 func (db *dbStorage) saveCounter(name string, delta int64) error {
-	_, err := db.pool.Exec(context.Background(), insertCounterSQL, name, delta)
+	isExist, _ := db.findCounter(name)
+	if isExist == nil {
+		_, err := db.pool.Exec(context.Background(), insertCounterSQL, name, delta)
+		return err
+	}
+	_, err := db.pool.Exec(context.Background(), updateCounterSQL, name, delta+isExist.Delta)
 	return err
 }
 
