@@ -2,8 +2,10 @@ package db
 
 import (
 	"context"
+	"errors"
 	"log"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rusalexch/metal/internal/app"
 )
@@ -58,6 +60,9 @@ func (db *dbStorage) Get(name string, mType app.MetricType) (app.Metrics, error)
 		{
 			counter, err := db.findCounter(name)
 			if err != nil {
+				if errors.Is(err, pgx.ErrNoRows) {
+					return app.Metrics{}, app.ErrNotFound
+				}
 				return app.Metrics{}, err
 			}
 			return app.Metrics{
@@ -70,6 +75,9 @@ func (db *dbStorage) Get(name string, mType app.MetricType) (app.Metrics, error)
 		{
 			gauge, err := db.findGauge(name)
 			if err != nil {
+				if errors.Is(err, pgx.ErrNoRows) {
+					return app.Metrics{}, app.ErrNotFound
+				}
 				return app.Metrics{}, err
 			}
 			return app.Metrics{
