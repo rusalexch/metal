@@ -156,10 +156,6 @@ func (fs *fileStorage) upload() (store, error) {
 		return emptyStore(), err
 	}
 
-	if st.Counters == nil && st.Gauges == nil {
-		fs.save(emptyStore())
-	}
-
 	if st.Counters == nil {
 		st.Counters = map[string]int64{}
 	}
