@@ -15,13 +15,13 @@ type dbStorage struct {
 }
 
 type dbCounter struct {
-	ID    string
-	Delta int64
+	ID    string `db:"id"`
+	Delta int64  `db:"delta"`
 }
 
 type dbGauge struct {
-	ID    string
-	Value float64
+	ID    string  `db:"id"`
+	Value float64 `db:"value"`
 }
 
 // New конструктор хранилища БД
@@ -54,6 +54,48 @@ func (db *dbStorage) Add(m app.Metrics) error {
 }
 
 func (db *dbStorage) AddList(m []app.Metrics) error {
+	ctx := context.Background()
+	tx, err := db.pool.Begin(ctx)
+	defer tx.Rollback(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = tx.Prepare(ctx, "gaugeInsert", insertGaugeSQL)
+	if err != nil {
+		return err
+	}
+	_, err = tx.Prepare(ctx, "counterInsert", insertCounterSQL)
+	if err != nil {
+		return err
+	}
+	for _, v := range m {
+		switch v.Type {
+		case app.Counter:
+			{
+				if _, err = tx.Exec(ctx, "counterInsert", v.ID, *v.Delta); err != nil {
+					if err = tx.Rollback(ctx); err != nil {
+						return err
+					}
+					return err
+				}
+			}
+		case app.Gauge:
+			{
+				if _, err = tx.Exec(ctx, "gaugeInsert", v.ID, *v.Value); err != nil {
+					if err = tx.Rollback(ctx); err != nil {
+						return err
+					}
+					return err
+				}
+			}
+		default:
+			log.Println("invalid metric type")
+		}
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -153,23 +195,13 @@ func (db *dbStorage) init() error {
 
 // saveCounter сохранение метрики типа counter
 func (db *dbStorage) saveCounter(name string, delta int64) error {
-	counter, _ := db.findCounter(name)
-	if counter == nil {
-		_, err := db.pool.Exec(context.Background(), insertCounterSQL, name, delta)
-		return err
-	}
-	_, err := db.pool.Exec(context.Background(), updateCounterSQL, delta+counter.Delta, name)
+	_, err := db.pool.Exec(context.Background(), insertCounterSQL, name, delta)
 	return err
 }
 
 // saveGauge сохранение метрики типа gauge
 func (db *dbStorage) saveGauge(name string, value float64) error {
-	gauge, _ := db.findGauge(name)
-	if gauge == nil {
-		_, err := db.pool.Exec(context.Background(), insertGuageSQL, name, value)
-		return err
-	}
-	_, err := db.pool.Exec(context.Background(), updateGuageSQL, value, name)
+	_, err := db.pool.Exec(context.Background(), insertGaugeSQL, name, value)
 	return err
 }
 

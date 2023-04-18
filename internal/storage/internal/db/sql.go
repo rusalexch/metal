@@ -12,13 +12,9 @@ var crteateCounterTableSQL = `
 	delta bigint
 	)`
 
-var insertGuageSQL = `INSERT INTO gauges VALUES($1, $2)`
+var insertGaugeSQL = `INSERT INTO gauges VALUES($1, $2) ON CONFLICT (id) DO UPDATE SET value = $2`
 
-var insertCounterSQL = `INSERT INTO counters VALUES($1, $2)`
-
-var updateGuageSQL = `UPDATE gauges SET value = $1 WHERE id = $2`
-
-var updateCounterSQL = `UPDATE counters SET delta = $1 WHERE id = $2`
+var insertCounterSQL = `INSERT INTO counters VALUES($1, $2) ON CONFLICT (id) DO UPDATE SET delta = $2`
 
 var findGaugeSQL = `SELECT * FROM gauges WHERE id = $1 LIMIT 1`
 
