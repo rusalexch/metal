@@ -1,8 +1,6 @@
 package filestorage
 
 import (
-	"log"
-
 	"github.com/rusalexch/metal/internal/app"
 )
 
@@ -12,9 +10,6 @@ type store struct {
 }
 
 func (st *store) addMetric(m app.Metrics) {
-	log.Println(st)
-	log.Println(st.Counters)
-	log.Println(m)
 	if m.Type == app.Counter {
 		delta, isExist := st.Counters[m.ID]
 		if isExist {

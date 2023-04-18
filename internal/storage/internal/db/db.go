@@ -205,12 +205,12 @@ func (db *dbStorage) init() error {
 
 // saveCounter сохранение метрики типа counter
 func (db *dbStorage) saveCounter(name string, delta int64) error {
-	isExist, _ := db.findCounter(name)
-	if isExist == nil {
+	counter, err := db.findCounter(name)
+	if err != nil && errors.Is(err, pgx.ErrNoRows) {
 		_, err := db.pool.Exec(context.Background(), insertCounterSQL, name, delta)
 		return err
 	}
-	_, err := db.pool.Exec(context.Background(), updateCounterSQL, name, delta+isExist.Delta)
+	_, err = db.pool.Exec(context.Background(), updateCounterSQL, name, delta+counter.Delta)
 	return err
 }
 
@@ -221,27 +221,27 @@ func (db *dbStorage) saveGauge(name string, value float64) error {
 }
 
 // findCounter поиск метрики типа counter по идентификатору name
-func (db *dbStorage) findCounter(name string) (*dbCounter, error) {
+func (db *dbStorage) findCounter(name string) (dbCounter, error) {
 	var counter dbCounter
 	row := db.pool.QueryRow(context.Background(), findCounterSQL, name)
 	err := row.Scan(&counter.ID, &counter.Delta)
 	if err != nil {
-		return nil, err
+		return counter, err
 	}
 
-	return &counter, nil
+	return counter, nil
 }
 
 // findGauge поиск метрики типа gauge по идентификатору name
-func (db *dbStorage) findGauge(name string) (*dbGauge, error) {
+func (db *dbStorage) findGauge(name string) (dbGauge, error) {
 	var gauge dbGauge
 	row := db.pool.QueryRow(context.Background(), findGaugeSQL, name)
 	err := row.Scan(&gauge.ID, &gauge.Value)
 	if err != nil {
-		return nil, err
+		return gauge, err
 	}
 
-	return &gauge, nil
+	return gauge, nil
 }
 
 // listCounter получение всех метрик типа counter
