@@ -6,34 +6,14 @@ import (
 	"io"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/rusalexch/metal/internal/app"
 )
 
-type store struct {
-	Counters map[string]int64   `json:"counters"`
-	Gauges   map[string]float64 `json:"gauges"`
-}
-
-func (st *store) addMetric(m app.Metrics) {
-	log.Println(st)
-	log.Println(st.Counters)
-	log.Println(m)
-	if m.Type == app.Counter {
-		delta, isExist := st.Counters[m.ID]
-		if isExist {
-			st.Counters[m.ID] = delta + *m.Delta
-		} else {
-			st.Counters[m.ID] = *m.Delta
-		}
-	}
-	if m.Type == app.Gauge {
-		st.Gauges[m.ID] = *m.Value
-	}
-}
-
 type fileStorage struct {
 	file *os.File
+	sync.Mutex
 }
 
 func New(file string, restore bool) *fileStorage {
@@ -55,6 +35,8 @@ func New(file string, restore bool) *fileStorage {
 }
 
 func (fs *fileStorage) Add(m app.Metrics) error {
+	fs.Lock()
+	defer fs.Unlock()
 	if !app.IsMetricType(m.Type) {
 		return app.ErrIncorrectType
 	}
@@ -75,6 +57,8 @@ func (fs *fileStorage) Add(m app.Metrics) error {
 }
 
 func (fs *fileStorage) AddList(m []app.Metrics) error {
+	fs.Lock()
+	defer fs.Unlock()
 	st, err := fs.upload()
 	if err != nil {
 		return err
@@ -93,6 +77,8 @@ func (fs *fileStorage) AddList(m []app.Metrics) error {
 
 // Get получение метрики с именем name и типом mType
 func (fs *fileStorage) Get(name string, mType app.MetricType) (app.Metrics, error) {
+	fs.Lock()
+	defer fs.Unlock()
 	if !app.IsMetricType(mType) {
 		return app.Metrics{}, app.ErrIncorrectType
 	}
@@ -126,6 +112,8 @@ func (fs *fileStorage) Get(name string, mType app.MetricType) (app.Metrics, erro
 
 // List получения всего списка метрик
 func (fs *fileStorage) List() ([]app.Metrics, error) {
+	fs.Lock()
+	defer fs.Unlock()
 	st, err := fs.upload()
 	if err != nil {
 		return nil, err

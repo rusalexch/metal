@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"sync"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -12,6 +13,7 @@ import (
 
 type dbStorage struct {
 	pool *pgxpool.Pool
+	sync.Mutex
 }
 
 type dbCounter struct {
@@ -43,6 +45,8 @@ func New(URL string) *dbStorage {
 
 // Add добавление новой метрики
 func (db *dbStorage) Add(m app.Metrics) error {
+	db.Lock()
+	defer db.Unlock()
 	switch m.Type {
 	case app.Counter:
 		return db.saveCounter(m.ID, *m.Delta)
@@ -54,6 +58,8 @@ func (db *dbStorage) Add(m app.Metrics) error {
 }
 
 func (db *dbStorage) AddList(m []app.Metrics) error {
+	db.Lock()
+	defer db.Unlock()
 	ctx := context.Background()
 	tx, err := db.pool.Begin(ctx)
 	defer tx.Rollback(ctx)
@@ -101,6 +107,8 @@ func (db *dbStorage) AddList(m []app.Metrics) error {
 
 // Get получение метрики name с типом mType
 func (db *dbStorage) Get(name string, mType app.MetricType) (app.Metrics, error) {
+	db.Lock()
+	defer db.Unlock()
 	switch mType {
 	case app.Counter:
 		{
@@ -139,6 +147,8 @@ func (db *dbStorage) Get(name string, mType app.MetricType) (app.Metrics, error)
 
 // List получение списка всех метрик
 func (db *dbStorage) List() ([]app.Metrics, error) {
+	db.Lock()
+	defer db.Unlock()
 	counters, err := db.listCounter()
 	if err != nil {
 		return nil, err
