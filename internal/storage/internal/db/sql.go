@@ -12,15 +12,15 @@ var crteateCounterTableSQL = `
 	delta bigint
 	)`
 
-var insertGuageSQL = `INSERT INTO guages VALUES($1, $2)`
+var insertGuageSQL = `INSERT INTO gauges VALUES($1, $2)`
 
 var insertCounterSQL = `INSERT INTO counters VALUES($1, $2)`
 
-var updateGuageSQL = `UPDATE guages SET value = $1 WHERE id = $2`
+var updateGuageSQL = `UPDATE gauges SET value = $1 WHERE id = $2`
 
 var updateCounterSQL = `UPDATE counters SET delta = $1 WHERE id = $2`
 
-var findGaugeSQL = `SELECT * FROM guages WHERE id = $1 LIMIT 1`
+var findGaugeSQL = `SELECT * FROM gauges WHERE id = $1 LIMIT 1`
 
 var findCounterSQL = `SELECT * FROM counters WHERE id = $1 LIMIT 1`
 
