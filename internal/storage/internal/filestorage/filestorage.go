@@ -134,7 +134,7 @@ func (fs *fileStorage) save(s store) error {
 	if err != nil {
 		return err
 	}
-
+	fs.seekStart()
 	_, err = fs.file.Write(data)
 	if err != nil {
 		return err
