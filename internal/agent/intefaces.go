@@ -14,6 +14,8 @@ type Transport interface {
 	SendOne(m app.Metrics) error
 	// SendOneJSON метод для отправки одной метрики JSON
 	SendOneJSON(m app.Metrics) error
+	// SendOneJSON метод для отправки одной метрики JSON
+	SendListJSON(m []app.Metrics) error
 }
 
 // Cache интерфейс кэша для хранения метрик
@@ -25,4 +27,3 @@ type Cache interface {
 	// Get метод для получения кэша
 	Get() []app.Metrics
 }
-

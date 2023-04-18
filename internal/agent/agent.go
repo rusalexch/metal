@@ -66,6 +66,11 @@ func (a *Agent) send() error {
 	}
 	list := a.cache.Get()
 
+	err := a.transport.SendListJSON(list)
+	if err != nil {
+		log.Println("send list json", err)
+	}
+
 	isError := false
 	for _, item := range list {
 		err := a.transport.SendOne(item)
