@@ -53,6 +53,10 @@ func (db *dbStorage) Add(m app.Metrics) error {
 	}
 }
 
+func (db *dbStorage) AddList(m []app.Metrics) error {
+	return nil
+}
+
 // Get получение метрики name с типом mType
 func (db *dbStorage) Get(name string, mType app.MetricType) (app.Metrics, error) {
 	switch mType {

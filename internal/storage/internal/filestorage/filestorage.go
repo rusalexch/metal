@@ -10,13 +10,27 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
-type fileStorage struct {
-	file *os.File
-}
-
 type store struct {
 	Counters map[string]int64   `json:"counters"`
 	Gauges   map[string]float64 `json:"gauges"`
+}
+
+func (st *store) addMetric(m app.Metrics) {
+	if m.Type == app.Counter {
+		delta, isExist := st.Counters[m.ID]
+		if isExist {
+			st.Counters[m.ID] = delta + *m.Delta
+		} else {
+			st.Counters[m.ID] = *m.Delta
+		}
+	}
+	if m.Type == app.Gauge {
+		st.Gauges[m.ID] = *m.Value
+	}
+}
+
+type fileStorage struct {
+	file *os.File
 }
 
 func New(file string, restore bool) *fileStorage {
@@ -47,23 +61,29 @@ func (fs *fileStorage) Add(m app.Metrics) error {
 		return err
 	}
 
-	if m.Type == app.Counter {
-		delta, isExist := st.Counters[m.ID]
-		if isExist {
-			st.Counters[m.ID] = delta + *m.Delta
-		} else {
-			st.Counters[m.ID] = *m.Delta
-		}
-	}
-	if m.Type == app.Gauge {
-		st.Gauges[m.ID] = *m.Value
-	}
+	st.addMetric(m)
 
 	err = fs.save(st)
 	if err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func (fs *fileStorage) AddList(m []app.Metrics) error {
+	st, err := fs.upload()
+	if err != nil {
+		return err
+	}
+	for _, v := range m {
+		st.addMetric(v)
+	}
+
+	err = fs.save(st)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
