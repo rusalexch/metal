@@ -44,6 +44,7 @@ func (h *Handlers) valueJSON(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -55,23 +56,25 @@ func (h *Handlers) valueJSON(w http.ResponseWriter, r *http.Request) {
 
 	err = json.Unmarshal(body, &m)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	m, err = h.storage.Get(m.ID, m.Type)
 	if err != nil {
+		log.Println(err)
 		if errors.Is(err, app.ErrNotFound) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	h.hash.AddHash(&m)
 	body, err = json.Marshal(m)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
