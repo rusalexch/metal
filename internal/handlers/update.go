@@ -135,6 +135,18 @@ func (h *Handlers) updates(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	m, err = h.storage.List()
+	if err != nil {
+		log.Println("getList", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	body, err = json.Marshal(m)
+	if err != nil {
+		log.Println("marshal", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.Header().Add(contentType, appJSON)
-	w.Write([]byte("ok"))
+	w.Write(body)
 }
