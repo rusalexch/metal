@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/httplog"
 	"github.com/rusalexch/metal/internal/hash"
 )
 
@@ -17,12 +18,16 @@ func New(stor storager, h hash.Hasher) *Handlers {
 
 // Init инициализация Хендлеров
 func (h *Handlers) Init() {
+	logger := httplog.NewLogger("httplog", httplog.Options{
+		JSON: true,
+	})
+
 	h.Use(middleware.RequestID)
 	h.Use(middleware.RealIP)
-	h.Use(middleware.Logger)
-	h.Use(middleware.Recoverer)
+	h.Use(httplog.RequestLogger(logger))
 	h.Use(compressMiddleware)
 	h.Use(decompressMiddleware)
+	h.Use(middleware.Recoverer)
 
 	h.Get("/", h.list)
 	h.Get("/ping", h.ping)
