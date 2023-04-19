@@ -66,11 +66,11 @@ func (db *dbStorage) AddList(m []app.Metrics) error {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Prepare(ctx, "gaugeInsert", insertGaugeSQL)
+	stmtGauge, err := tx.Prepare(ctx, "gaugeInsert", insertGaugeSQL)
 	if err != nil {
 		return err
 	}
-	_, err = tx.Prepare(ctx, "counterInsert", insertCounterSQL)
+	stmtCounter, err := tx.Prepare(ctx, "counterInsert", insertCounterSQL)
 	if err != nil {
 		return err
 	}
@@ -78,8 +78,7 @@ func (db *dbStorage) AddList(m []app.Metrics) error {
 		switch v.Type {
 		case app.Counter:
 			{
-				var d = *v.Delta
-				if _, err = tx.Exec(ctx, "counterInsert", v.ID, d); err != nil {
+				if _, err = tx.Exec(ctx, stmtCounter.Name, v.ID, *v.Delta); err != nil {
 					if err = tx.Rollback(ctx); err != nil {
 						return err
 					}
@@ -88,8 +87,7 @@ func (db *dbStorage) AddList(m []app.Metrics) error {
 			}
 		case app.Gauge:
 			{
-				var vl = *v.Value
-				if _, err = tx.Exec(ctx, "gaugeInsert", v.ID, vl); err != nil {
+				if _, err = tx.Exec(ctx, stmtGauge.Name, v.ID, *v.Value); err != nil {
 					if err = tx.Rollback(ctx); err != nil {
 						return err
 					}
@@ -207,12 +205,7 @@ func (db *dbStorage) init() error {
 
 // saveCounter сохранение метрики типа counter
 func (db *dbStorage) saveCounter(name string, delta int64) error {
-	counter, err := db.findCounter(name)
-	if err != nil && errors.Is(err, pgx.ErrNoRows) {
-		_, err := db.pool.Exec(context.Background(), insertCounterSQL, name, delta)
-		return err
-	}
-	_, err = db.pool.Exec(context.Background(), updateCounterSQL, name, delta+counter.Delta)
+	_, err := db.pool.Exec(context.Background(), insertCounterSQL, name, delta)
 	return err
 }
 

@@ -16,8 +16,6 @@ var insertGaugeSQL = `INSERT INTO gauges VALUES($1, $2) ON CONFLICT (id) DO UPDA
 
 var insertCounterSQL = `INSERT INTO counters VALUES($1, $2) ON CONFLICT (id) DO UPDATE SET delta = delta + $2`
 
-var updateCounterSQL = `UPDATE counters SET delta = $2 WHERE id = $1`
-
 var findGaugeSQL = `SELECT * FROM gauges WHERE id = $1 LIMIT 1`
 
 var findCounterSQL = `SELECT * FROM counters WHERE id = $1 LIMIT 1`
