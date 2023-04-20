@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"text/template"
+	"time"
 
 	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/utils"
@@ -20,7 +22,10 @@ type res struct {
 }
 
 func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
-	metrics, err := h.storage.List()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	metrics, err := h.storage.List(ctx)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

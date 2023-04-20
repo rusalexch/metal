@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/httplog"
@@ -12,6 +14,7 @@ func New(stor storager, h hash.Hasher) *Handlers {
 	return &Handlers{
 		storage: stor,
 		hash:    h,
+		timeout: 10 * time.Second,
 		Mux:     chi.NewMux(),
 	}
 }

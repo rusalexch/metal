@@ -1,6 +1,7 @@
 package filestorage
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
@@ -34,7 +35,9 @@ func New(file string, restore bool) *fileStorage {
 	return fs
 }
 
-func (fs *fileStorage) Add(m app.Metrics) error {
+func (fs *fileStorage) Add(ctx context.Context, m app.Metrics) error {
+	_, cancel := context.WithCancel(ctx)
+	defer cancel()
 	fs.Lock()
 	defer fs.Unlock()
 	if !app.IsMetricType(m.Type) {
@@ -56,7 +59,9 @@ func (fs *fileStorage) Add(m app.Metrics) error {
 	return nil
 }
 
-func (fs *fileStorage) AddList(m []app.Metrics) error {
+func (fs *fileStorage) AddList(ctx context.Context, m []app.Metrics) error {
+	_, cancel := context.WithCancel(ctx)
+	defer cancel()
 	fs.Lock()
 	defer fs.Unlock()
 	st, err := fs.upload()
@@ -76,7 +81,9 @@ func (fs *fileStorage) AddList(m []app.Metrics) error {
 }
 
 // Get получение метрики с именем name и типом mType
-func (fs *fileStorage) Get(name string, mType app.MetricType) (app.Metrics, error) {
+func (fs *fileStorage) Get(ctx context.Context, name string, mType app.MetricType) (app.Metrics, error) {
+	_, cancel := context.WithCancel(ctx)
+	defer cancel()
 	fs.Lock()
 	defer fs.Unlock()
 	if !app.IsMetricType(mType) {
@@ -111,7 +118,9 @@ func (fs *fileStorage) Get(name string, mType app.MetricType) (app.Metrics, erro
 }
 
 // List получения всего списка метрик
-func (fs *fileStorage) List() ([]app.Metrics, error) {
+func (fs *fileStorage) List(ctx context.Context) ([]app.Metrics, error) {
+	_, cancel := context.WithCancel(ctx)
+	defer cancel()
 	fs.Lock()
 	defer fs.Unlock()
 	st, err := fs.upload()
@@ -123,7 +132,9 @@ func (fs *fileStorage) List() ([]app.Metrics, error) {
 }
 
 // Ping заглушка
-func (fs *fileStorage) Ping() error {
+func (fs *fileStorage) Ping(ctx context.Context) error {
+	_, cancel := context.WithCancel(ctx)
+	defer cancel()
 	return nil
 }
 

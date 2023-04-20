@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -14,9 +15,11 @@ import (
 )
 
 func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
+	defer cancel()
 	ID := chi.URLParam(r, "ID")
 	mType := chi.URLParam(r, "mType")
-	m, err := h.storage.Get(ID, mType)
+	m, err := h.storage.Get(ctx, ID, mType)
 	if err != nil {
 		if errors.Is(err, app.ErrIncorrectType) {
 			w.WriteHeader(http.StatusNotImplemented)
@@ -38,7 +41,8 @@ func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) valueJSON(w http.ResponseWriter, r *http.Request) {
-
+	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
+	defer cancel()
 	var m app.Metrics
 
 	body, err := io.ReadAll(r.Body)
@@ -61,7 +65,7 @@ func (h *Handlers) valueJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m, err = h.storage.Get(m.ID, m.Type)
+	m, err = h.storage.Get(ctx, m.ID, m.Type)
 	if err != nil {
 		log.Println("get storage", err)
 		if errors.Is(err, app.ErrNotFound) {

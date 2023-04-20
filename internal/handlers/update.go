@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -50,7 +51,10 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err := h.storage.Add(m)
+	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
+	defer cancel()
+
+	err := h.storage.Add(ctx, m)
 	if err != nil {
 		if errors.Is(err, app.ErrIncorrectType) {
 			w.WriteHeader(http.StatusNotImplemented)
@@ -92,9 +96,12 @@ func (h *Handlers) updateJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.storage.Add(m)
+	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
+	defer cancel()
 
-	m, _ = h.storage.Get(m.ID, m.Type)
+	h.storage.Add(ctx, m)
+
+	m, _ = h.storage.Get(ctx, m.ID, m.Type)
 	h.hash.AddHash(&m)
 	body, err = json.Marshal(m)
 	if err != nil {
@@ -128,14 +135,16 @@ func (h *Handlers) updates(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println(m)
+	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
+	defer cancel()
 
-	err = h.storage.AddList(m)
+	err = h.storage.AddList(ctx, m)
 	if err != nil {
 		log.Println("addList", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	m, err = h.storage.List()
+	m, err = h.storage.List(ctx)
 	if err != nil {
 		log.Println("getList", err)
 		w.WriteHeader(http.StatusInternalServerError)

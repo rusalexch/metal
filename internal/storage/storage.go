@@ -7,7 +7,7 @@ import (
 
 // New конструктор хранилища метрик
 func New(dbURL string, file string, restore bool) *Storage {
-	var stor MetricsStorage
+	var stor metricsStorage
 	if dbURL != "" {
 		stor = db.New(dbURL)
 	} else {
