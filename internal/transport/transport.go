@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/rusalexch/metal/internal/app"
@@ -37,6 +38,27 @@ func (c *Client) SendOne(m app.Metrics) error {
 
 func (c *Client) SendOneJSON(m app.Metrics) error {
 	url := fmt.Sprintf("http://%s/update/", c.addr)
+	body, err := json.Marshal(m)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	res, err := c.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	return nil
+}
+
+func (c *Client) SendListJSON(m []app.Metrics) error {
+	log.Println("send list")
+	url := fmt.Sprintf("http://%s/updates/", c.addr)
 	body, err := json.Marshal(m)
 	if err != nil {
 		return err

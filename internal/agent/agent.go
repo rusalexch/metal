@@ -2,7 +2,6 @@ package agent
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -22,6 +21,7 @@ func New(conf Config) *Agent {
 		metrics:        conf.Metrics,
 		cache:          conf.Cache,
 		transport:      conf.Transport,
+		hash:           conf.Hash,
 	}
 }
 
@@ -66,21 +66,29 @@ func (a *Agent) send() error {
 	}
 	list := a.cache.Get()
 
+	err := a.transport.SendListJSON(list)
+	if err != nil {
+		log.Println("send list json", err)
+	}
+
 	isError := false
 	for _, item := range list {
 		err := a.transport.SendOne(item)
+
 		if err != nil {
 			log.Println(err)
 			isError = true
 		} else {
-			log.Println(fmt.Scanf("metric: %s was sended", item.ID))
+			log.Printf("metric: %s was sended\n", item.ID)
+
 		}
+		a.hash.AddHash(&item)
 		err = a.transport.SendOneJSON(item)
 		if err != nil {
 			log.Println(err)
 			isError = true
 		} else {
-			log.Println(fmt.Scanf("metric as json: %s was sended", item.ID))
+			log.Printf("metric as json: %s was sended\n", item.ID)
 		}
 	}
 	if isError {

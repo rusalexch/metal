@@ -1,13 +1,19 @@
 package handlers
 
 import (
-	"fmt"
+	"context"
+	"log"
 	"net/http"
 )
 
 // ping хендлер для проверки работоспособности
-func ping(w http.ResponseWriter, r *http.Request) {
-	res := "pong"
+func (h *Handlers) ping(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
+	defer cancel()
+	if err := h.storage.Ping(ctx); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 
-	fmt.Fprint(w, res)
+	w.WriteHeader(http.StatusOK)
 }

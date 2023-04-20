@@ -13,4 +13,6 @@ type Metrics struct {
 	Delta *int64 `json:"delta,omitempty"`
 	// Value значение метрики в случае передачи gauge
 	Value *float64 `json:"value,omitempty"`
+	// Hash значение хеш-функции
+	Hash string `json:"hash,omitempty"`
 }

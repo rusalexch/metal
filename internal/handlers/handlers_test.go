@@ -1,21 +1,19 @@
 package handlers
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"github.com/rusalexch/metal/internal/services"
+	"github.com/rusalexch/metal/internal/hash"
 	"github.com/rusalexch/metal/internal/storage"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func testRequest(t *testing.T, ts *httptest.Server, method, path string, body io.Reader) (int, string) {
-	fmt.Println(ts.URL + path)
 	req, err := http.NewRequest(method, ts.URL+path, body)
 	require.NoError(t, err)
 	if body != nil {
@@ -34,14 +32,14 @@ func testRequest(t *testing.T, ts *httptest.Server, method, path string, body io
 }
 
 func TestNew(t *testing.T) {
-	h := New(services.New(storage.New()))
+	h := New(storage.New("", "/tmp/test1", false), hash.New(""))
 	h.Init()
 	ts := httptest.NewServer(h)
 	defer ts.Close()
 
 	statusCode, body := testRequest(t, ts, http.MethodGet, "/ping", nil)
 	assert.Equal(t, http.StatusOK, statusCode)
-	assert.Equal(t, "pong", body)
+	assert.Equal(t, "", body)
 
 	statusCode, body = testRequest(t, ts, http.MethodGet, "/", nil)
 	assert.Equal(t, http.StatusOK, statusCode)

@@ -16,6 +16,8 @@ type Agent struct {
 	cache Cache
 	// client клиент для отправки метрик на сервер
 	transport Transport
+	// hash хеш-пакет
+	hash hasher
 }
 
 // Config конфигурация приложения
@@ -30,4 +32,6 @@ type Config struct {
 	Cache Cache
 	// client клиент для отправки метрик на сервер
 	Transport Transport
+	// Hash  хеш-пакет
+	Hash hasher
 }
