@@ -2,8 +2,6 @@ package agent
 
 import (
 	"time"
-
-	"github.com/rusalexch/metal/internal/hash"
 )
 
 // Agent структура настроек приложения
@@ -19,7 +17,7 @@ type Agent struct {
 	// client клиент для отправки метрик на сервер
 	transport Transport
 	// hash хеш-пакет
-	hash hash.Hasher
+	hash hasher
 }
 
 // Config конфигурация приложения
@@ -35,5 +33,5 @@ type Config struct {
 	// client клиент для отправки метрик на сервер
 	Transport Transport
 	// Hash  хеш-пакет
-	Hash hash.Hasher
+	Hash hasher
 }

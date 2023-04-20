@@ -27,3 +27,9 @@ type Cache interface {
 	// Get метод для получения кэша
 	Get() []app.Metrics
 }
+
+type hasher interface {
+	AddHash(m *app.Metrics)
+	Check(m app.Metrics) bool
+}
+

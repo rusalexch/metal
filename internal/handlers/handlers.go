@@ -6,15 +6,14 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/httplog"
-	"github.com/rusalexch/metal/internal/hash"
 )
 
 // New конструктор Хэндлераов
-func New(stor storager, h hash.Hasher) *Handlers {
+func New(stor storager, h hasher) *Handlers {
 	return &Handlers{
 		storage: stor,
 		hash:    h,
-		timeout: 10 * time.Second,
+		timeout: 100 * time.Second,
 		Mux:     chi.NewMux(),
 	}
 }

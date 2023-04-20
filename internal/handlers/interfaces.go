@@ -14,3 +14,8 @@ type storager interface {
 	Ping(ctx context.Context) error
 	Close()
 }
+
+type hasher interface {
+	AddHash(m *app.Metrics)
+	Check(m app.Metrics) bool
+}
