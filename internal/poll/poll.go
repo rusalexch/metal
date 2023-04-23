@@ -1,4 +1,4 @@
-package metric
+package poll
 
 import (
 	"math/rand"

@@ -1,4 +1,4 @@
-package metric
+package poll
 
 // Metrics структура настроек модуля metrics
 type Metrics struct {
