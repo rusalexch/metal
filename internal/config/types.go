@@ -7,6 +7,7 @@ type AgentConfig struct {
 	ReportInterval time.Duration `env:"REPORT_INTERVAL"`
 	PoolInterval   time.Duration `env:"POLL_INTERVAL"`
 	HashKey        string        `env:"KEY"`
+	RateLimit      int           `env:"RATE_LIMIT"`
 }
 
 type ServerConfig struct {

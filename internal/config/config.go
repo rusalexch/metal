@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -16,6 +17,7 @@ var (
 	restore        *string
 	key            *string
 	dbURL          *string
+	rateLimit      int
 )
 
 func init() {
@@ -39,6 +41,13 @@ func init() {
 	storeFile = flag.String("f", defaultStoreFile, "store file")
 	key = flag.String("k", defaultKey, "hash secret key")
 	dbURL = flag.String("d", "", "database url string")
+	flag.Func("l", "rate limit", func(i string) (err error) {
+		rateLimit, err = strconv.Atoi(i)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 func NewAgentConfig() AgentConfig {
@@ -51,19 +60,20 @@ func NewAgentConfig() AgentConfig {
 		return nil
 	})
 	flag.Parse()
-	checkENV()
+	parseENV()
 	return AgentConfig{
 		Addr:           *addr,
 		ReportInterval: reportInterval,
 		PoolInterval:   pollInterval,
 		HashKey:        *key,
+		RateLimit:      rateLimit,
 	}
 }
 
 func NewServerConfig() ServerConfig {
 	restore = flag.String("r", defaultRestore, "is restore from file")
 	flag.Parse()
-	checkENV()
+	parseENV()
 	return ServerConfig{
 		Addr:          *addr,
 		StoreInterval: storeInterval,
@@ -74,7 +84,7 @@ func NewServerConfig() ServerConfig {
 	}
 }
 
-func checkENV() {
+func parseENV() {
 	if addrEnv, isSet := os.LookupEnv("ADDRESS"); isSet {
 		addr = &addrEnv
 	}
@@ -110,5 +120,12 @@ func checkENV() {
 	}
 	if dbURLEnv, isSet := os.LookupEnv("DATABASE_DSN"); isSet {
 		dbURL = &dbURLEnv
+	}
+	if rateLimitEnv, isSet := os.LookupEnv("RATE_LIMIT"); isSet {
+		limit, err := strconv.Atoi(rateLimitEnv)
+		if err != nil {
+			log.Fatal(err)
+		}
+		rateLimit = limit
 	}
 }
