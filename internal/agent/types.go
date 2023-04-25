@@ -11,7 +11,7 @@ type Agent struct {
 	// reportInterval частота отправки метрик на сервер
 	reportInterval time.Duration
 	// metrics пакет сбора метрик
-	metrics Metrics
+	metrics Scaner
 	// cache пакет сохранения метрик в памяти
 	cache Cache
 	// client клиент для отправки метрик на сервер
@@ -27,7 +27,7 @@ type Config struct {
 	// reportInterval частота отправки метрик на сервер
 	ReportInterval time.Duration
 	// metrics пакет сбора метрик
-	Metrics Metrics
+	Metrics Scaner
 	// cache пакет сохранения метрик в памяти
 	Cache Cache
 	// client клиент для отправки метрик на сервер

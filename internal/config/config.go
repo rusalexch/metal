@@ -23,7 +23,7 @@ var (
 func init() {
 	addr = flag.String("a", defaultAddr, "set address")
 	pollInterval = defaultPoolInterval
-	flag.Func("p", "poool interval", func(s string) (err error) {
+	flag.Func("p", "poll interval", func(s string) (err error) {
 		reportInterval, err = time.ParseDuration(s)
 		if err != nil {
 			return err
@@ -41,6 +41,7 @@ func init() {
 	storeFile = flag.String("f", defaultStoreFile, "store file")
 	key = flag.String("k", defaultKey, "hash secret key")
 	dbURL = flag.String("d", "", "database url string")
+	rateLimit = defaultRateLimit
 	flag.Func("l", "rate limit", func(i string) (err error) {
 		rateLimit, err = strconv.Atoi(i)
 		if err != nil {

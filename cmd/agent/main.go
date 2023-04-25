@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/rusalexch/metal/internal/agent"
 	"github.com/rusalexch/metal/internal/cache"
 	"github.com/rusalexch/metal/internal/config"
@@ -16,7 +14,7 @@ func main() {
 
 	m := poll.New()
 	c := cache.New()
-	t := transport.New(env.Addr)
+	t := transport.New(env.Addr, env.RateLimit)
 	h := hash.New(env.HashKey)
 
 	conf := agent.Config{
@@ -30,8 +28,5 @@ func main() {
 
 	a := agent.New(conf)
 
-	err := a.Start()
-	if err != nil {
-		log.Fatal(err)
-	}
+	a.Start()
 }

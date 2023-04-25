@@ -1,8 +1,10 @@
 package poll
 
 import (
+	"context"
 	"math/rand"
 	"runtime"
+	"time"
 
 	"github.com/rusalexch/metal/internal/app"
 )
@@ -10,6 +12,25 @@ import (
 // New создание модуля сбора метрик
 func New() *Metrics {
 	return &Metrics{}
+}
+
+func (m *Metrics) ScanChan(ctx context.Context, ticker *time.Ticker, metricCh chan<- app.Metrics) {
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				m.scanToChan(metricCh)
+			}
+		}
+	}()
+}
+
+func (m *Metrics) scanToChan(metricCh chan<- app.Metrics) {
+	for _, v := range m.Scan() {
+		metricCh <- v
+	}
 }
 
 // Scan сканирование метрики

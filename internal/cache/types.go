@@ -1,9 +1,14 @@
 package cache
 
-import "github.com/rusalexch/metal/internal/app"
+import (
+	"sync"
+
+	"github.com/rusalexch/metal/internal/app"
+)
 
 // Cache структура кэша
 type Cache struct {
 	// слайс для хранения кэша
-	m []app.Metrics
+	m  map[string]app.Metrics
+	mx sync.Mutex
 }

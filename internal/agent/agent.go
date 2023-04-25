@@ -1,8 +1,7 @@
 package agent
 
 import (
-	"errors"
-	"log"
+	"context"
 	"time"
 
 	"github.com/rusalexch/metal/internal/app"
@@ -26,73 +25,19 @@ func New(conf Config) *Agent {
 }
 
 // Start метод запуска клиента сбора и отправки метрик на сервер
-func (a *Agent) Start() error {
+func (a *Agent) Start() {
 	pollTicker := time.NewTicker(a.pollInterval)
 	defer pollTicker.Stop()
 	reportTicker := time.NewTicker(a.reportInterval)
 	defer reportTicker.Stop()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	pollChan := make(chan app.Metrics)
+	defer close(pollChan)
+	reqChan := make(chan []app.Metrics)
+	defer close(reqChan)
 
-	for {
-		select {
-		case <-pollTicker.C:
-			{
-				a.scanAndSave()
-			}
-		case <-reportTicker.C:
-			{
-				err := a.send()
-				if err != nil {
-					log.Println(err)
-				}
-				a.cache.Reset()
-			}
-		}
-	}
-}
-
-func (a *Agent) scanAndSave() {
-	m := a.metrics.Scan()
-
-	a.save(m)
-}
-
-func (a *Agent) save(m []app.Metrics) {
-	a.cache.Add(m)
-}
-
-func (a *Agent) send() error {
-	if a.transport == nil {
-		return errors.New(TransportNotProvided)
-	}
-	list := a.cache.Get()
-
-	err := a.transport.SendListJSON(list)
-	if err != nil {
-		log.Println("send list json", err)
-	}
-
-	isError := false
-	for _, item := range list {
-		err := a.transport.SendOne(item)
-
-		if err != nil {
-			log.Println(err)
-			isError = true
-		} else {
-			log.Printf("metric: %s was sended\n", item.ID)
-
-		}
-		a.hash.AddHash(&item)
-		err = a.transport.SendOneJSON(item)
-		if err != nil {
-			log.Println(err)
-			isError = true
-		} else {
-			log.Printf("metric as json: %s was sended\n", item.ID)
-		}
-	}
-	if isError {
-		return errors.New(NotAllMetricsSent)
-	}
-	return nil
+	a.metrics.ScanChan(ctx, pollTicker, pollChan)
+	a.cache.Start(ctx, pollChan, reqChan, *reportTicker)
+	a.transport.Start(ctx, reqChan)
 }
