@@ -4,16 +4,9 @@ import (
 	"testing"
 
 	"github.com/rusalexch/metal/internal/app"
+	"github.com/rusalexch/metal/internal/utils"
 	"github.com/stretchr/testify/assert"
 )
-
-func int64AsPointer(v int64) *int64 {
-	return &v
-}
-
-func float64AsPointer(v float64) *float64 {
-	return &v
-}
 
 func TestNew(t *testing.T) {
 	tests := []struct {
@@ -22,7 +15,9 @@ func TestNew(t *testing.T) {
 	}{
 		{
 			name: "should be created",
-			want: &Cache{},
+			want: &Cache{
+				m: map[string]app.Metrics{},
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -33,39 +28,14 @@ func TestNew(t *testing.T) {
 	}
 }
 
-func TestCache_Add(t *testing.T) {
-	type want struct {
-		m1 []app.Metrics
-		m2 []app.Metrics
-	}
+func TestCache_add(t *testing.T) {
 	type args struct {
-		firstAdd  []app.Metrics
-		secondAdd []app.Metrics
+		m app.Metrics
 	}
-
-	metricsFirst := []app.Metrics{
-		{
-			Type:  app.Counter,
-			Delta: int64AsPointer(64),
-			ID:    "testCounter1",
-		},
-		{
-			Type:  app.Gauge,
-			Value: float64AsPointer(1.23),
-			ID:    "testGuage1",
-		},
-		{
-			Type:  app.Gauge,
-			Value: float64AsPointer(-1.000001),
-			ID:    "testGuage2",
-		},
-	}
-	metricsSecond := []app.Metrics{
-		{
-			Type:  app.Counter,
-			Delta: int64AsPointer(1230),
-			ID:    "testCounter5",
-		},
+	type want struct {
+		id    string
+		delta int64
+		value float64
 	}
 	tests := []struct {
 		name string
@@ -73,135 +43,84 @@ func TestCache_Add(t *testing.T) {
 		want want
 	}{
 		{
-			name: "added three metrics",
+			name: "add counter",
 			args: args{
-				firstAdd:  metricsFirst,
-				secondAdd: metricsSecond,
+				m: app.Metrics{
+					ID:    "testCounter1",
+					Type:  app.Counter,
+					Delta: utils.Int64AsPointer(12),
+				},
 			},
 			want: want{
-				m1: metricsFirst,
-				m2: append(metricsFirst, metricsSecond...),
+				id:    "testCounter1",
+				delta: 12,
+			},
+		},
+		{
+			name: "add gauge",
+			args: args{
+				m: app.Metrics{
+					ID:    "testGauge1",
+					Type:  app.Gauge,
+					Value: utils.Float64AsPointer(0.00001),
+				},
+			},
+			want: want{
+				id:    "testGauge1",
+				value: 0.00001,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
-			c.Reset()
-			c.Add(tt.args.firstAdd)
-
-			assert.Equal(t, tt.want.m1, c.m)
-
-			c.Add(tt.args.secondAdd)
-			assert.Equal(t, tt.want.m2, c.m)
+			c.add(tt.args.m)
+			got, ok := c.m[tt.want.id]
+			assert.Equal(t, true, ok)
+			if tt.args.m.Type == app.Counter {
+				assert.Equal(t, tt.want.delta, *got.Delta)
+			} else if tt.args.m.Type == app.Gauge {
+				assert.Equal(t, tt.want.value, *got.Value)
+			}
 		})
 	}
 }
 
-func TestCache_Reset(t *testing.T) {
-	type want struct {
+func TestCache_get(t *testing.T) {
+	type args struct {
 		m []app.Metrics
 	}
-	metrics := []app.Metrics{
-		{
-			Type:  app.Counter,
-			Delta: int64AsPointer(123),
-			ID:    "testCounter1",
-		},
-		{
-			Type:  app.Gauge,
-			Value: float64AsPointer(1.23),
-			ID:    "testGuage1",
-		},
-		{
-			Type:  app.Gauge,
-			Value: float64AsPointer(-1.000001),
-			ID:    "testGuage2",
-		},
+	mCounter := app.Metrics{
+		ID:    "TestCounter1",
+		Type:  app.Counter,
+		Delta: utils.Int64AsPointer(15),
 	}
-
+	mGauge := app.Metrics{
+		ID:    "TestGauge1",
+		Type:  app.Gauge,
+		Value: utils.Float64AsPointer(0.001),
+	}
 	tests := []struct {
-		name   string
-		fields []app.Metrics
-		want   want
+		name string
+		args args
+		want []app.Metrics
 	}{
 		{
-			name:   "reset when empty",
-			fields: []app.Metrics{},
-			want: want{
-				m: []app.Metrics{},
+			name: "get from cache",
+			args: args{
+				m: []app.Metrics{mCounter, mGauge},
 			},
-		},
-		{
-			name:   "reset `when exist",
-			fields: metrics,
-			want: want{
-				m: []app.Metrics{},
-			},
+			want: []app.Metrics{mCounter, mGauge},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := New()
-			if len(tt.fields) != 0 {
-				c.Add(tt.fields)
+			for _, m := range tt.args.m {
+				c.add(m)
 			}
-			c.Reset()
-			assert.Equal(t, tt.want.m, c.m)
-		})
-	}
-}
-
-func TestCache_Get(t *testing.T) {
-	type want struct {
-		m []app.Metrics
-	}
-	metrics := []app.Metrics{
-		{
-			Type:  app.Counter,
-			Delta: int64AsPointer(123),
-			ID:    "testCounter1",
-		},
-		{
-			Type:  app.Gauge,
-			Value: float64AsPointer(1.23),
-			ID:    "testGuage1",
-		},
-		{
-			Type:  app.Gauge,
-			Value: float64AsPointer(-1.000001),
-			ID:    "testGuage2",
-		},
-	}
-	tests := []struct {
-		name   string
-		fields []app.Metrics
-		want   want
-	}{
-		{
-			name:   "get empty cache",
-			fields: []app.Metrics{},
-			want: want{
-				m: []app.Metrics{},
-			},
-		},
-		{
-			name:   "get values from cache",
-			fields: metrics,
-			want: want{
-				m: metrics,
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := New()
-			c.Reset()
-			if len(tt.fields) != 0 {
-				c.Add(tt.fields)
-			}
-			got := c.Get()
-			assert.Equal(t, tt.want.m, got)
+			got := c.get()
+			assert.EqualValues(t, tt.want, got)
 		})
 	}
 }
