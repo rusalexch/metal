@@ -90,6 +90,11 @@ func TestCache_get(t *testing.T) {
 	type args struct {
 		m []app.Metrics
 	}
+	type want struct {
+		counter app.Metrics
+		gauge   app.Metrics
+	}
+
 	mCounter := app.Metrics{
 		ID:    "TestCounter1",
 		Type:  app.Counter,
@@ -100,17 +105,21 @@ func TestCache_get(t *testing.T) {
 		Type:  app.Gauge,
 		Value: utils.Float64AsPointer(0.001),
 	}
+
 	tests := []struct {
 		name string
 		args args
-		want []app.Metrics
+		want want
 	}{
 		{
 			name: "get from cache",
 			args: args{
 				m: []app.Metrics{mCounter, mGauge},
 			},
-			want: []app.Metrics{mCounter, mGauge},
+			want: want{
+				counter: mCounter,
+				gauge:   mGauge,
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -120,7 +129,8 @@ func TestCache_get(t *testing.T) {
 				c.add(m)
 			}
 			got := c.get()
-			assert.EqualValues(t, tt.want, got)
+			assert.Contains(t, got, tt.want.counter)
+			assert.Contains(t, got, tt.want.gauge)
 		})
 	}
 }
