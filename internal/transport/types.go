@@ -15,7 +15,7 @@ type Client struct {
 	client *http.Client
 
 	chOne     chan app.Metrics
-	chJsonOne chan app.Metrics
+	chJSONOne chan app.Metrics
 	chList    chan []app.Metrics
 	chReq     chan reqParam
 	cntReq    int

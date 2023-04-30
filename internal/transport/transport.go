@@ -20,7 +20,7 @@ func New(addr string, rateLimit int) *Client {
 		addr:      addr,
 		client:    client,
 		chOne:     make(chan app.Metrics),
-		chJsonOne: make(chan app.Metrics),
+		chJSONOne: make(chan app.Metrics),
 		chList:    make(chan []app.Metrics),
 		chReq:     make(chan reqParam),
 		cntReq:    rateLimit,
@@ -43,7 +43,7 @@ func (c *Client) Start(ctx context.Context, ch <-chan []app.Metrics) {
 
 func (c *Client) close() {
 	close(c.chOne)
-	close(c.chJsonOne)
+	close(c.chJSONOne)
 	close(c.chList)
 	close(c.chReq)
 }
@@ -58,8 +58,8 @@ func (c *Client) dmx(m []app.Metrics) {
 	}()
 	go func() {
 		for _, v := range m {
-			if c.chJsonOne != nil {
-				c.chJsonOne <- v
+			if c.chJSONOne != nil {
+				c.chJSONOne <- v
 			}
 		}
 	}()
@@ -72,7 +72,7 @@ func (c *Client) dmx(m []app.Metrics) {
 
 func (c *Client) init() {
 	c.initSendOne()
-	c.initSendJsonOne()
+	c.initSendJSONOne()
 	c.initSendList()
 	for i := 0; i < c.cntReq; i++ {
 		go func() {
@@ -124,18 +124,18 @@ func (c *Client) sendOneParam(m app.Metrics) reqParam {
 	return reqParam{url: url, body: nil}
 }
 
-func (c *Client) initSendJsonOne() {
-	if c.chJsonOne == nil {
+func (c *Client) initSendJSONOne() {
+	if c.chJSONOne == nil {
 		return
 	}
 	go func() {
-		for m := range c.chJsonOne {
-			c.chReq <- c.sendJsonOneParam(m)
+		for m := range c.chJSONOne {
+			c.chReq <- c.sendJSONOneParam(m)
 		}
 	}()
 }
 
-func (c *Client) sendJsonOneParam(m app.Metrics) reqParam {
+func (c *Client) sendJSONOneParam(m app.Metrics) reqParam {
 	url := fmt.Sprintf("http://%s/update/", c.addr)
 	body, err := json.Marshal(m)
 	if err != nil {
