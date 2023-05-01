@@ -12,7 +12,7 @@ import (
 func main() {
 	env := config.NewAgentConfig()
 
-	m := poll.New()
+	p := poll.New()
 	c := cache.New()
 	t := transport.New(env.Addr, env.RateLimit)
 	h := hash.New(env.HashKey)
@@ -20,7 +20,7 @@ func main() {
 	conf := agent.Config{
 		PollInterval:   env.PoolInterval,
 		ReportInterval: env.ReportInterval,
-		Metrics:        m,
+		Poll:           p,
 		Cache:          c,
 		Transport:      t,
 		Hash:           h,

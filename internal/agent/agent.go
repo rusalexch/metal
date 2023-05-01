@@ -17,7 +17,7 @@ func New(conf Config) *Agent {
 	return &Agent{
 		pollInterval:   conf.PollInterval,
 		reportInterval: conf.ReportInterval,
-		metrics:        conf.Metrics,
+		poll:           conf.Poll,
 		cache:          conf.Cache,
 		transport:      conf.Transport,
 		hash:           conf.Hash,
@@ -37,7 +37,7 @@ func (a *Agent) Start() {
 	reqChan := make(chan []app.Metrics)
 	defer close(reqChan)
 
-	a.metrics.ScanChan(ctx, pollTicker, pollChan)
+	a.poll.ScanChan(ctx, pollTicker, pollChan)
 	a.cache.Start(ctx, pollChan, reqChan, *reportTicker)
 	a.transport.Start(ctx, reqChan)
 }
