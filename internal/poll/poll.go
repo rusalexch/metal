@@ -31,18 +31,20 @@ func New() *poll {
 
 func (p *poll) ScanChan(ctx context.Context, ticker *time.Ticker, metricCh chan<- app.Metrics) {
 	go func() {
-		rtCtx, rtCancel := context.WithCancel(ctx)
-		guCtx, guCancel := context.WithCancel(ctx)
+		rtCtx, rtCancel := context.WithCancel(context.Background())
+		guCtx, guCancel := context.WithCancel(context.Background())
+		p.rt.ScanToChan(rtCtx, metricCh)
+		p.gu.ScanToChan(guCtx, metricCh)
 		for {
 			select {
 			case <-ctx.Done():
-				p.close()
 				rtCancel()
 				guCancel()
+				p.close()
 				return
 			case <-ticker.C:
-				p.rt.ScanToChan(rtCtx, metricCh)
-				p.gu.ScanToChan(guCtx, metricCh)
+				p.rtTrigger <- struct{}{}
+				p.guTrigger <- struct{}{}
 			}
 		}
 	}()
