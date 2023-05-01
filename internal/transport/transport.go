@@ -93,11 +93,10 @@ func (c *Client) makeRequest(param reqParam) {
 	} else {
 		req.Header.Add("Content-Type", "application/json")
 	}
-	res, err := c.client.Do(req)
+	_, err = c.client.Do(req)
 	if err != nil {
 		log.Println(err)
 	}
-	defer res.Body.Close()
 }
 
 func (c *Client) initSendOne() {
