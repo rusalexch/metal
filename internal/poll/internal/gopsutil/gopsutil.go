@@ -39,11 +39,16 @@ func (g *gopsutil) scanToChan(metricCh chan<- app.Metrics) {
 
 func (g *gopsutil) Scan() []app.Metrics {
 	m, _ := mem.VirtualMemory()
-	c, _ := cpu.Counts(true)
+	c, _ := cpu.Percent(0, false)
+	var util float64
+	for _, u := range c {
+		util += u
+	}
+	util = util / float64(len(c))
 
 	return []app.Metrics{
 		app.AsGauge(float64(m.Total), "TotalMemory"),
 		app.AsGauge(float64(m.Free), "FreeMemory"),
-		app.AsGauge(float64(c), "CPUutilization1"),
+		app.AsGauge(float64(util), "CPUutilization1"),
 	}
 }
