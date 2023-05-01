@@ -96,21 +96,13 @@ func (fs *fileStorage) Get(ctx context.Context, name string, mType app.MetricTyp
 	if mType == app.Counter {
 		m, isExist := st.Counters[name]
 		if isExist {
-			return app.Metrics{
-				ID:    name,
-				Type:  mType,
-				Delta: &m,
-			}, nil
+			return app.AsCounter(m, name), nil
 		}
 	}
 	if mType == app.Gauge {
 		m, isExist := st.Gauges[name]
 		if isExist {
-			return app.Metrics{
-				ID:    name,
-				Type:  mType,
-				Value: &m,
-			}, nil
+			return app.AsGauge(m, name), nil
 		}
 	}
 
@@ -205,19 +197,11 @@ func storeToMetric(st store) []app.Metrics {
 	m := make([]app.Metrics, 0, len(st.Counters)+len(st.Gauges))
 	for name, delta := range st.Counters {
 		d := delta
-		m = append(m, app.Metrics{
-			ID:    name,
-			Type:  app.Counter,
-			Delta: &d,
-		})
+		m = append(m, app.AsCounter(d, name))
 	}
 	for name, value := range st.Gauges {
 		v := value
-		m = append(m, app.Metrics{
-			ID:    name,
-			Type:  app.Gauge,
-			Value: &v,
-		})
+		m = append(m, app.AsGauge(v, name))
 	}
 
 	return m

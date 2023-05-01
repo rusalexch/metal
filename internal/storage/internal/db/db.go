@@ -121,11 +121,7 @@ func (db *dbStorage) Get(ctx context.Context, name string, mType app.MetricType)
 				}
 				return app.Metrics{}, err
 			}
-			return app.Metrics{
-				ID:    counter.ID,
-				Type:  app.Counter,
-				Delta: &counter.Delta,
-			}, nil
+			return app.AsCounter(counter.Delta, counter.ID), nil
 		}
 	case app.Gauge:
 		{
@@ -136,11 +132,7 @@ func (db *dbStorage) Get(ctx context.Context, name string, mType app.MetricType)
 				}
 				return app.Metrics{}, err
 			}
-			return app.Metrics{
-				ID:    gauge.ID,
-				Type:  app.Gauge,
-				Value: &gauge.Value,
-			}, nil
+			return app.AsGauge(gauge.Value, gauge.ID), nil
 		}
 	default:
 		return app.Metrics{}, app.ErrIncorrectType
@@ -161,19 +153,11 @@ func (db *dbStorage) List(ctx context.Context) ([]app.Metrics, error) {
 	}
 	metrics := make([]app.Metrics, 0, len(counters)+len(gauges))
 	for _, c := range counters {
-		m := app.Metrics{
-			ID:    c.ID,
-			Type:  app.Counter,
-			Delta: &c.Delta,
-		}
+		m := app.AsCounter(c.Delta, c.ID)
 		metrics = append(metrics, m)
 	}
 	for _, g := range gauges {
-		m := app.Metrics{
-			ID:    g.ID,
-			Type:  app.Gauge,
-			Value: &g.Value,
-		}
+		m := app.AsGauge(g.Value, g.ID)
 		metrics = append(metrics, m)
 	}
 
