@@ -1,35 +1,30 @@
 package agent
 
-import "github.com/rusalexch/metal/internal/app"
+import (
+	"context"
+	"time"
 
-// Metrics интерфейс для сканера метрик
-type Metrics interface {
+	"github.com/rusalexch/metal/internal/app"
+)
+
+// Scaner интерфейс для сканера метрик
+type Scaner interface {
 	// Scan метод для сканирования метрик
 	Scan() []app.Metrics
+	ScanChan(ctx context.Context, ticker *time.Ticker, metricCh chan<- app.Metrics)
 }
 
 // Transport интерфейс клиента для отправки метрик на сервер
 type Transport interface {
-	// SendOne метод для отправки одной метрики
-	SendOne(m app.Metrics) error
-	// SendOneJSON метод для отправки одной метрики JSON
-	SendOneJSON(m app.Metrics) error
-	// SendOneJSON метод для отправки одной метрики JSON
-	SendListJSON(m []app.Metrics) error
+	Start(ctx context.Context, ch <-chan []app.Metrics)
 }
 
 // Cache интерфейс кэша для хранения метрик
 type Cache interface {
-	// Add метод для добавления метрики в кэш
-	Add(m []app.Metrics)
-	// Reset метод для очистки кэша
-	Reset()
-	// Get метод для получения кэша
-	Get() []app.Metrics
+	Start(ctx context.Context, chIn <-chan app.Metrics, chOut chan<- []app.Metrics, t time.Ticker)
 }
 
 type hasher interface {
 	AddHash(m *app.Metrics)
 	Check(m app.Metrics) bool
 }
-

@@ -10,4 +10,5 @@ const (
 	defaultStoreInterval  = time.Second * 300
 	defaultStoreFile      = "/tmp/devops-metrics-db.json"
 	defaultKey            = ""
+	defaultRateLimit      = 1
 )
