@@ -13,7 +13,7 @@ func New(stor storager, h hasher) *Handlers {
 	return &Handlers{
 		storage: stor,
 		hash:    h,
-		timeout: 100 * time.Second,
+		timeout: 10 * time.Second,
 		Mux:     chi.NewMux(),
 	}
 }
@@ -27,6 +27,7 @@ func (h *Handlers) Init() {
 	h.Use(middleware.RequestID)
 	h.Use(middleware.RealIP)
 	h.Use(httplog.RequestLogger(logger))
+	h.Use(middleware.Timeout(h.timeout))
 	h.Use(compressMiddleware)
 	h.Use(decompressMiddleware)
 	h.Use(middleware.Recoverer)

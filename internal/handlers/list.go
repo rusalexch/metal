@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"text/template"
-	"time"
 
 	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/utils"
@@ -22,8 +20,7 @@ type res struct {
 }
 
 func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	ctx := r.Context()
 
 	metrics, err := h.storage.List(ctx)
 	if err != nil {
