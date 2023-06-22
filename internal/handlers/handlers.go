@@ -3,8 +3,8 @@ package handlers
 import (
 	"time"
 
-	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog"
 )
 
@@ -38,4 +38,5 @@ func (h *Handlers) Init() {
 	h.Post("/update/", h.updateJSON)
 	h.Post("/value/", h.valueJSON)
 	h.Post("/updates/", h.updates)
+	h.Mount("/debug", middleware.Profiler())
 }
