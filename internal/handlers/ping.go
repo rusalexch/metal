@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// ping хендлер для проверки работоспособности
+// ping - хендлер для проверки работоспособности
 func (h *Handlers) ping(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

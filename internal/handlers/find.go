@@ -14,6 +14,7 @@ import (
 	"github.com/rusalexch/metal/internal/utils"
 )
 
+// find - хэндлер поиска метрики по query-параметрам
 func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -40,6 +41,7 @@ func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// valueJSON - Хэндлер поиска метрики в формате JSON
 func (h *Handlers) valueJSON(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

@@ -9,16 +9,23 @@ import (
 	"github.com/rusalexch/metal/internal/utils"
 )
 
-type item struct {
-	Name  string
+// Структура метрики для шаблона html
+type metric struct {
+	// Name - наименование метрики
+	Name string
+	// Value - значение метрики
 	Value string
 }
 
-type res struct {
+// data - структура данных для шаблона html
+type data struct {
+	// Title - заголовок страницы
 	Title string
-	Items []item
+	// Metrics - список метрик
+	Metrics []metric
 }
 
+// list - хэндлер вывода списка метрик
 func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -29,20 +36,20 @@ func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := res{
+	res := data{
 		Title: "Метрики",
-		Items: make([]item, 0, len(metrics)),
+		Metrics: make([]metric, 0, len(metrics)),
 	}
 
 	for _, v := range metrics {
 		switch v.Type {
 		case app.Counter:
-			res.Items = append(res.Items, item{
+			res.Metrics = append(res.Metrics, metric{
 				Name:  v.ID,
 				Value: utils.Int64ToStr(*v.Delta),
 			})
 		case app.Gauge:
-			res.Items = append(res.Items, item{
+			res.Metrics = append(res.Metrics, metric{
 				Name:  v.ID,
 				Value: utils.Float64ToStr(*v.Value),
 			})
@@ -68,7 +75,7 @@ var tmpl = `<!DOCTYPE html>
 	</head>
 	<body>
 		<ul>
-			{{range .Items}}<li><b>{{ .Name }}:</b> {{ .Value }}</li>{{else}}<div><strong>no metrics</strong></div>{{end}}
+			{{range .Metrics}}<li><b>{{ .Name }}:</b> {{ .Value }}</li>{{else}}<div><strong>no metrics</strong></div>{{end}}
 		</ul>
 	</body>
 </html>`

@@ -7,15 +7,18 @@ import (
 	"strings"
 )
 
+// gzipWriter - структура миддлвара сжатия
 type gzipWriter struct {
 	http.ResponseWriter
 	Writer io.Writer
 }
 
+// Write - реализация интерфейса io.Writer
 func (w gzipWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }
 
+// compressMiddleware - middleware сжатия ответа
 func compressMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
@@ -35,6 +38,7 @@ func compressMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// decompressMiddleware - middleware распаковки сжатого запроса
 func decompressMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Content-Encoding") == "gzip" {
