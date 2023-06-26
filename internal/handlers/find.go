@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,13 +9,15 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+
 	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/utils"
 )
 
+// find - хэндлер поиска метрики по query-параметрам.
 func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
-	defer cancel()
+	ctx := r.Context()
+
 	ID := chi.URLParam(r, "ID")
 	mType := chi.URLParam(r, "mType")
 	m, err := h.storage.Get(ctx, ID, mType)
@@ -40,9 +41,10 @@ func (h *Handlers) find(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// valueJSON - Хэндлер поиска метрики в формате JSON.
 func (h *Handlers) valueJSON(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
-	defer cancel()
+	ctx := r.Context()
+
 	var m app.Metrics
 
 	body, err := io.ReadAll(r.Body)

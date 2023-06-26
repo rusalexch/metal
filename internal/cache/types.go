@@ -6,9 +6,9 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
-// Cache структура кэша
+// Cache - структура кэша.
 type Cache struct {
-	// слайс для хранения кэша
-	m  map[string]app.Metrics
-	mx sync.Mutex
+	// слайс для хранения кэша.
+	m map[string]app.Metrics
+	sync.Mutex
 }

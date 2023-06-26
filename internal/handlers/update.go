@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,12 +9,15 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+
 	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/utils"
 )
 
-// update Хэндлер для обновления метрик
+// update Хэндлер для обновления метрик query-параметрами.
 func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	m := app.Metrics{
 		Type: chi.URLParam(r, "mType"),
 		ID:   chi.URLParam(r, "ID"),
@@ -51,9 +53,6 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
-	defer cancel()
-
 	err := h.storage.Add(ctx, m)
 	if err != nil {
 		if errors.Is(err, app.ErrIncorrectType) {
@@ -68,7 +67,10 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// update Хэндлер для обновления метрик JSON-body.
 func (h *Handlers) updateJSON(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	body, err := io.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -96,9 +98,6 @@ func (h *Handlers) updateJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
-	defer cancel()
-
 	h.storage.Add(ctx, m)
 
 	m, _ = h.storage.Get(ctx, m.ID, m.Type)
@@ -113,7 +112,10 @@ func (h *Handlers) updateJSON(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
+// updates - хэндлер обновления метрик списком.
 func (h *Handlers) updates(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	body, err := io.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -135,8 +137,6 @@ func (h *Handlers) updates(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println(m)
-	ctx, cancel := context.WithTimeout(context.Background(), h.timeout)
-	defer cancel()
 
 	err = h.storage.AddList(ctx, m)
 	if err != nil {

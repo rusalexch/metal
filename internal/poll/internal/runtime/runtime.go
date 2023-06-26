@@ -8,18 +8,20 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
+// runtime - структура модуля сбора метрик runtime
 type runtime struct {
 	cnt     int64
 	trigger <-chan interface{}
 }
 
+// New - конструктор модуля метрик runtime
 func New(trigger <-chan interface{}) *runtime {
 	return &runtime{
 		trigger: trigger,
 	}
 }
 
-// ScanToChan Сканирование в канал
+// ScanToChan - метод сканирование метрик runtime в канал
 func (r *runtime) ScanToChan(ctx context.Context, metricCh chan<- app.Metrics) {
 	go func() {
 		for {
@@ -33,13 +35,14 @@ func (r *runtime) ScanToChan(ctx context.Context, metricCh chan<- app.Metrics) {
 	}()
 }
 
+// ScanToChan - сканирование метрик runtime в канал
 func (r *runtime) scanToChan(metricCh chan<- app.Metrics) {
 	for _, v := range r.Scan() {
 		metricCh <- v
 	}
 }
 
-// Scan сканирование метрики
+// Scan - метод сканирование метрики runtime
 func (r *runtime) Scan() []app.Metrics {
 	rm := rt.MemStats{}
 	rt.ReadMemStats(&rm)
@@ -80,7 +83,7 @@ func (r *runtime) Scan() []app.Metrics {
 	return res
 }
 
-// randomValue получение случайного значения float64 в диапазоне от -100 до 100
+// randomValue - получение случайного значения float64 в диапазоне от -100 до 100
 func randomValue() float64 {
 	var min float64 = -100
 	var max float64 = 100

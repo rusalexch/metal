@@ -12,11 +12,13 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
+// fileStorage - структура модуля файлового хранилища.
 type fileStorage struct {
 	file *os.File
 	sync.Mutex
 }
 
+// New - конструктор модуля файлового хранилища.
 func New(file string, restore bool) *fileStorage {
 	flag := os.O_RDWR | os.O_CREATE
 	if !restore {
@@ -35,6 +37,7 @@ func New(file string, restore bool) *fileStorage {
 	return fs
 }
 
+// Add - метод добавления/обновления новой метрики.
 func (fs *fileStorage) Add(ctx context.Context, m app.Metrics) error {
 	_, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -59,6 +62,7 @@ func (fs *fileStorage) Add(ctx context.Context, m app.Metrics) error {
 	return nil
 }
 
+// AddList - метод добавления/обновления списка метрик.
 func (fs *fileStorage) AddList(ctx context.Context, m []app.Metrics) error {
 	_, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -80,7 +84,7 @@ func (fs *fileStorage) AddList(ctx context.Context, m []app.Metrics) error {
 	return nil
 }
 
-// Get получение метрики с именем name и типом mType
+// Get - получение метрики с именем name и типом mType.
 func (fs *fileStorage) Get(ctx context.Context, name string, mType app.MetricType) (app.Metrics, error) {
 	_, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -109,7 +113,7 @@ func (fs *fileStorage) Get(ctx context.Context, name string, mType app.MetricTyp
 	return app.Metrics{}, app.ErrNotFound
 }
 
-// List получения всего списка метрик
+// List - получения всего списка метрик.
 func (fs *fileStorage) List(ctx context.Context) ([]app.Metrics, error) {
 	_, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -123,18 +127,19 @@ func (fs *fileStorage) List(ctx context.Context) ([]app.Metrics, error) {
 	return storeToMetric(st), nil
 }
 
-// Ping заглушка
+// Ping - заглушка.
 func (fs *fileStorage) Ping(ctx context.Context) error {
 	_, cancel := context.WithCancel(ctx)
 	defer cancel()
 	return nil
 }
 
-// Close закрыть файл хранилища
+// Close - закрыть файл хранилища.
 func (fs *fileStorage) Close() {
 	fs.file.Close()
 }
 
+// init - инициализация работы файлового хранилища.
 func (fs *fileStorage) init() {
 	b, _ := io.ReadAll(fs.file)
 	if len(b) == 0 {
@@ -142,7 +147,7 @@ func (fs *fileStorage) init() {
 	}
 }
 
-// save сохранить метрики в файл
+// save - сохранение метрик файл.
 func (fs *fileStorage) save(s store) error {
 	fs.clear()
 	data, err := json.Marshal(s)
@@ -158,7 +163,7 @@ func (fs *fileStorage) save(s store) error {
 	return nil
 }
 
-// upload выгрузить метрики из файла
+// upload - получение метрик из файла.
 func (fs *fileStorage) upload() (store, error) {
 	var st store
 	fs.seekStart()
@@ -181,18 +186,18 @@ func (fs *fileStorage) upload() (store, error) {
 	return st, nil
 }
 
-// clear очистить файл
+// clear - очистить файл.
 func (fs *fileStorage) clear() {
 	fs.seekStart()
 	fs.file.Truncate(0)
 }
 
-// seekStart возврат указателя в начало файла
+// seekStart - возврат указателя в начало файла.
 func (fs *fileStorage) seekStart() {
 	fs.file.Seek(0, io.SeekStart)
 }
 
-// storeToMetric преобразование слайса метрик в структуру файла
+// storeToMetric - преобразование слайса метрик в структуру файла.
 func storeToMetric(st store) []app.Metrics {
 	m := make([]app.Metrics, 0, len(st.Counters)+len(st.Gauges))
 	for name, delta := range st.Counters {
@@ -207,7 +212,7 @@ func storeToMetric(st store) []app.Metrics {
 	return m
 }
 
-// emptyStore генерация пустой структуры для файла
+// emptyStore - генерация пустой структуры для файла.
 func emptyStore() store {
 	return store{
 		Counters: map[string]int64{},

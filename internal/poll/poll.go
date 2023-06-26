@@ -9,15 +9,19 @@ import (
 	"github.com/rusalexch/metal/internal/poll/internal/runtime"
 )
 
-// poll структура настроек модуля metrics
+// poll - структура настроек модуля metrics.
 type poll struct {
-	rt        poller
+	// rt - модуль сбора метрик runtime.
+	rt poller
+	// rtTrigger - триггер сбора метрик runtime.
 	rtTrigger chan interface{}
-	gu        poller
+	// gu - модуль сбора метрик gopsutil.
+	gu poller
+	// guTrigger - триггер сбора метрик gopsutil.
 	guTrigger chan interface{}
 }
 
-// New создание модуля сбора метрик
+// New - конструктор модуля сбора метрик.
 func New() *poll {
 	rtTrigger := make(chan interface{})
 	guTrigger := make(chan interface{})
@@ -29,6 +33,7 @@ func New() *poll {
 	}
 }
 
+// ScanChan - метод сканирования метрик в каналы.
 func (p *poll) ScanChan(ctx context.Context, ticker *time.Ticker, metricCh chan<- app.Metrics) {
 	go func() {
 		rtCtx, rtCancel := context.WithCancel(context.Background())
@@ -50,6 +55,7 @@ func (p *poll) ScanChan(ctx context.Context, ticker *time.Ticker, metricCh chan<
 	}()
 }
 
+// close - метод закрытия модуля сбора метрик.
 func (p *poll) close() {
 	if p.rtTrigger != nil {
 		close(p.rtTrigger)
@@ -59,6 +65,7 @@ func (p *poll) close() {
 	}
 }
 
+// Scan - метод сканирования метрик.
 func (p *poll) Scan() []app.Metrics {
 	rtM := p.rt.Scan()
 	guM := p.gu.Scan()

@@ -4,7 +4,7 @@ func IsMetricType(t MetricType) bool {
 	return t == Counter || t == Gauge
 }
 
-// guage преобразование метрики типа goage
+// AsGauge - получение метрики типа goage.
 func AsGauge(v float64, name string) Metrics {
 	return Metrics{
 		Type:  Gauge,
@@ -13,7 +13,7 @@ func AsGauge(v float64, name string) Metrics {
 	}
 }
 
-// counter преобразование метрики типа counter
+// AsCounter - получение метрики типа counter.
 func AsCounter(v int64, name string) Metrics {
 	return Metrics{
 		Type:  Counter,

@@ -2,8 +2,9 @@ package hash
 
 import "hash"
 
+// Hash - структура хэш-функции.
 type Hash struct {
 	hash.Hash
-	// needHash статус разрешенного хеширования
+	// needHash - флаг задействования хэш-функции.
 	needHash bool
 }

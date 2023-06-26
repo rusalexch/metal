@@ -9,6 +9,7 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
+// New - конструктор хэш-функции.
 func New(key string) *Hash {
 	return &Hash{
 		Hash:     hmac.New(sha256.New, []byte(key)),
@@ -16,6 +17,7 @@ func New(key string) *Hash {
 	}
 }
 
+// AddHash - метода добавления хэша к метрики.
 func (h Hash) AddHash(m *app.Metrics) {
 	if h.needHash {
 		return
@@ -24,6 +26,7 @@ func (h Hash) AddHash(m *app.Metrics) {
 	m.Hash = h.createHash(m)
 }
 
+// Check - метод проверки хэша метрики.
 func (h Hash) Check(m app.Metrics) bool {
 	if h.needHash {
 		return true
@@ -33,6 +36,7 @@ func (h Hash) Check(m app.Metrics) bool {
 	return checkHash == m.Hash
 }
 
+// createHash - метод генерации строки хэша метрики.
 func (h Hash) createHash(m *app.Metrics) string {
 	h.Reset()
 	str := ""

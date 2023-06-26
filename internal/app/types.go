@@ -1,18 +1,18 @@
 package app
 
-// MetricType тип для типа метрики
+// MetricType тип для типа метрики.
 type MetricType = string
 
-// Metrics структура метрики
+// Metrics структура метрики.
 type Metrics struct {
-	// ID наименование метрики
+	// ID наименование метрики.
 	ID string `json:"id"`
-	// Type наименование типа метрики
+	// Type наименование типа метрики.
 	Type MetricType `json:"type"`
-	// Value значение метрики в случае передачи counter
+	// Delta значение метрики типа counter.
 	Delta *int64 `json:"delta,omitempty"`
-	// Value значение метрики в случае передачи gauge
+	// Value значение метрики типа gauge.
 	Value *float64 `json:"value,omitempty"`
-	// Hash значение хеш-функции
+	// Hash значение хеш-функции.
 	Hash string `json:"hash,omitempty"`
 }
