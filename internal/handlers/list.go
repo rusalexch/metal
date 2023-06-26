@@ -9,23 +9,23 @@ import (
 	"github.com/rusalexch/metal/internal/utils"
 )
 
-// Структура метрики для шаблона html
+// Структура метрики для шаблона html.
 type metric struct {
-	// Name - наименование метрики
+	// Name - наименование метрики.
 	Name string
-	// Value - значение метрики
+	// Value - значение метрики.
 	Value string
 }
 
-// data - структура данных для шаблона html
+// data - структура данных для шаблона html.
 type data struct {
-	// Title - заголовок страницы
+	// Title - заголовок страницы.
 	Title string
-	// Metrics - список метрик
+	// Metrics - список метрик.
 	Metrics []metric
 }
 
-// list - хэндлер вывода списка метрик
+// list - хэндлер вывода списка метрик.
 func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -67,6 +67,7 @@ func (h *Handlers) list(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// tmpl - шаблон html для отображения метрик.
 var tmpl = `<!DOCTYPE html>
 <html>
 	<head>

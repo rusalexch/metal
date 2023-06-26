@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/httplog"
 )
 
-// New конструктор Хэндлераов
+// New конструктор Хэндлераов.
 func New(stor storager, h hasher) *Handlers {
 	return &Handlers{
 		storage: stor,
@@ -18,7 +18,7 @@ func New(stor storager, h hasher) *Handlers {
 	}
 }
 
-// Init инициализация Хендлеров
+// Init инициализация Хендлеров.
 func (h *Handlers) Init() {
 	logger := httplog.NewLogger("httplog", httplog.Options{
 		JSON: true,

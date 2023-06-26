@@ -12,7 +12,7 @@ import (
 	"github.com/rusalexch/metal/internal/utils"
 )
 
-// New - конструктор клиента отправки метрик
+// New - конструктор клиента отправки метрик.
 func New(addr string, rateLimit int) *Client {
 	client := &http.Client{}
 
@@ -27,7 +27,7 @@ func New(addr string, rateLimit int) *Client {
 	}
 }
 
-// Start - запуск клиента отправки метрик
+// Start - запуск клиента отправки метрик.
 func (c *Client) Start(ctx context.Context, ch <-chan []app.Metrics) {
 	c.init()
 
@@ -42,7 +42,7 @@ func (c *Client) Start(ctx context.Context, ch <-chan []app.Metrics) {
 	}
 }
 
-// close - закрытие клиента отправки метрик
+// close - закрытие клиента отправки метрик.
 func (c *Client) close() {
 	close(c.chOne)
 	close(c.chJSONOne)
@@ -50,7 +50,7 @@ func (c *Client) close() {
 	close(c.chReq)
 }
 
-// dmx - демультиплексор метрик по каналам
+// dmx - демультиплексор метрик по каналам.
 func (c *Client) dmx(m []app.Metrics) {
 	go func() {
 		for _, v := range m {
@@ -73,7 +73,7 @@ func (c *Client) dmx(m []app.Metrics) {
 	}()
 }
 
-// init - инициализация клиента отправки метрик
+// init - инициализация клиента отправки метрик.
 func (c *Client) init() {
 	c.initSendOne()
 	c.initSendJSONOne()
@@ -87,7 +87,7 @@ func (c *Client) init() {
 	}
 }
 
-// makeRequest - конструктор запроса отправки метрик на сервер
+// makeRequest - конструктор запроса отправки метрик на сервер.
 func (c *Client) makeRequest(param reqParam) {
 	req, err := http.NewRequest(http.MethodPost, param.url, param.body)
 	if err != nil {
@@ -106,7 +106,7 @@ func (c *Client) makeRequest(param reqParam) {
 	defer res.Body.Close()
 }
 
-// initSendOne - инициализация канала отправки метрик по одиночному каналу
+// initSendOne - инициализация канала отправки метрик по одиночному каналу.
 func (c *Client) initSendOne() {
 	if c.chOne == nil {
 		return
@@ -118,7 +118,7 @@ func (c *Client) initSendOne() {
 	}()
 }
 
-// sendOneParam - подготовка параметров запроса одиной метрики
+// sendOneParam - подготовка параметров запроса одиной метрики.
 func (c *Client) sendOneParam(m app.Metrics) reqParam {
 	var val string
 	switch m.Type {
@@ -132,7 +132,7 @@ func (c *Client) sendOneParam(m app.Metrics) reqParam {
 	return reqParam{url: url, body: nil}
 }
 
-// initSendJSONOne - инициализация канала отправки одной метрики форматом JSON
+// initSendJSONOne - инициализация канала отправки одной метрики форматом JSON.
 func (c *Client) initSendJSONOne() {
 	if c.chJSONOne == nil {
 		return
@@ -144,7 +144,7 @@ func (c *Client) initSendJSONOne() {
 	}()
 }
 
-// sendJSONOneParam - подготовка параметров запроса отправки одной метрики форматом JSON
+// sendJSONOneParam - подготовка параметров запроса отправки одной метрики форматом JSON.
 func (c *Client) sendJSONOneParam(m app.Metrics) reqParam {
 	url := fmt.Sprintf("http://%s/update/", c.addr)
 	body, err := json.Marshal(m)
@@ -155,7 +155,7 @@ func (c *Client) sendJSONOneParam(m app.Metrics) reqParam {
 	return reqParam{url: url, body: bytes.NewBuffer(body)}
 }
 
-// initSendList - инициализация канала отправки метрик списком
+// initSendList - инициализация канала отправки метрик списком.
 func (c *Client) initSendList() {
 	if c.chList == nil {
 		return
@@ -167,7 +167,7 @@ func (c *Client) initSendList() {
 	}()
 }
 
-// sendListParam - подготовка параметров отправки метрик списком
+// sendListParam - подготовка параметров отправки метрик списком.
 func (c *Client) sendListParam(m []app.Metrics) reqParam {
 	url := fmt.Sprintf("http://%s/updates/", c.addr)
 	body, err := json.Marshal(m)

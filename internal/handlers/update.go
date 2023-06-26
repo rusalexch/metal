@@ -14,7 +14,7 @@ import (
 	"github.com/rusalexch/metal/internal/utils"
 )
 
-// update Хэндлер для обновления метрик query-параметрами
+// update Хэндлер для обновления метрик query-параметрами.
 func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -67,7 +67,7 @@ func (h *Handlers) update(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// update Хэндлер для обновления метрик JSON-body
+// update Хэндлер для обновления метрик JSON-body.
 func (h *Handlers) updateJSON(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -112,7 +112,7 @@ func (h *Handlers) updateJSON(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
-// updates - хэндлер обновления метрик списком
+// updates - хэндлер обновления метрик списком.
 func (h *Handlers) updates(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

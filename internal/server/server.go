@@ -6,7 +6,7 @@ import (
 	"github.com/rusalexch/metal/internal/handlers"
 )
 
-// New - конструктор сервера сбора метрик
+// New - конструктор сервера сбора метрик.
 func New(handler *handlers.Handlers, addr string) *Server {
 	return &Server{
 		addr:    addr,
@@ -14,7 +14,7 @@ func New(handler *handlers.Handlers, addr string) *Server {
 	}
 }
 
-// Start - запуск сервера сбора метрик
+// Start - запуск сервера сбора метрик.
 func (s *Server) Start() error {
 	s.handler.Init()
 

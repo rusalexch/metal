@@ -7,14 +7,14 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
-// New - конструктор кэша
+// New - конструктор кэша.
 func New() *Cache {
 	return &Cache{
 		m: map[string]app.Metrics{},
 	}
 }
 
-// Start - запуск кеша
+// Start - запуск кеша.
 func (c *Cache) Start(ctx context.Context, chIn <-chan app.Metrics, chOut chan<- []app.Metrics, t time.Ticker) {
 	go func() {
 		for {
@@ -30,7 +30,7 @@ func (c *Cache) Start(ctx context.Context, chIn <-chan app.Metrics, chOut chan<-
 	}()
 }
 
-// add - метод добавления метрики в кэш
+// add - метод добавления метрики в кэш.
 func (c *Cache) add(m app.Metrics) {
 	c.Lock()
 	defer c.Unlock()
@@ -38,7 +38,7 @@ func (c *Cache) add(m app.Metrics) {
 	c.m[m.ID] = m
 }
 
-// get - метод получения метрики
+// get - метод получения метрики.
 func (c *Cache) get() []app.Metrics {
 	c.Lock()
 	defer c.Unlock()

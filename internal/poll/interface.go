@@ -6,10 +6,10 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
-// poller - интерфейс модуля сбора метрик
+// poller - интерфейс модуля сбора метрик.
 type poller interface {
-	// ScanToChan - метод сканирование метрик в канал
+	// ScanToChan - метод сканирование метрик в канал.
 	ScanToChan(ctx context.Context, metricCh chan<- app.Metrics)
-	// Scan - метод сканирования метрик
+	// Scan - метод сканирования метрик.
 	Scan() []app.Metrics
 }
