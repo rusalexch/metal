@@ -3,9 +3,10 @@ package gopsutil
 import (
 	"context"
 
-	"github.com/rusalexch/metal/internal/app"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/mem"
+
+	"github.com/rusalexch/metal/internal/app"
 )
 
 type gopsutil struct {

@@ -3,8 +3,9 @@ package server
 import (
 	"testing"
 
-	"github.com/rusalexch/metal/internal/handlers"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/rusalexch/metal/internal/handlers"
 )
 
 func TestNew(t *testing.T) {

@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/rusalexch/metal/internal/app"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/rusalexch/metal/internal/app"
 )
 
 func wantHash(key, id string, delta *int64, value *float64) string {

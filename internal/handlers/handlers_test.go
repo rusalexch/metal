@@ -7,10 +7,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/rusalexch/metal/internal/hash"
-	"github.com/rusalexch/metal/internal/storage"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/rusalexch/metal/internal/hash"
+	"github.com/rusalexch/metal/internal/storage"
 )
 
 func testRequest(t *testing.T, ts *httptest.Server, method, path string, body io.Reader) (int, string) {

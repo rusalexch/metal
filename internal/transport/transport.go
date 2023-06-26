@@ -96,7 +96,7 @@ func (c *Client) makeRequest(param reqParam) {
 	res, err := c.client.Do(req)
 	if err != nil {
 		log.Println(err)
-		return 
+		return
 	}
 	defer res.Body.Close()
 }

@@ -3,9 +3,10 @@ package cache
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/rusalexch/metal/internal/app"
 	"github.com/rusalexch/metal/internal/utils"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
