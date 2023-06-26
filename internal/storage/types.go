@@ -1,6 +1,6 @@
 package storage
 
-// Storage структура хранилища
+// Storage - структура хранилища
 type Storage struct {
 	metricsStorage
 }

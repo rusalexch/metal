@@ -4,11 +4,13 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
+// store - структура данных файлового хранилища
 type store struct {
 	Counters map[string]int64   `json:"counters"`
 	Gauges   map[string]float64 `json:"gauges"`
 }
 
+// addMetric - добавление/обновление метрики в структура файлового хранилища
 func (st *store) addMetric(m app.Metrics) {
 	if m.Type == app.Counter {
 		delta, isExist := st.Counters[m.ID]

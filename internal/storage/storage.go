@@ -5,7 +5,7 @@ import (
 	"github.com/rusalexch/metal/internal/storage/internal/filestorage"
 )
 
-// New конструктор хранилища метрик
+// New - конструктор хранилища метрик
 func New(dbURL string, file string, restore bool) *Storage {
 	var stor metricsStorage
 	if dbURL != "" {

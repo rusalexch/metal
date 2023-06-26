@@ -13,22 +13,25 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
+// dbStorage - структура модуля хранилища PostgreSQL
 type dbStorage struct {
 	pool *pgxpool.Pool
 	sync.Mutex
 }
 
+// dbCounter - структура метрики типа counter
 type dbCounter struct {
 	ID    string `db:"id"`
 	Delta int64  `db:"delta"`
 }
 
+// dbGauge - структура метрики типа gauge
 type dbGauge struct {
 	ID    string  `db:"id"`
 	Value float64 `db:"value"`
 }
 
-// New конструктор хранилища БД
+// New - конструктор хранилища БД PostgreSQL
 func New(URL string) *dbStorage {
 	pool, err := pgxpool.New(context.Background(), URL)
 	if err != nil {
@@ -47,7 +50,7 @@ func New(URL string) *dbStorage {
 	return db
 }
 
-// Add добавление новой метрики
+// Add - метод добавления/обновления метрики
 func (db *dbStorage) Add(ctx context.Context, m app.Metrics) error {
 	db.Lock()
 	defer db.Unlock()
@@ -61,6 +64,7 @@ func (db *dbStorage) Add(ctx context.Context, m app.Metrics) error {
 	}
 }
 
+// AddList - метода добавления/обновления списка метрик
 func (db *dbStorage) AddList(ctx context.Context, m []app.Metrics) error {
 	db.Lock()
 	defer db.Unlock()
@@ -108,7 +112,7 @@ func (db *dbStorage) AddList(ctx context.Context, m []app.Metrics) error {
 	return nil
 }
 
-// Get получение метрики name с типом mType
+// Get - метод получение метрики name с типом mType
 func (db *dbStorage) Get(ctx context.Context, name string, mType app.MetricType) (app.Metrics, error) {
 	db.Lock()
 	defer db.Unlock()
@@ -140,7 +144,7 @@ func (db *dbStorage) Get(ctx context.Context, name string, mType app.MetricType)
 	}
 }
 
-// List получение списка всех метрик
+// List - метод получение списка всех метрик
 func (db *dbStorage) List(ctx context.Context) ([]app.Metrics, error) {
 	db.Lock()
 	defer db.Unlock()
@@ -165,17 +169,17 @@ func (db *dbStorage) List(ctx context.Context) ([]app.Metrics, error) {
 	return metrics, nil
 }
 
-// Ping проверка работы БД
+// Ping - метод проверка работы БД
 func (db *dbStorage) Ping(ctx context.Context) error {
 	return db.pool.Ping(ctx)
 }
 
-// Close закрыть подключение к БД
+// Close - метод окончания сессии БД
 func (db *dbStorage) Close() {
 	db.pool.Close()
 }
 
-// init инициализация БД, создание таблиц если их нет
+// init - инициализация БД, создание таблиц если их нет
 func (db *dbStorage) init(ctx context.Context) error {
 	_, err := db.pool.Exec(ctx, createGaugeTableSQL)
 	if err != nil {
@@ -189,19 +193,19 @@ func (db *dbStorage) init(ctx context.Context) error {
 	return nil
 }
 
-// saveCounter сохранение метрики типа counter
+// saveCounter - сохранение метрики типа counter
 func (db *dbStorage) saveCounter(ctx context.Context, name string, delta int64) error {
 	_, err := db.pool.Exec(ctx, insertCounterSQL, name, delta)
 	return err
 }
 
-// saveGauge сохранение метрики типа gauge
+// saveGauge - сохранение метрики типа gauge
 func (db *dbStorage) saveGauge(ctx context.Context, name string, value float64) error {
 	_, err := db.pool.Exec(ctx, insertGaugeSQL, name, value)
 	return err
 }
 
-// findCounter поиск метрики типа counter по идентификатору name
+// findCounter - поиск метрики типа counter по идентификатору name
 func (db *dbStorage) findCounter(ctx context.Context, name string) (dbCounter, error) {
 	var counter dbCounter
 	row := db.pool.QueryRow(ctx, findCounterSQL, name)
@@ -213,7 +217,7 @@ func (db *dbStorage) findCounter(ctx context.Context, name string) (dbCounter, e
 	return counter, nil
 }
 
-// findGauge поиск метрики типа gauge по идентификатору name
+// findGauge - поиск метрики типа gauge по идентификатору name
 func (db *dbStorage) findGauge(ctx context.Context, name string) (dbGauge, error) {
 	var gauge dbGauge
 	row := db.pool.QueryRow(ctx, findGaugeSQL, name)
@@ -225,7 +229,7 @@ func (db *dbStorage) findGauge(ctx context.Context, name string) (dbGauge, error
 	return gauge, nil
 }
 
-// listCounter получение всех метрик типа counter
+// listCounter - получение всех метрик типа counter
 func (db *dbStorage) listCounter(ctx context.Context) ([]dbCounter, error) {
 	rows, err := db.pool.Query(ctx, listCounterSQL)
 	if err != nil {
@@ -251,7 +255,7 @@ func (db *dbStorage) listCounter(ctx context.Context) ([]dbCounter, error) {
 	return counters, nil
 }
 
-// listGauge получение всех метрик типа gauge
+// listGauge - получение всех метрик типа gauge
 func (db *dbStorage) listGauge(ctx context.Context) ([]dbGauge, error) {
 	rows, err := db.pool.Query(ctx, listGaugeSQL)
 	if err != nil {
