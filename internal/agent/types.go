@@ -6,20 +6,32 @@ import (
 
 // Agent структура настроек приложения
 type Agent struct {
-	pollInterval   time.Duration // pollInterval - частота сбора метрик
-	reportInterval time.Duration // reportInterval - частота отправки метрик на сервер
-	poll           Scaner        // poll -  пакет сбора метрик
-	cache          Cache         // cache - пакет сохранения метрик в памяти
-	transport      Transport     // client - клиент для отправки метрик на сервер
-	hash           hasher        // hash - хеш-пакет
+	// pollInterval - частота сбора метрик
+	pollInterval time.Duration
+	// reportInterval - частота отправки метрик на сервер
+	reportInterval time.Duration
+	// poll -  пакет сбора метрик
+	poll Scaner
+	// cache - пакет сохранения метрик в памяти
+	cache Cache
+	// client - клиент для отправки метрик на сервер
+	transport Transport
+	// hash - хеш-пакет
+	hash hasher
 }
 
 // Config конфигурация приложения
 type Config struct {
-	PollInterval   time.Duration // PollInterval - частота сбора метрик
-	ReportInterval time.Duration // ReportInterval - частота отправки метрик на сервер
-	Poll           Scaner        // Poll - пакет сбора метрик
-	Cache          Cache         // Cache - пакет сохранения метрик в памяти
-	Transport      Transport     // Transport - клиент для отправки метрик на сервер
-	Hash           hasher        // Hash - хеш-пакет
+	// PollInterval - частота сбора метрик
+	PollInterval time.Duration
+	// ReportInterval - частота отправки метрик на сервер
+	ReportInterval time.Duration
+	// Poll - пакет сбора метрик
+	Poll Scaner
+	// Cache - пакет сохранения метрик в памяти
+	Cache Cache
+	// Transport - клиент для отправки метрик на сервер
+	Transport Transport
+	// Hash - хеш-пакет
+	Hash hasher
 }
