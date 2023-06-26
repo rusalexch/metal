@@ -7,21 +7,28 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
-// Client структура клиента
+// Client - структура клиента
 type Client struct {
 	// addr адрес сервера сбора метрик
 	addr string
 	// client http клиент
 	client *http.Client
-
-	chOne     chan app.Metrics
+	// chOne - канал отправки одной метрики
+	chOne chan app.Metrics
+	// chJSONOne - канал отправки одной метрики формата JSON
 	chJSONOne chan app.Metrics
-	chList    chan []app.Metrics
-	chReq     chan reqParam
-	cntReq    int
+	// chList - канал отправки списка метрик
+	chList chan []app.Metrics
+	// chReq - канал параметров запроса отправки метрик
+	chReq chan reqParam
+	// cntReq - количество одновременно запущенных сессий отправки метрик
+	cntReq int
 }
 
+// reqParam - структура параметров запроса на отправку метрик
 type reqParam struct {
-	url  string
+	// url - url адрес отправки метрик
+	url string
+	// body - данные для отправки, если есть
 	body io.Reader
 }
