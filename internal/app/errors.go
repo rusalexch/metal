@@ -2,5 +2,9 @@ package app
 
 import "errors"
 
-var ErrNotFound = errors.New("metric not found")
-var ErrIncorrectType = errors.New("incorrect metric type")
+var (
+	// ErrNotFound - ошибка: метрика не найдена
+	ErrNotFound = errors.New("metric not found")
+	// ErrIncorrectType - ошибка: не корректный тип метрики
+	ErrIncorrectType = errors.New("incorrect metric type")
+)

@@ -9,9 +9,9 @@ type Metrics struct {
 	ID string `json:"id"`
 	// Type наименование типа метрики
 	Type MetricType `json:"type"`
-	// Value значение метрики в случае передачи counter
+	// Delta значение метрики типа counter
 	Delta *int64 `json:"delta,omitempty"`
-	// Value значение метрики в случае передачи gauge
+	// Value значение метрики типа gauge
 	Value *float64 `json:"value,omitempty"`
 	// Hash значение хеш-функции
 	Hash string `json:"hash,omitempty"`
