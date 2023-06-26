@@ -9,15 +9,15 @@ import (
 )
 
 var (
-	addr           *string
-	reportInterval time.Duration
-	pollInterval   time.Duration
-	storeInterval  time.Duration
-	storeFile      *string
-	restore        *string
-	key            *string
-	dbURL          *string
-	rateLimit      int
+	addr           *string       // переменная для адреса сервера
+	reportInterval time.Duration // переменная для интервала сбора метрик
+	pollInterval   time.Duration // переменная для интервала отправки метрик на сервер
+	storeInterval  time.Duration // интервал сохранения в файловое хранилище
+	storeFile      *string       // путь к файлу файлового хранилища
+	restore        *string       // флаг подгружать ли сохраненные данные из файлового хранилища, или начинать с чистого файла
+	key            *string       // ключ хэш-функции
+	dbURL          *string       // url строка подключения базы данных
+	rateLimit      int           // количество одновременно исходящих запросов от агента
 )
 
 func init() {
@@ -51,6 +51,7 @@ func init() {
 	})
 }
 
+// NewAgentConfig - конструктор конфигурации для агента
 func NewAgentConfig() AgentConfig {
 	reportInterval = defaultReportInterval
 	flag.Func("r", "report interval", func(s string) (err error) {
@@ -71,6 +72,7 @@ func NewAgentConfig() AgentConfig {
 	}
 }
 
+// NewServerConfig - конструктор конфигурации для сервера
 func NewServerConfig() ServerConfig {
 	restore = flag.String("r", defaultRestore, "is restore from file")
 	flag.Parse()
@@ -85,6 +87,7 @@ func NewServerConfig() ServerConfig {
 	}
 }
 
+// parseENV - метод парсинга переменных окружения
 func parseENV() {
 	if addrEnv, isSet := os.LookupEnv("ADDRESS"); isSet {
 		addr = &addrEnv
