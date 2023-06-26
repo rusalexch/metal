@@ -10,5 +10,5 @@ import (
 type Cache struct {
 	// слайс для хранения кэша
 	m map[string]app.Metrics
-	*sync.Mutex
+	sync.Mutex
 }
