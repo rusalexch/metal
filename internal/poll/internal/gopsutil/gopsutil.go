@@ -9,16 +9,19 @@ import (
 	"github.com/rusalexch/metal/internal/app"
 )
 
+// gopsutil - структура модуля метрик gopsutil
 type gopsutil struct {
 	trigger <-chan interface{}
 }
 
+// New - конструктор модула метрик gopsutil
 func New(trigger <-chan interface{}) *gopsutil {
 	return &gopsutil{
 		trigger: trigger,
 	}
 }
 
+// ScanToChan - метод сканирования метрик gopsutil в канал
 func (g *gopsutil) ScanToChan(ctx context.Context, metricCh chan<- app.Metrics) {
 	go func() {
 		for {
@@ -32,12 +35,14 @@ func (g *gopsutil) ScanToChan(ctx context.Context, metricCh chan<- app.Metrics) 
 	}()
 }
 
+// scanToChan - сканирование метрик gopsutil в канал
 func (g *gopsutil) scanToChan(metricCh chan<- app.Metrics) {
 	for _, v := range g.Scan() {
 		metricCh <- v
 	}
 }
 
+// Scan - метод сканирования метрик gopsutil
 func (g *gopsutil) Scan() []app.Metrics {
 	m, _ := mem.VirtualMemory()
 	c, _ := cpu.Percent(0, false)
