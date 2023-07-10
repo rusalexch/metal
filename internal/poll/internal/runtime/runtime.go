@@ -10,8 +10,8 @@ import (
 
 // runtime - структура модуля сбора метрик runtime
 type runtime struct {
-	cnt     int64
 	trigger <-chan interface{}
+	cnt     int64
 }
 
 // New - конструктор модуля метрик runtime

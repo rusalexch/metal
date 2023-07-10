@@ -15,9 +15,9 @@ func TestNew(t *testing.T) {
 
 	h := &handlers.Handlers{}
 	tests := []struct {
-		name string
-		args args
 		want *Server
+		args args
+		name string
 	}{
 		{
 			name: "should be created server",
