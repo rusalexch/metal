@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/multichecker"
 	"golang.org/x/tools/go/analysis/passes/asmdecl"
@@ -48,13 +50,15 @@ import (
 	"golang.org/x/tools/go/analysis/passes/unusedresult"
 	"golang.org/x/tools/go/analysis/passes/unusedwrite"
 	"golang.org/x/tools/go/analysis/passes/usesgenerics"
+	"honnef.co/go/tools/staticcheck"
 )
 
 func main() {
-    checks := std()
+	checks := std()
+	addStaticChecks(checks)
 	multichecker.Main(
-        checks...
-    )
+		checks...,
+	)
 }
 
 func std() []*analysis.Analyzer {
@@ -104,5 +108,13 @@ func std() []*analysis.Analyzer {
 		unusedresult.Analyzer,
 		unusedwrite.Analyzer,
 		usesgenerics.Analyzer,
+	}
+}
+
+func addStaticChecks(checks []*analysis.Analyzer) {
+	for _, check := range staticcheck.Analyzers {
+		if strings.HasPrefix(check.Analyzer.Name, "SA") || check.Analyzer.Name == "S1025" {
+			checks = append(checks, check.Analyzer)
+		}
 	}
 }
