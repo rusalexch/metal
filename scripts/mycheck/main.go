@@ -1,6 +1,7 @@
 package main
 
 import (
+	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/multichecker"
 	"golang.org/x/tools/go/analysis/passes/asmdecl"
 	"golang.org/x/tools/go/analysis/passes/assign"
@@ -50,51 +51,58 @@ import (
 )
 
 func main() {
+    checks := std()
 	multichecker.Main(
+        checks...
+    )
+}
+
+func std() []*analysis.Analyzer {
+	return []*analysis.Analyzer{
 		asmdecl.Analyzer,
-        assign.Analyzer,
-        atomic.Analyzer,
-        atomicalign.Analyzer,
-        bools.Analyzer,
-        buildssa.Analyzer,
-        buildtag.Analyzer,
-        cgocall.Analyzer,
-        composite.Analyzer,
-        copylock.Analyzer,
-        ctrlflow.Analyzer,
-        deepequalerrors.Analyzer,
-        defers.Analyzer,
-        directive.Analyzer,
-        errorsas.Analyzer,
-        fieldalignment.Analyzer,
-        findcall.Analyzer,
-        framepointer.Analyzer,
-        httpresponse.Analyzer,
-        ifaceassert.Analyzer,
-        inspect.Analyzer,
-        loopclosure.Analyzer,
-        lostcancel.Analyzer,
-        nilfunc.Analyzer,
-        nilness.Analyzer,
-        pkgfact.Analyzer,
+		assign.Analyzer,
+		atomic.Analyzer,
+		atomicalign.Analyzer,
+		bools.Analyzer,
+		buildssa.Analyzer,
+		buildtag.Analyzer,
+		cgocall.Analyzer,
+		composite.Analyzer,
+		copylock.Analyzer,
+		ctrlflow.Analyzer,
+		deepequalerrors.Analyzer,
+		defers.Analyzer,
+		directive.Analyzer,
+		errorsas.Analyzer,
+		fieldalignment.Analyzer,
+		findcall.Analyzer,
+		framepointer.Analyzer,
+		httpresponse.Analyzer,
+		ifaceassert.Analyzer,
+		inspect.Analyzer,
+		loopclosure.Analyzer,
+		lostcancel.Analyzer,
+		nilfunc.Analyzer,
+		nilness.Analyzer,
+		pkgfact.Analyzer,
 		printf.Analyzer,
-        reflectvaluecompare.Analyzer,
+		reflectvaluecompare.Analyzer,
 		shadow.Analyzer,
-        shift.Analyzer,
-        sigchanyzer.Analyzer,
-        slog.Analyzer,
-        sortslice.Analyzer,
-        stdmethods.Analyzer,
-        stringintconv.Analyzer,
+		shift.Analyzer,
+		sigchanyzer.Analyzer,
+		slog.Analyzer,
+		sortslice.Analyzer,
+		stdmethods.Analyzer,
+		stringintconv.Analyzer,
 		structtag.Analyzer,
-        testinggoroutine.Analyzer,
-        tests.Analyzer,
-        timeformat.Analyzer,
-        unmarshal.Analyzer,
-        unreachable.Analyzer,
-        unsafeptr.Analyzer,
-        unusedresult.Analyzer,
-        unusedwrite.Analyzer,
-        usesgenerics.Analyzer,
-	)
+		testinggoroutine.Analyzer,
+		tests.Analyzer,
+		timeformat.Analyzer,
+		unmarshal.Analyzer,
+		unreachable.Analyzer,
+		unsafeptr.Analyzer,
+		unusedresult.Analyzer,
+		unusedwrite.Analyzer,
+		usesgenerics.Analyzer,
+	}
 }
