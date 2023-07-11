@@ -1,15 +1,27 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/rusalexch/metal/internal/agent"
 	"github.com/rusalexch/metal/internal/cache"
 	"github.com/rusalexch/metal/internal/config"
 	"github.com/rusalexch/metal/internal/hash"
 	"github.com/rusalexch/metal/internal/poll"
 	"github.com/rusalexch/metal/internal/transport"
+	"github.com/rusalexch/metal/internal/utils"
+)
+
+const notValue = "N/A"
+
+var (
+	buildVersion string
+	buildDate    string
+	buildCommit  string
 )
 
 func main() {
+	buildLog()
 	env := config.NewAgentConfig()
 
 	p := poll.New()
@@ -29,4 +41,10 @@ func main() {
 	a := agent.New(conf)
 
 	a.Start()
+}
+
+func buildLog() {
+	fmt.Printf("Build version: %s\n", utils.StringTernar(buildVersion, notValue))
+	fmt.Printf("Build version: %s\n", utils.StringTernar(buildDate, notValue))
+	fmt.Printf("Build version: %s\n", utils.StringTernar(buildCommit, notValue))
 }
