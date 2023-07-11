@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go/ast"
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
@@ -56,11 +57,13 @@ import (
 func main() {
 	checks := std()
 	addStaticChecks(checks)
+	checks = append(checks, unUseOsExit)
 	multichecker.Main(
 		checks...,
 	)
 }
 
+// std - стандартные анализаторы
 func std() []*analysis.Analyzer {
 	return []*analysis.Analyzer{
 		asmdecl.Analyzer,
@@ -111,10 +114,43 @@ func std() []*analysis.Analyzer {
 	}
 }
 
+// addStaticChecks - статические анализаторы
 func addStaticChecks(checks []*analysis.Analyzer) {
 	for _, check := range staticcheck.Analyzers {
 		if strings.HasPrefix(check.Analyzer.Name, "SA") || check.Analyzer.Name == "S1025" {
 			checks = append(checks, check.Analyzer)
 		}
 	}
+}
+
+// unUseOsExit - анализатор использования os.Exit в пакете main
+var unUseOsExit = &analysis.Analyzer{
+	Name: "unuseosexit",
+	Doc:  "check use os.Exit in main package",
+	Run:  run,
+}
+
+func run(pass *analysis.Pass) (interface{}, error) {
+	if pass.Pkg.Name() != "main" {
+		return nil, nil
+	}
+	for _, file := range pass.Files {
+		ast.Inspect(file, func(node ast.Node) bool {
+			switch x := node.(type) {
+			case *ast.CallExpr:
+				{
+					if v, ok := x.Fun.(*ast.SelectorExpr); ok {
+						if pkg, ok := v.X.(*ast.Ident); ok {
+							if pkg.Name == "os" && v.Sel.Name == "Exit" {
+								pass.Reportf(x.Fun.Pos(), `don't use "os.Exit"`)
+							}
+						}
+					}
+				}
+			}
+			return true
+		})
+	}
+
+	return nil, nil
 }
