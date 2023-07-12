@@ -9,8 +9,6 @@ import (
 
 // Client - структура клиента.
 type Client struct {
-	// addr адрес сервера сбора метрик.
-	addr string
 	// client http клиент.
 	client *http.Client
 	// chOne - канал отправки одной метрики.
@@ -21,14 +19,16 @@ type Client struct {
 	chList chan []app.Metrics
 	// chReq - канал параметров запроса отправки метрик.
 	chReq chan reqParam
+	// addr адрес сервера сбора метрик.
+	addr string
 	// cntReq - количество одновременно запущенных сессий отправки метрик.
 	cntReq int
 }
 
 // reqParam - структура параметров запроса на отправку метрик.
 type reqParam struct {
-	// url - url адрес отправки метрик.
-	url string
 	// body - данные для отправки, если есть.
 	body io.Reader
+	// url - url адрес отправки метрик.
+	url string
 }

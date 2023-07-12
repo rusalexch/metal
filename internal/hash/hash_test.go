@@ -29,9 +29,9 @@ func TestNew(t *testing.T) {
 		key string
 	}
 	tests := []struct {
-		name string
-		args args
 		want *Hash
+		args args
+		name string
 	}{
 		{
 			name: "with empty key",

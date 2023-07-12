@@ -11,8 +11,8 @@ import (
 
 func TestNew(t *testing.T) {
 	tests := []struct {
-		name string
 		want *Cache
+		name string
 	}{
 		{
 			name: "should be created",
@@ -109,8 +109,8 @@ func TestCache_get(t *testing.T) {
 
 	tests := []struct {
 		name string
-		args args
 		want want
+		args args
 	}{
 		{
 			name: "get from cache",
