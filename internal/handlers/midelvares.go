@@ -7,7 +7,6 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -83,7 +82,7 @@ func (h *Handlers) decryptMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		r.Body = ioutil.NopCloser(bytes.NewReader(decryptBody))
+		r.Body = io.NopCloser(bytes.NewReader(decryptBody))
 		next.ServeHTTP(w, r)
 	})
 }
