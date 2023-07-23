@@ -1,6 +1,8 @@
 package config
 
 import (
+	"crypto/rsa"
+	"crypto/x509"
 	"flag"
 	"log"
 	"os"
@@ -27,6 +29,8 @@ var (
 	dbURL *string
 	// количество одновременно исходящих запросов от агента.
 	rateLimit int
+	// cryptoKeyPath ключ, для агента публичный для сервера приватный
+	cryptoKeyPath *string
 )
 
 func init() {
@@ -58,6 +62,7 @@ func init() {
 		}
 		return nil
 	})
+	cryptoKeyPath = flag.String("crypto-key", "", "set crypto key file (public for agent, private for server)")
 }
 
 // NewAgentConfig - конструктор конфигурации для агента.
@@ -72,12 +77,20 @@ func NewAgentConfig() AgentConfig {
 	})
 	flag.Parse()
 	parseENV()
+
+	cryptoKey, err := getPublicKey(cryptoKeyPath)
+	if err != nil {
+		log.Println("can't get public crypto key")
+		log.Fatal(err)
+	}
+
 	return AgentConfig{
 		Addr:           *addr,
 		ReportInterval: reportInterval,
 		PoolInterval:   pollInterval,
 		HashKey:        *key,
 		RateLimit:      rateLimit,
+		CryptoKey:      cryptoKey,
 	}
 }
 
@@ -86,6 +99,13 @@ func NewServerConfig() ServerConfig {
 	restore = flag.String("r", defaultRestore, "is restore from file")
 	flag.Parse()
 	parseENV()
+
+	cryptoKey, err := getPrivateKey(cryptoKeyPath)
+	if err != nil {
+		log.Println("can't get private crypto key")
+		log.Fatal(err)
+	}
+
 	return ServerConfig{
 		Addr:          *addr,
 		StoreInterval: storeInterval,
@@ -93,6 +113,7 @@ func NewServerConfig() ServerConfig {
 		Restore:       *restore == "true",
 		HashKey:       *key,
 		DBURL:         *dbURL,
+		CryptoKey:     cryptoKey,
 	}
 }
 
@@ -141,4 +162,37 @@ func parseENV() {
 		}
 		rateLimit = limit
 	}
+	if cryptoKeyPathEnv, isSet := os.LookupEnv("CRYPTO_KEY"); isSet {
+		cryptoKeyPath = &cryptoKeyPathEnv
+	}
+}
+
+func getPublicKey(path *string) (*rsa.PublicKey, error) {
+	if path == nil {
+		return nil, nil
+	}
+	key, err := readCryptoFile(*path)
+	if err != nil {
+		return nil, err
+	}
+	return x509.ParsePKCS1PublicKey(key)
+}
+
+func getPrivateKey(path *string) (*rsa.PrivateKey, error) {
+	if path == nil {
+		return nil, nil
+	}
+	key, err := readCryptoFile(*path)
+	if err != nil {
+		return nil, err
+	}
+	return x509.ParsePKCS1PrivateKey(key)
+}
+
+func readCryptoFile(path string) ([]byte, error) {
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return []byte{}, err
+	}
+	return file, nil
 }

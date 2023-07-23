@@ -1,11 +1,14 @@
 package config
 
-import "time"
+import (
+	"crypto/rsa"
+	"time"
+)
 
 // AgentConfig - структура конфигурации агента.
 type AgentConfig struct {
 	// адрес сервера.
-	Addr string `env:"ADDRESS"` 
+	Addr string `env:"ADDRESS"`
 	// ключ хэш-функции.
 	HashKey string `env:"KEY"`
 	// интервал сбора метрик.
@@ -14,6 +17,8 @@ type AgentConfig struct {
 	PoolInterval time.Duration `env:"POLL_INTERVAL"`
 	// количество одновременно исходящих запросов от агента.
 	RateLimit int `env:"RATE_LIMIT"`
+	// CryptoKey публичный ключ
+	CryptoKey *rsa.PublicKey
 }
 
 // ServerConfig - структура конфигурации сервера.
@@ -30,4 +35,6 @@ type ServerConfig struct {
 	StoreInterval time.Duration `env:"STORE_INTERVAL"`
 	// флаг восстановления данных из файла файлового хранилища.
 	Restore bool `env:"RESTORE"`
+	// CryptoKey приватный ключ
+	CryptoKey *rsa.PrivateKey
 }
