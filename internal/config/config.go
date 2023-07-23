@@ -168,7 +168,7 @@ func parseENV() {
 }
 
 func getPublicKey(path *string) (*rsa.PublicKey, error) {
-	if path == nil {
+	if path == nil || *path == "" {
 		return nil, nil
 	}
 	key, err := readCryptoFile(*path)
@@ -179,7 +179,7 @@ func getPublicKey(path *string) (*rsa.PublicKey, error) {
 }
 
 func getPrivateKey(path *string) (*rsa.PrivateKey, error) {
-	if path == nil {
+	if path == nil || *path == "" {
 		return nil, nil
 	}
 	key, err := readCryptoFile(*path)
