@@ -17,8 +17,8 @@ type AgentConfig struct {
 	PoolInterval time.Duration `env:"POLL_INTERVAL"`
 	// количество одновременно исходящих запросов от агента.
 	RateLimit int `env:"RATE_LIMIT"`
-	// CryptoKey публичный ключ
-	CryptoKey *rsa.PublicKey
+	// PublicKey публичный ключ
+	PublicKey *rsa.PublicKey
 }
 
 // ServerConfig - структура конфигурации сервера.
@@ -35,6 +35,6 @@ type ServerConfig struct {
 	StoreInterval time.Duration `env:"STORE_INTERVAL"`
 	// флаг восстановления данных из файла файлового хранилища.
 	Restore bool `env:"RESTORE"`
-	// CryptoKey приватный ключ
-	CryptoKey *rsa.PrivateKey
+	// PrivateKey приватный ключ
+	PrivateKey *rsa.PrivateKey
 }

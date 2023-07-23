@@ -27,7 +27,7 @@ func main() {
 	defer stor.Close()
 
 	hs := hash.New(envConf.HashKey)
-	h := handlers.New(stor, hs)
+	h := handlers.New(stor, hs, envConf.PrivateKey)
 	s := server.New(h, envConf.Addr)
 
 	err := s.Start()

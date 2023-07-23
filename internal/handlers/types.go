@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"crypto/rsa"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -15,4 +16,6 @@ type Handlers struct {
 	hash hasher
 	// timeout - интервал таймаута.
 	timeout time.Duration
+	// privateKey - приватный ключ
+	privateKey *rsa.PrivateKey
 }

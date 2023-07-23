@@ -90,7 +90,7 @@ func NewAgentConfig() AgentConfig {
 		PoolInterval:   pollInterval,
 		HashKey:        *key,
 		RateLimit:      rateLimit,
-		CryptoKey:      cryptoKey,
+		PublicKey:      cryptoKey,
 	}
 }
 
@@ -113,7 +113,7 @@ func NewServerConfig() ServerConfig {
 		Restore:       *restore == "true",
 		HashKey:       *key,
 		DBURL:         *dbURL,
-		CryptoKey:     cryptoKey,
+		PrivateKey:    cryptoKey,
 	}
 }
 

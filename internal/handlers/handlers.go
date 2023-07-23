@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"crypto/rsa"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -9,12 +10,13 @@ import (
 )
 
 // New конструктор Хэндлераов.
-func New(stor storager, h hasher) *Handlers {
+func New(stor storager, h hasher, privateKey *rsa.PrivateKey) *Handlers {
 	return &Handlers{
-		storage: stor,
-		hash:    h,
-		timeout: 10 * time.Second,
-		Mux:     chi.NewMux(),
+		storage:    stor,
+		hash:       h,
+		timeout:    10 * time.Second,
+		Mux:        chi.NewMux(),
+		privateKey: privateKey,
 	}
 }
 
@@ -30,6 +32,7 @@ func (h *Handlers) Init() {
 	h.Use(middleware.Timeout(h.timeout))
 	h.Use(compressMiddleware)
 	h.Use(decompressMiddleware)
+	h.Use(h.decryptMiddleware)
 	h.Use(middleware.Recoverer)
 
 	h.Get("/", h.list)
