@@ -35,7 +35,7 @@ var (
 )
 
 func init() {
-	defValues = json.ParseJson()
+	defValues = json.ParseJSON()
 
 	addr = flag.String("a", defValues.Address, "set address")
 	pollInterval = defValues.PollInterval

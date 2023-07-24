@@ -31,7 +31,7 @@ type DefaultConfig struct {
 	RateLimit      int
 }
 
-type JsonConfig struct {
+type JSONConfig struct {
 	Address        *string   `json:"address"`
 	Restore        *string   `json:"restore"`
 	StoreInterval  *interval `json:"store_interval"`
@@ -42,7 +42,7 @@ type JsonConfig struct {
 	PollInterval   *interval `json:"poll_interval"`
 }
 
-func ParseJson() *DefaultConfig {
+func ParseJSON() *DefaultConfig {
 	flag.Parse()
 	if jsonFileEnv, isSet := os.LookupEnv("CONFIG"); isSet {
 		jsonFile = jsonFileEnv
@@ -55,7 +55,7 @@ func ParseJson() *DefaultConfig {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var jsonCfg JsonConfig
+	var jsonCfg JSONConfig
 	err = json.Unmarshal(file, &jsonCfg)
 	if err != nil {
 		log.Fatal(err)
@@ -79,7 +79,7 @@ func defaultValues() *DefaultConfig {
 	}
 }
 
-func fillDefaultValues(json JsonConfig) *DefaultConfig {
+func fillDefaultValues(json JSONConfig) *DefaultConfig {
 	defValues := defaultValues()
 	if json.Address != nil {
 		defValues.Address = *json.Address
