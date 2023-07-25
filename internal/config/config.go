@@ -33,28 +33,26 @@ var (
 	cryptoKeyPath *string
 	// jsonFile - путь к файлу конфигурации json
 	jsonFile string
-
-	// defValues - параметры по умолчанию, или настройки json-файла
-	defValues *json.DefaultConfig
 )
 
 func init() {
 	flag.StringVar(&jsonFile, "c", "", "json-file configuration")
 	flag.StringVar(&jsonFile, "config", "", "json-file configuration")
-	flag.Func("a", "set address", parseStringFlag(addr))
-	flag.Func("p", "poll interval", parseDurationFlag(pollInterval))
-	flag.Func("i", "store interval", parseDurationFlag(storeInterval))
-	flag.Func("f", "store file", parseStringFlag(storeFile))
-	flag.Func("k", "hash secret key", parseStringFlag(key))
-	flag.Func("d", "database url string", parseStringFlag(dbURL))
-	flag.Func("l", "rate limit", parseIntFlag(rateLimit))
-	flag.Func("crypto-key", "set crypto key file (public for agent, private for server)", parseStringFlag(cryptoKeyPath))
+	flag.Func("a", "set address", parseStringFlag(&addr))
+	flag.Func("p", "poll interval", parseDurationFlag(&pollInterval))
+	flag.Func("i", "store interval", parseDurationFlag(&storeInterval))
+	flag.Func("f", "store file", parseStringFlag(&storeFile))
+	flag.Func("k", "hash secret key", parseStringFlag(&key))
+	flag.Func("d", "database url string", parseStringFlag(&dbURL))
+	flag.Func("l", "rate limit", parseIntFlag(&rateLimit))
+	flag.Func("crypto-key", "set crypto key file (public for agent, private for server)", parseStringFlag(&cryptoKeyPath))
 }
 
 // NewAgentConfig - конструктор конфигурации для агента.
 func NewAgentConfig() AgentConfig {
-	flag.Func("r", "report interval", parseDurationFlag(reportInterval))
+	flag.Func("r", "report interval", parseDurationFlag(&reportInterval))
 	flag.Parse()
+	log.Println(addr)
 	parseENV()
 	cfg := json.ParseJSON(jsonFile)
 
@@ -76,7 +74,7 @@ func NewAgentConfig() AgentConfig {
 
 // NewServerConfig - конструктор конфигурации для сервера.
 func NewServerConfig() ServerConfig {
-	flag.Func("r", "is restore from file", parseStringFlag(restore))
+	flag.Func("r", "is restore from file", parseStringFlag(&restore))
 	flag.Parse()
 	parseENV()
 	cfg := json.ParseJSON(jsonFile)
@@ -105,31 +103,31 @@ func cfgSwitch[T constraints.Ordered](val *T, def T) T {
 	return *val
 }
 
-func parseDurationFlag(val *time.Duration) func(s string) error {
+func parseDurationFlag(val **time.Duration) func(s string) error {
 	return func(s string) error {
 		interval, err := time.ParseDuration(s)
 		if err != nil {
 			return err
 		}
-		reportInterval = &interval
+		*val = &interval
 		return nil
 	}
 }
 
-func parseStringFlag(val *string) func(s string) error {
+func parseStringFlag(val **string) func(s string) error {
 	return func(s string) error {
-		val = &s
+		*val = &s
 		return nil
 	}
 }
 
-func parseIntFlag(val *int) func(s string) error {
+func parseIntFlag(val **int) func(s string) error {
 	return func(i string) (err error) {
 		v, err := strconv.Atoi(i)
 		if err != nil {
 			return err
 		}
-		val = &v
+		*val = &v
 		return nil
 	}
 }
