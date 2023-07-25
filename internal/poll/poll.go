@@ -36,8 +36,8 @@ func New() *poll {
 // ScanChan - метод сканирования метрик в каналы.
 func (p *poll) ScanChan(ctx context.Context, ticker *time.Ticker, metricCh chan<- app.Metrics) {
 	go func() {
-		rtCtx, rtCancel := context.WithCancel(context.Background())
-		guCtx, guCancel := context.WithCancel(context.Background())
+		rtCtx, rtCancel := context.WithCancel(ctx)
+		guCtx, guCancel := context.WithCancel(ctx)
 		p.rt.ScanToChan(rtCtx, metricCh)
 		p.gu.ScanToChan(guCtx, metricCh)
 		for {
@@ -61,7 +61,7 @@ func (p *poll) close() {
 		close(p.rtTrigger)
 	}
 	if p.guTrigger != nil {
-		close(p.rtTrigger)
+		close(p.guTrigger)
 	}
 }
 

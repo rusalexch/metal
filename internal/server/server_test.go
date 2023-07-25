@@ -1,6 +1,7 @@
 package server
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -25,8 +26,8 @@ func TestNew(t *testing.T) {
 				handler: h,
 			},
 			want: &Server{
-				addr:    "127.0.0.1:8080",
 				handler: h,
+				srv:     http.Server{Addr: "127.0.0.1:8080", Handler: h},
 			},
 		},
 	}
