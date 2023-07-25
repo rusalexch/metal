@@ -7,11 +7,11 @@ import (
 )
 
 // getPublicKey - получить публичный ключ
-func getPublicKey(path *string) (*rsa.PublicKey, error) {
-	if path == nil || *path == "" {
+func getPublicKey(path string) (*rsa.PublicKey, error) {
+	if path == "" {
 		return nil, nil
 	}
-	key, err := readCryptoFile(*path)
+	key, err := readCryptoFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -19,11 +19,11 @@ func getPublicKey(path *string) (*rsa.PublicKey, error) {
 }
 
 // getPrivateKey - получить приватный ключ
-func getPrivateKey(path *string) (*rsa.PrivateKey, error) {
-	if path == nil || *path == "" {
+func getPrivateKey(path string) (*rsa.PrivateKey, error) {
+	if path == "" {
 		return nil, nil
 	}
-	key, err := readCryptoFile(*path)
+	key, err := readCryptoFile(path)
 	if err != nil {
 		return nil, err
 	}

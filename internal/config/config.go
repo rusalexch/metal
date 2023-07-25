@@ -7,17 +7,18 @@ import (
 	"time"
 
 	"github.com/rusalexch/metal/internal/config/json"
+	"golang.org/x/exp/constraints"
 )
 
 var (
 	// переменная для адреса сервера.
 	addr *string
 	// переменная для интервала сбора метрик.
-	reportInterval time.Duration
+	reportInterval *time.Duration
 	// переменная для интервала отправки метрик на сервер.
-	pollInterval time.Duration
+	pollInterval *time.Duration
 	// интервал сохранения в файловое хранилище.
-	storeInterval time.Duration
+	storeInterval *time.Duration
 	// путь к файлу файлового хранилища.
 	storeFile *string
 	// флаг подгружать ли сохраненные данные из файлового хранилища, или начинать с чистого файла.
@@ -27,97 +28,108 @@ var (
 	// url строка подключения базы данных.
 	dbURL *string
 	// количество одновременно исходящих запросов от агента.
-	rateLimit int
+	rateLimit *int
 	// cryptoKeyPath ключ, для агента публичный для сервера приватный
 	cryptoKeyPath *string
+	// jsonFile - путь к файлу конфигурации json
+	jsonFile string
+
 	// defValues - параметры по умолчанию, или настройки json-файла
 	defValues *json.DefaultConfig
 )
 
 func init() {
-	defValues = json.ParseJSON()
-
-	addr = flag.String("a", defValues.Address, "set address")
-	pollInterval = defValues.PollInterval
-	flag.Func("p", "poll interval", func(s string) (err error) {
-		reportInterval, err = time.ParseDuration(s)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	storeInterval = defValues.StoreInterval
-	flag.Func("i", "store interval", func(i string) (err error) {
-		storeInterval, err = time.ParseDuration(i)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	storeFile = flag.String("f", defValues.StoreFile, "store file")
-	key = flag.String("k", defValues.Key, "hash secret key")
-	dbURL = flag.String("d", defValues.DatabaseDSN, "database url string")
-	rateLimit = defValues.RateLimit
-	flag.Func("l", "rate limit", func(i string) (err error) {
-		rateLimit, err = strconv.Atoi(i)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	cryptoKeyPath = flag.String("crypto-key", defValues.CryptoKey, "set crypto key file (public for agent, private for server)")
-
+	flag.StringVar(&jsonFile, "c", "", "json-file configuration")
+	flag.StringVar(&jsonFile, "config", "", "json-file configuration")
+	flag.Func("a", "set address", parseStringFlag(addr))
+	flag.Func("p", "poll interval", parseDurationFlag(pollInterval))
+	flag.Func("i", "store interval", parseDurationFlag(storeInterval))
+	flag.Func("f", "store file", parseStringFlag(storeFile))
+	flag.Func("k", "hash secret key", parseStringFlag(key))
+	flag.Func("d", "database url string", parseStringFlag(dbURL))
+	flag.Func("l", "rate limit", parseIntFlag(rateLimit))
+	flag.Func("crypto-key", "set crypto key file (public for agent, private for server)", parseStringFlag(cryptoKeyPath))
 }
 
 // NewAgentConfig - конструктор конфигурации для агента.
 func NewAgentConfig() AgentConfig {
-	reportInterval = defValues.ReportInterval
-	flag.Func("r", "report interval", func(s string) (err error) {
-		reportInterval, err = time.ParseDuration(s)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
+	flag.Func("r", "report interval", parseDurationFlag(reportInterval))
 	flag.Parse()
 	parseENV()
+	cfg := json.ParseJSON(jsonFile)
 
-	cryptoKey, err := getPublicKey(cryptoKeyPath)
+	cryptoKey, err := getPublicKey(cfgSwitch(cryptoKeyPath, cfg.CryptoKey))
 	if err != nil {
 		log.Println("can't get public crypto key")
 		log.Fatal(err)
 	}
 
 	return AgentConfig{
-		Addr:           *addr,
-		ReportInterval: reportInterval,
-		PoolInterval:   pollInterval,
-		HashKey:        *key,
-		RateLimit:      rateLimit,
+		Addr:           cfgSwitch(addr, cfg.Address),
+		ReportInterval: cfgSwitch(reportInterval, cfg.ReportInterval),
+		PoolInterval:   cfgSwitch(pollInterval, cfg.PollInterval),
+		HashKey:        cfgSwitch(key, cfg.Key),
+		RateLimit:      cfgSwitch(rateLimit, cfg.RateLimit),
 		PublicKey:      cryptoKey,
 	}
 }
 
 // NewServerConfig - конструктор конфигурации для сервера.
 func NewServerConfig() ServerConfig {
-	restore = flag.String("r", defValues.Restore, "is restore from file")
+	flag.Func("r", "is restore from file", parseStringFlag(restore))
 	flag.Parse()
-
 	parseENV()
+	cfg := json.ParseJSON(jsonFile)
 
-	cryptoKey, err := getPrivateKey(cryptoKeyPath)
+	cryptoKey, err := getPrivateKey(cfgSwitch(cryptoKeyPath, cfg.CryptoKey))
 	if err != nil {
 		log.Println("can't get private crypto key")
 		log.Fatal(err)
 	}
 
 	return ServerConfig{
-		Addr:          *addr,
-		StoreInterval: storeInterval,
-		StoreFile:     *storeFile,
-		Restore:       *restore == "true",
-		HashKey:       *key,
-		DBURL:         *dbURL,
+		Addr:          cfgSwitch(addr, cfg.Address),
+		StoreInterval: cfgSwitch(storeInterval, cfg.StoreInterval),
+		StoreFile:     cfgSwitch(storeFile, cfg.StoreFile),
+		Restore:       cfgSwitch(restore, cfg.Restore) == "true",
+		HashKey:       cfgSwitch(key, cfg.Key),
+		DBURL:         cfgSwitch(dbURL, cfg.DatabaseDSN),
 		PrivateKey:    cryptoKey,
+	}
+}
+
+func cfgSwitch[T constraints.Ordered](val *T, def T) T {
+	if val == nil {
+		return def
+	}
+	return *val
+}
+
+func parseDurationFlag(val *time.Duration) func(s string) error {
+	return func(s string) error {
+		interval, err := time.ParseDuration(s)
+		if err != nil {
+			return err
+		}
+		reportInterval = &interval
+		return nil
+	}
+}
+
+func parseStringFlag(val *string) func(s string) error {
+	return func(s string) error {
+		val = &s
+		return nil
+	}
+}
+
+func parseIntFlag(val *int) func(s string) error {
+	return func(i string) (err error) {
+		v, err := strconv.Atoi(i)
+		if err != nil {
+			return err
+		}
+		val = &v
+		return nil
 	}
 }

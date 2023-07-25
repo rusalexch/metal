@@ -4,7 +4,10 @@ go 1.18
 
 require golang.org/x/tools v0.11.0
 
-require golang.org/x/exp/typeparams v0.0.0-20221208152030-732eee02a75a // indirect
+require (
+	golang.org/x/exp v0.0.0-20230725012225-302865e7556b // indirect
+	golang.org/x/exp/typeparams v0.0.0-20221208152030-732eee02a75a // indirect
+)
 
 require (
 	github.com/caarlos0/env/v7 v7.1.0 // indirect

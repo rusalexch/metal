@@ -13,25 +13,13 @@ func parseENV() {
 		addr = &addrEnv
 	}
 	if reportIntervalEnv, isSet := os.LookupEnv("REPORT_INTERVAL"); isSet {
-		t, err := time.ParseDuration(reportIntervalEnv)
-		if err != nil {
-			log.Fatal(err)
-		}
-		reportInterval = t
+		reportInterval = parseDurationEnv(reportIntervalEnv)
 	}
 	if poolIntervalEnv, isSet := os.LookupEnv("POLL_INTERVAL"); isSet {
-		t, err := time.ParseDuration(poolIntervalEnv)
-		if err != nil {
-			log.Fatal(err)
-		}
-		pollInterval = t
+		pollInterval = parseDurationEnv(poolIntervalEnv)
 	}
 	if storeIntervalEnv, isSet := os.LookupEnv("STORE_INTERVAL"); isSet {
-		s, err := time.ParseDuration(storeIntervalEnv)
-		if err != nil {
-			log.Fatal(err)
-		}
-		storeInterval = s
+		storeInterval = parseDurationEnv(storeIntervalEnv)
 	}
 	if storeFileEnv, isSet := os.LookupEnv("STORE_FILE"); isSet {
 		storeFile = &storeFileEnv
@@ -46,13 +34,29 @@ func parseENV() {
 		dbURL = &dbURLEnv
 	}
 	if rateLimitEnv, isSet := os.LookupEnv("RATE_LIMIT"); isSet {
-		limit, err := strconv.Atoi(rateLimitEnv)
-		if err != nil {
-			log.Fatal(err)
-		}
-		rateLimit = limit
+		rateLimit = parseIntEnv(rateLimitEnv)
 	}
 	if cryptoKeyPathEnv, isSet := os.LookupEnv("CRYPTO_KEY"); isSet {
 		cryptoKeyPath = &cryptoKeyPathEnv
 	}
+	if jsonFileEnv, isSet := os.LookupEnv("CONFIG"); isSet {
+		jsonFile = jsonFileEnv
+	}
+}
+
+func parseDurationEnv(s string) *time.Duration {
+	t, err := time.ParseDuration(s)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return &t
+}
+
+func parseIntEnv(s string) *int {
+	num, err := strconv.Atoi(s)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &num
 }

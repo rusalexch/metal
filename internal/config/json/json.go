@@ -3,20 +3,10 @@ package json
 import (
 	"encoding/json"
 	"errors"
-	"flag"
 	"log"
 	"os"
 	"time"
 )
-
-var (
-	jsonFile string
-)
-
-func init() {
-	flag.StringVar(&jsonFile, "c", "", "json-file configuration")
-	flag.StringVar(&jsonFile, "config", "", "json-file configuration")
-}
 
 type DefaultConfig struct {
 	Address        string
@@ -42,12 +32,7 @@ type JSONConfig struct {
 	PollInterval   *interval `json:"poll_interval"`
 }
 
-func ParseJSON() *DefaultConfig {
-	flag.Parse()
-	if jsonFileEnv, isSet := os.LookupEnv("CONFIG"); isSet {
-		jsonFile = jsonFileEnv
-	}
-
+func ParseJSON(jsonFile string) *DefaultConfig {
 	if jsonFile == "" {
 		return defaultValues()
 	}
