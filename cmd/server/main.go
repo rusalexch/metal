@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
 
 	"github.com/rusalexch/metal/internal/config"
 	"github.com/rusalexch/metal/internal/handlers"
@@ -27,13 +30,25 @@ func main() {
 	defer stor.Close()
 
 	hs := hash.New(envConf.HashKey)
-	h := handlers.New(stor, hs)
+	h := handlers.New(stor, hs, envConf.PrivateKey)
 	s := server.New(h, envConf.Addr)
 
-	err := s.Start()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// через этот канал сообщим основному потоку, что соединения закрыты
+	idleConnsClosed := make(chan struct{})
+	// канал для перенаправления прерываний
+	// поскольку нужно отловить всего одно прерывание,
+	// ёмкости 1 для канала будет достаточно
+	sigint := make(chan os.Signal, 1)
+	// регистрируем перенаправление прерываний
+	signal.Notify(sigint, os.Interrupt)
+	go func() {
+		<-sigint
+		s.Shutdown(context.Background(), idleConnsClosed)
+	}()
+	s.Start()
+
+	<-idleConnsClosed
+	log.Println("Server Shutdown gracefully")
 }
 
 func buildLog() {

@@ -1,7 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/rusalexch/metal/internal/agent"
 	"github.com/rusalexch/metal/internal/cache"
@@ -26,7 +31,7 @@ func main() {
 
 	p := poll.New()
 	c := cache.New()
-	t := transport.New(env.Addr, env.RateLimit)
+	t := transport.New(env.Addr, env.RateLimit, env.PublicKey)
 	h := hash.New(env.HashKey)
 
 	conf := agent.Config{
@@ -40,7 +45,13 @@ func main() {
 
 	a := agent.New(conf)
 
-	a.Start()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	a.Start(ctx)
+
+	<-ctx.Done()
+	log.Println("graceful shutdown")
 }
 
 func buildLog() {

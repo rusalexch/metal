@@ -1,7 +1,7 @@
 package transport
 
 import (
-	"io"
+	"crypto/rsa"
 	"net/http"
 
 	"github.com/rusalexch/metal/internal/app"
@@ -23,12 +23,15 @@ type Client struct {
 	addr string
 	// cntReq - количество одновременно запущенных сессий отправки метрик.
 	cntReq int
+	// publicKey - публичный ключ
+	publicKey *rsa.PublicKey
 }
 
 // reqParam - структура параметров запроса на отправку метрик.
 type reqParam struct {
 	// body - данные для отправки, если есть.
-	body io.Reader
+	body []byte
+	// body io.Reader
 	// url - url адрес отправки метрик.
 	url string
 }

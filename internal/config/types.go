@@ -1,11 +1,14 @@
 package config
 
-import "time"
+import (
+	"crypto/rsa"
+	"time"
+)
 
 // AgentConfig - структура конфигурации агента.
 type AgentConfig struct {
 	// адрес сервера.
-	Addr string `env:"ADDRESS"` 
+	Addr string `env:"ADDRESS"`
 	// ключ хэш-функции.
 	HashKey string `env:"KEY"`
 	// интервал сбора метрик.
@@ -14,6 +17,8 @@ type AgentConfig struct {
 	PoolInterval time.Duration `env:"POLL_INTERVAL"`
 	// количество одновременно исходящих запросов от агента.
 	RateLimit int `env:"RATE_LIMIT"`
+	// PublicKey публичный ключ
+	PublicKey *rsa.PublicKey
 }
 
 // ServerConfig - структура конфигурации сервера.
@@ -30,4 +35,27 @@ type ServerConfig struct {
 	StoreInterval time.Duration `env:"STORE_INTERVAL"`
 	// флаг восстановления данных из файла файлового хранилища.
 	Restore bool `env:"RESTORE"`
+	// PrivateKey приватный ключ
+	PrivateKey *rsa.PrivateKey
 }
+
+// type defaultValues struct {
+// 		// адрес сервера по умолчанию.
+// 		defaultAddr string
+// 		// интервал сбора метрик по умолчанию.
+// 		defaultReportInterval time.Duration
+// 		// интервал отправки метрик по умолчанию.
+// 		defaultPoolInterval time.Duration
+// 		// статус восстановления метрик из файлового хранилища по умолчанию.
+// 		defaultRestore = "true"
+// 		// интервал сохранения метрик в файловое хранилище по умолчанию.
+// 		defaultStoreInterval = time.Second * 300
+// 		// путь к файлу файлового хранилища по умолчанию.
+// 		defaultStoreFile = "/tmp/devops-metrics-db.json"
+// 		// ключ хэш-функции по умолчанию.
+// 		defaultKey = ""
+// 		// количество одновременно исходящих запросов по умолчанию.
+// 		defaultRateLimit = 1
+// }
+
+

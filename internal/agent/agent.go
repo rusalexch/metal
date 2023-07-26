@@ -21,12 +21,12 @@ func New(conf Config) *Agent {
 }
 
 // Start метод запуска клиента сбора и отправки метрик на сервер.
-func (a *Agent) Start() {
+func (a *Agent) Start(ctx context.Context) {
 	pollTicker := time.NewTicker(a.pollInterval)
 	defer pollTicker.Stop()
 	reportTicker := time.NewTicker(a.reportInterval)
 	defer reportTicker.Stop()
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	pollChan := make(chan app.Metrics)
 	defer close(pollChan)

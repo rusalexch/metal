@@ -3,6 +3,9 @@ package transport
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -13,7 +16,7 @@ import (
 )
 
 // New - конструктор клиента отправки метрик.
-func New(addr string, rateLimit int) *Client {
+func New(addr string, rateLimit int, publicKey *rsa.PublicKey) *Client {
 	client := &http.Client{}
 
 	return &Client{
@@ -24,6 +27,7 @@ func New(addr string, rateLimit int) *Client {
 		chList:    make(chan []app.Metrics),
 		chReq:     make(chan reqParam),
 		cntReq:    rateLimit,
+		publicKey: publicKey,
 	}
 }
 
@@ -89,7 +93,8 @@ func (c *Client) init() {
 
 // makeRequest - конструктор запроса отправки метрик на сервер.
 func (c *Client) makeRequest(param reqParam) {
-	req, err := http.NewRequest(http.MethodPost, param.url, param.body)
+	body := bytes.NewBuffer(c.encrypt(param.body))
+	req, err := http.NewRequest(http.MethodPost, param.url, body)
 	if err != nil {
 		log.Println(err)
 	}
@@ -97,6 +102,7 @@ func (c *Client) makeRequest(param reqParam) {
 		req.Header.Add("Content-Type", "text/plain")
 	} else {
 		req.Header.Add("Content-Type", "application/json")
+
 	}
 	res, err := c.client.Do(req)
 	if err != nil {
@@ -104,6 +110,21 @@ func (c *Client) makeRequest(param reqParam) {
 		return
 	}
 	defer res.Body.Close()
+}
+
+// encrypt шифрование данных публичным ключом
+func (c *Client) encrypt(body []byte) []byte {
+	if c.publicKey == nil || body == nil {
+		return body
+	}
+
+	encryptBody, err := rsa.EncryptOAEP(sha256.New(), rand.Reader, c.publicKey, body, nil)
+	if err != nil {
+		log.Println("can't encrypt body")
+		return body
+	}
+
+	return encryptBody
 }
 
 // initSendOne - инициализация канала отправки метрик по одиночному каналу.
@@ -152,7 +173,7 @@ func (c *Client) sendJSONOneParam(m app.Metrics) reqParam {
 		log.Println(err)
 	}
 
-	return reqParam{url: url, body: bytes.NewBuffer(body)}
+	return reqParam{url: url, body: body}
 }
 
 // initSendList - инициализация канала отправки метрик списком.
@@ -175,5 +196,5 @@ func (c *Client) sendListParam(m []app.Metrics) reqParam {
 		log.Println(err)
 	}
 
-	return reqParam{url: url, body: bytes.NewBuffer(body)}
+	return reqParam{url: url, body: body}
 }

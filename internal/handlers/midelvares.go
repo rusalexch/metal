@@ -1,8 +1,13 @@
 package handlers
 
 import (
+	"bytes"
 	"compress/gzip"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -52,6 +57,32 @@ func decompressMiddleware(next http.Handler) http.Handler {
 		}
 		defer r.Body.Close()
 
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (h *Handlers) decryptMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if h.privateKey == nil {
+			next.ServeHTTP(w, r)
+			return
+		}
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			log.Println("decryptMiddleware > can't read body")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer r.Body.Close()
+
+		decryptBody, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, h.privateKey, body, nil)
+		if err != nil {
+			log.Println("decryptMiddleware > can't decrypt body")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		r.Body = io.NopCloser(bytes.NewReader(decryptBody))
 		next.ServeHTTP(w, r)
 	})
 }
