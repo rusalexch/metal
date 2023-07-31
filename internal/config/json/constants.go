@@ -19,4 +19,6 @@ const (
 	defaultKey = ""
 	// количество одновременно исходящих запросов по умолчанию.
 	defaultRateLimit = 1
+	// defaultTrustedSubnet - CIDR
+	defaultTrustedSubnet = ""
 )

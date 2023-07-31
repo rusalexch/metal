@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 
 	"github.com/rusalexch/metal/internal/app"
@@ -104,6 +105,12 @@ func (c *Client) makeRequest(param reqParam) {
 		req.Header.Add("Content-Type", "application/json")
 
 	}
+	host, _, err := net.SplitHostPort(c.addr)
+	if err != nil {
+		log.Println("can't get host address")
+		log.Println(err)
+	}
+	req.Header.Add("X-Real-IP", host)
 	res, err := c.client.Do(req)
 	if err != nil {
 		log.Println(err)

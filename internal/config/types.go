@@ -37,6 +37,8 @@ type ServerConfig struct {
 	Restore bool `env:"RESTORE"`
 	// PrivateKey приватный ключ
 	PrivateKey *rsa.PrivateKey
+	// TrustedSubnet - CIDR
+	TrustedSubnet string
 }
 
 // type defaultValues struct {
@@ -57,5 +59,3 @@ type ServerConfig struct {
 // 		// количество одновременно исходящих запросов по умолчанию.
 // 		defaultRateLimit = 1
 // }
-
-
