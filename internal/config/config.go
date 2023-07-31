@@ -31,6 +31,8 @@ var (
 	rateLimit *int
 	// cryptoKeyPath ключ, для агента публичный для сервера приватный
 	cryptoKeyPath *string
+	// trustedSubnet - CIDR
+	trustedSubnet *string
 	// jsonFile - путь к файлу конфигурации json
 	jsonFile string
 )
@@ -46,6 +48,7 @@ func init() {
 	flag.Func("d", "database url string", parseStringFlag(&dbURL))
 	flag.Func("l", "rate limit", parseIntFlag(&rateLimit))
 	flag.Func("crypto-key", "set crypto key file (public for agent, private for server)", parseStringFlag(&cryptoKeyPath))
+	flag.Func("t", "trusted subnet", parseStringFlag(&trustedSubnet))
 }
 
 // NewAgentConfig - конструктор конфигурации для агента.
@@ -93,6 +96,7 @@ func NewServerConfig() ServerConfig {
 		HashKey:       cfgSwitch(key, cfg.Key),
 		DBURL:         cfgSwitch(dbURL, cfg.DatabaseDSN),
 		PrivateKey:    cryptoKey,
+		TrustedSubnet: cfgSwitch(trustedSubnet, cfg.TrustedSubnet),
 	}
 }
 

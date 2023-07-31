@@ -42,6 +42,9 @@ func parseENV() {
 	if jsonFileEnv, isSet := os.LookupEnv("CONFIG"); isSet {
 		jsonFile = jsonFileEnv
 	}
+	if trustedSubnetEnv, isSet := os.LookupEnv("TRUSTED_SUBNET"); isSet {
+		trustedSubnet = &trustedSubnetEnv
+	}
 }
 
 func parseDurationEnv(s string) *time.Duration {

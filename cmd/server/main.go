@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 
@@ -28,9 +29,18 @@ func main() {
 	envConf := config.NewServerConfig()
 	stor := storage.New(envConf.DBURL, envConf.StoreFile, envConf.Restore)
 	defer stor.Close()
+	var ipNet *net.IPNet
+	if envConf.TrustedSubnet != "" {
+		_, net, err := net.ParseCIDR(envConf.TrustedSubnet)
+		if err != nil {
+			log.Println("can't parse CIDR")
+			log.Fatal(err)
+		}
+		ipNet = net
+	}
 
 	hs := hash.New(envConf.HashKey)
-	h := handlers.New(stor, hs, envConf.PrivateKey)
+	h := handlers.New(stor, hs, envConf.PrivateKey, ipNet)
 	s := server.New(h, envConf.Addr)
 
 	// через этот канал сообщим основному потоку, что соединения закрыты
