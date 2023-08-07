@@ -35,6 +35,8 @@ var (
 	trustedSubnet *string
 	// jsonFile - путь к файлу конфигурации json
 	jsonFile string
+	// grpcPort - grpc порт
+	grpcPort *int
 )
 
 func init() {
@@ -49,6 +51,7 @@ func init() {
 	flag.Func("l", "rate limit", parseIntFlag(&rateLimit))
 	flag.Func("crypto-key", "set crypto key file (public for agent, private for server)", parseStringFlag(&cryptoKeyPath))
 	flag.Func("t", "trusted subnet", parseStringFlag(&trustedSubnet))
+	flag.Func("grpc", "grpc port", parseIntFlag(&grpcPort))
 }
 
 // NewAgentConfig - конструктор конфигурации для агента.
@@ -72,6 +75,7 @@ func NewAgentConfig() AgentConfig {
 		HashKey:        cfgSwitch(key, cfg.Key),
 		RateLimit:      cfgSwitch(rateLimit, cfg.RateLimit),
 		PublicKey:      cryptoKey,
+		GRPCPort:       cfgSwitch(grpcPort, cfg.GRPCPort),
 	}
 }
 
@@ -97,6 +101,7 @@ func NewServerConfig() ServerConfig {
 		DBURL:         cfgSwitch(dbURL, cfg.DatabaseDSN),
 		PrivateKey:    cryptoKey,
 		TrustedSubnet: cfgSwitch(trustedSubnet, cfg.TrustedSubnet),
+		GRPCPort:      cfgSwitch(grpcPort, cfg.GRPCPort),
 	}
 }
 

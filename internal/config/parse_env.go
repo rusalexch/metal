@@ -45,6 +45,9 @@ func parseENV() {
 	if trustedSubnetEnv, isSet := os.LookupEnv("TRUSTED_SUBNET"); isSet {
 		trustedSubnet = &trustedSubnetEnv
 	}
+	if grpcPortEnv, isSet := os.LookupEnv("GRPC_PORT"); isSet {
+		grpcPort = parseIntEnv(grpcPortEnv)
+	}
 }
 
 func parseDurationEnv(s string) *time.Duration {

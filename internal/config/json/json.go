@@ -20,6 +20,7 @@ type DefaultConfig struct {
 	Key            string
 	RateLimit      int
 	TrustedSubnet  string
+	GRPCPort       int
 }
 
 type JSONConfig struct {
@@ -32,6 +33,7 @@ type JSONConfig struct {
 	ReportInterval *interval `json:"report_interval,omitempty"`
 	PollInterval   *interval `json:"poll_interval,omitempty"`
 	TrustedSubnet  *string   `json:"trusted_subnet,omitempty"`
+	GRPCPort       *int      `json:"grpc_port,omitempty"`
 }
 
 func ParseJSON(jsonFile string) *DefaultConfig {
@@ -63,7 +65,8 @@ func defaultValues() *DefaultConfig {
 		PollInterval:   defaultPoolInterval,
 		Key:            defaultKey,
 		RateLimit:      defaultRateLimit,
-		TrustedSubnet:  "",
+		TrustedSubnet:  defaultTrustedSubnet,
+		GRPCPort:       defaultGRPCPort,
 	}
 }
 
@@ -95,6 +98,9 @@ func fillDefaultValues(json JSONConfig) *DefaultConfig {
 	}
 	if json.TrustedSubnet != nil {
 		defValues.TrustedSubnet = *json.TrustedSubnet
+	}
+	if json.GRPCPort != nil {
+		defValues.GRPCPort = *json.GRPCPort
 	}
 	return defValues
 }

@@ -19,6 +19,8 @@ type AgentConfig struct {
 	RateLimit int `env:"RATE_LIMIT"`
 	// PublicKey публичный ключ
 	PublicKey *rsa.PublicKey
+	// GRPCPort - порт grpc сервера
+	GRPCPort int `env:"GRPC_PORT"`
 }
 
 // ServerConfig - структура конфигурации сервера.
@@ -39,6 +41,8 @@ type ServerConfig struct {
 	PrivateKey *rsa.PrivateKey
 	// TrustedSubnet - CIDR
 	TrustedSubnet string
+	// GRPCPort - порт grpc сервера
+	GRPCPort int `env:"GRPC_PORT"`
 }
 
 // type defaultValues struct {

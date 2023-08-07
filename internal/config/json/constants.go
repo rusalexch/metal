@@ -21,4 +21,6 @@ const (
 	defaultRateLimit = 1
 	// defaultTrustedSubnet - CIDR
 	defaultTrustedSubnet = ""
+	// defaultGRPCPort - порт grpc по умолчанию
+	defaultGRPCPort = 3200
 )
