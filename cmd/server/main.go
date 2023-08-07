@@ -9,6 +9,7 @@ import (
 	"os/signal"
 
 	"github.com/rusalexch/metal/internal/config"
+	grpcserver "github.com/rusalexch/metal/internal/grpc/server"
 	"github.com/rusalexch/metal/internal/handlers"
 	"github.com/rusalexch/metal/internal/hash"
 	"github.com/rusalexch/metal/internal/server"
@@ -42,6 +43,7 @@ func main() {
 	hs := hash.New(envConf.HashKey)
 	h := handlers.New(stor, hs, envConf.PrivateKey, ipNet)
 	s := server.New(h, envConf.Addr)
+	grpc := grpcserver.New(stor, envConf.GRPCAddress)
 
 	// через этот канал сообщим основному потоку, что соединения закрыты
 	idleConnsClosed := make(chan struct{})
@@ -54,8 +56,11 @@ func main() {
 	go func() {
 		<-sigint
 		s.Shutdown(context.Background(), idleConnsClosed)
+		grpc.Stop()
 	}()
-	s.Start()
+	go s.Start()
+
+	go grpc.Start()
 
 	<-idleConnsClosed
 	log.Println("Server Shutdown gracefully")

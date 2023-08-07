@@ -45,8 +45,8 @@ func parseENV() {
 	if trustedSubnetEnv, isSet := os.LookupEnv("TRUSTED_SUBNET"); isSet {
 		trustedSubnet = &trustedSubnetEnv
 	}
-	if grpcPortEnv, isSet := os.LookupEnv("GRPC_PORT"); isSet {
-		grpcPort = parseIntEnv(grpcPortEnv)
+	if grpcAddressEnv, isSet := os.LookupEnv("GRPC_ADDRESS"); isSet {
+		grpcAddress = &grpcAddressEnv
 	}
 }
 
