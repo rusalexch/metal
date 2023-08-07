@@ -19,17 +19,21 @@ type DefaultConfig struct {
 	PollInterval   time.Duration
 	Key            string
 	RateLimit      int
+	TrustedSubnet  string
+	GRPCAddress    string
 }
 
 type JSONConfig struct {
-	Address        *string   `json:"address"`
-	Restore        *string   `json:"restore"`
-	StoreInterval  *interval `json:"store_interval"`
-	StoreFile      *string   `json:"store_file"`
-	DatabaseDSN    *string   `json:"database_dsn"`
-	CryptoKey      *string   `json:"crypto_key"`
-	ReportInterval *interval `json:"report_interval"`
-	PollInterval   *interval `json:"poll_interval"`
+	Address        *string   `json:"address,omitempty"`
+	Restore        *string   `json:"restore,omitempty"`
+	StoreInterval  *interval `json:"store_interval,omitempty"`
+	StoreFile      *string   `json:"store_file,omitempty"`
+	DatabaseDSN    *string   `json:"database_dsn,omitempty"`
+	CryptoKey      *string   `json:"crypto_key,omitempty"`
+	ReportInterval *interval `json:"report_interval,omitempty"`
+	PollInterval   *interval `json:"poll_interval,omitempty"`
+	TrustedSubnet  *string   `json:"trusted_subnet,omitempty"`
+	GRPCAddress    *string   `json:"grpc_address,omitempty"`
 }
 
 func ParseJSON(jsonFile string) *DefaultConfig {
@@ -61,6 +65,8 @@ func defaultValues() *DefaultConfig {
 		PollInterval:   defaultPoolInterval,
 		Key:            defaultKey,
 		RateLimit:      defaultRateLimit,
+		TrustedSubnet:  defaultTrustedSubnet,
+		GRPCAddress:    defaultGRPCAddress,
 	}
 }
 
@@ -89,6 +95,12 @@ func fillDefaultValues(json JSONConfig) *DefaultConfig {
 	}
 	if json.StoreInterval != nil {
 		defValues.StoreInterval = json.StoreInterval.Duration
+	}
+	if json.TrustedSubnet != nil {
+		defValues.TrustedSubnet = *json.TrustedSubnet
+	}
+	if json.GRPCAddress != nil {
+		defValues.GRPCAddress = *json.GRPCAddress
 	}
 	return defValues
 }

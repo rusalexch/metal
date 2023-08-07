@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"crypto/rsa"
+	"net"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -18,4 +19,6 @@ type Handlers struct {
 	timeout time.Duration
 	// privateKey - приватный ключ
 	privateKey *rsa.PrivateKey
+	// trustedSubnet - CIDR
+	ipNet *net.IPNet
 }

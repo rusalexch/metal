@@ -9,40 +9,62 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"time"
 
 	"github.com/rusalexch/metal/internal/app"
+	pm "github.com/rusalexch/metal/internal/proto"
 	"github.com/rusalexch/metal/internal/utils"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // New - конструктор клиента отправки метрик.
-func New(addr string, rateLimit int, publicKey *rsa.PublicKey) *Client {
+func New(addr string, rateLimit int, publicKey *rsa.PublicKey, grpcAddres string) *Client {
 	client := &http.Client{}
 
 	return &Client{
-		addr:      addr,
-		client:    client,
-		chOne:     make(chan app.Metrics),
-		chJSONOne: make(chan app.Metrics),
-		chList:    make(chan []app.Metrics),
-		chReq:     make(chan reqParam),
-		cntReq:    rateLimit,
-		publicKey: publicKey,
+		addr:        addr,
+		client:      client,
+		chOne:       make(chan app.Metrics),
+		chGRPC:      make(chan app.Metrics),
+		chJSONOne:   make(chan app.Metrics),
+		chList:      make(chan []app.Metrics),
+		chReq:       make(chan reqParam),
+		cntReq:      rateLimit,
+		publicKey:   publicKey,
+		grpcAddress: grpcAddres,
 	}
 }
 
 // Start - запуск клиента отправки метрик.
 func (c *Client) Start(ctx context.Context, ch <-chan []app.Metrics) {
 	c.init()
+	close := c.startGRPC()
 
 	for {
 		select {
 		case <-ctx.Done():
 			c.close()
+			close()
 			return
 		case m := <-ch:
 			c.dmx(m)
 		}
+	}
+}
+
+func (c *Client) startGRPC() func() {
+	conn, err := grpc.Dial(c.grpcAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.grpc = pm.NewMetricsClient(conn)
+
+	return func() {
+		conn.Close()
 	}
 }
 
@@ -65,6 +87,13 @@ func (c *Client) dmx(m []app.Metrics) {
 	}()
 	go func() {
 		for _, v := range m {
+			if c.chGRPC != nil {
+				c.chGRPC <- v
+			}
+		}
+	}()
+	go func() {
+		for _, v := range m {
 			if c.chJSONOne != nil {
 				c.chJSONOne <- v
 			}
@@ -77,11 +106,43 @@ func (c *Client) dmx(m []app.Metrics) {
 	}()
 }
 
+func (c *Client) initGRPC() {
+	if c.chGRPC == nil {
+		return
+	}
+	go func() {
+		for m := range c.chGRPC {
+			c.sendGRPC(m)
+		}
+	}()
+}
+
+func (c *Client) sendGRPC(m app.Metrics) {
+	ctx, close := context.WithTimeout(context.Background(), time.Second*10)
+	defer close()
+
+	switch m.Type {
+	case app.Counter:
+		in := pm.CounterMetric{
+			Name:  m.ID,
+			Delta: *m.Delta,
+		}
+		c.grpc.AddCounter(ctx, &in)
+	case app.Gauge:
+		in := pm.GaugeMetric{
+			Name:  m.ID,
+			Value: *m.Value,
+		}
+		c.grpc.AddGauge(ctx, &in)
+	}
+}
+
 // init - инициализация клиента отправки метрик.
 func (c *Client) init() {
 	c.initSendOne()
 	c.initSendJSONOne()
 	c.initSendList()
+	c.initGRPC()
 	for i := 0; i < c.cntReq; i++ {
 		go func() {
 			for r := range c.chReq {
@@ -104,6 +165,12 @@ func (c *Client) makeRequest(param reqParam) {
 		req.Header.Add("Content-Type", "application/json")
 
 	}
+	host, _, err := net.SplitHostPort(c.addr)
+	if err != nil {
+		log.Println("can't get host address")
+		log.Println(err)
+	}
+	req.Header.Add("X-Real-IP", host)
 	res, err := c.client.Do(req)
 	if err != nil {
 		log.Println(err)

@@ -19,4 +19,8 @@ const (
 	defaultKey = ""
 	// количество одновременно исходящих запросов по умолчанию.
 	defaultRateLimit = 1
+	// defaultTrustedSubnet - CIDR
+	defaultTrustedSubnet = ""
+	// defaultGRPCAddress - порт grpc по умолчанию
+	defaultGRPCAddress = ":3200"
 )

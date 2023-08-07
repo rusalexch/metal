@@ -31,7 +31,7 @@ func main() {
 
 	p := poll.New()
 	c := cache.New()
-	t := transport.New(env.Addr, env.RateLimit, env.PublicKey)
+	t := transport.New(env.Addr, env.RateLimit, env.PublicKey, env.GRPCAddress)
 	h := hash.New(env.HashKey)
 
 	conf := agent.Config{
