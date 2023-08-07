@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/rusalexch/metal/internal/app"
+	pm "github.com/rusalexch/metal/internal/proto"
 )
 
 // Client - структура клиента.
@@ -13,6 +14,8 @@ type Client struct {
 	client *http.Client
 	// chOne - канал отправки одной метрики.
 	chOne chan app.Metrics
+	// chGRPC - канал для отправки метрики по grpc
+	chGRPC chan app.Metrics
 	// chJSONOne - канал отправки одной метрики формата JSON.
 	chJSONOne chan app.Metrics
 	// chList - канал отправки списка метрик.
@@ -25,6 +28,10 @@ type Client struct {
 	cntReq int
 	// publicKey - публичный ключ
 	publicKey *rsa.PublicKey
+	// grpcAddress - адрес grpc
+	grpcAddress string
+	// grpc - клиент grpc
+	grpc pm.MetricsClient
 }
 
 // reqParam - структура параметров запроса на отправку метрик.
